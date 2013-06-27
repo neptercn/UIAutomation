@@ -4,18 +4,13 @@
 /*
 global UiaConstant:={0:0
 ; enum TreeScope
-  ,TreeScope_Element:0x1
-	,TreeScope_Children:0x2
-	,TreeScope_Descendants:0x4
-	,TreeScope_Parent:0x8
-	,TreeScope_Ancestors:0x10
-	,TreeScope_Subtree:0x7
+	,TreeScope_Element:0x1,TreeScope_Children:0x2,TreeScope_Descendants:0x4,TreeScope_Parent:0x8,TreeScope_Ancestors:0x10,TreeScope_Subtree:0x7
 ; enum PropertyConditionFlags	
-	,PropertyConditionFlags_None:0
-	,PropertyConditionFlags_IgnoreCase:1
+	,PropertyConditionFlags_None:0,PropertyConditionFlags_IgnoreCase:1
 ; enum AutomationElementMode
-	,AutomationElementMode_None:0
-	,AutomationElementMode_Full:1}
+	,AutomationElementMode_None:0,AutomationElementMode_Full:1}
+UIA_PropertyId:={30000:"UIA_RuntimeIdPropertyId",30001:"UIA_BoundingRectanglePropertyId",30002:"UIA_ProcessIdPropertyId",30003:"UIA_ControlTypePropertyId",30004:"UIA_LocalizedControlTypePropertyId",30005:"UIA_NamePropertyId",30006:"UIA_AcceleratorKeyPropertyId",30007:"UIA_AccessKeyPropertyId",30008:"UIA_HasKeyboardFocusPropertyId",30009:"UIA_IsKeyboardFocusablePropertyId",30010:"UIA_IsEnabledPropertyId",30011:"UIA_AutomationIdPropertyId",30012:"UIA_ClassNamePropertyId",30013:"UIA_HelpTextPropertyId",30014:"UIA_ClickablePointPropertyId",30015:"UIA_CulturePropertyId",30016:"UIA_IsControlElementPropertyId",30017:"UIA_IsContentElementPropertyId",30018:"UIA_LabeledByPropertyId",30019:"UIA_IsPasswordPropertyId",30020:"UIA_NativeWindowHandlePropertyId",30021:"UIA_ItemTypePropertyId",30022:"UIA_IsOffscreenPropertyId",30023:"UIA_OrientationPropertyId",30024:"UIA_FrameworkIdPropertyId",30025:"UIA_IsRequiredForFormPropertyId",30026:"UIA_ItemStatusPropertyId",30027:"UIA_IsDockPatternAvailablePropertyId",30028:"UIA_IsExpandCollapsePatternAvailablePropertyId",30029:"UIA_IsGridItemPatternAvailablePropertyId",30030:"UIA_IsGridPatternAvailablePropertyId",30031:"UIA_IsInvokePatternAvailablePropertyId",30032:"UIA_IsMultipleViewPatternAvailablePropertyId",30033:"UIA_IsRangeValuePatternAvailablePropertyId",30034:"UIA_IsScrollPatternAvailablePropertyId",30035:"UIA_IsScrollItemPatternAvailablePropertyId",30036:"UIA_IsSelectionItemPatternAvailablePropertyId",30037:"UIA_IsSelectionPatternAvailablePropertyId",30038:"UIA_IsTablePatternAvailablePropertyId",30039:"UIA_IsTableItemPatternAvailablePropertyId",30040:"UIA_IsTextPatternAvailablePropertyId",30041:"UIA_IsTogglePatternAvailablePropertyId",30042:"UIA_IsTransformPatternAvailablePropertyId",30043:"UIA_IsValuePatternAvailablePropertyId",30044:"UIA_IsWindowPatternAvailablePropertyId",30045:"UIA_ValueValuePropertyId",30046:"UIA_ValueIsReadOnlyPropertyId",30047:"UIA_RangeValueValuePropertyId",30048:"UIA_RangeValueIsReadOnlyPropertyId",30049:"UIA_RangeValueMinimumPropertyId",30050:"UIA_RangeValueMaximumPropertyId",30051:"UIA_RangeValueLargeChangePropertyId",30052:"UIA_RangeValueSmallChangePropertyId",30053:"UIA_ScrollHorizontalScrollPercentPropertyId",30054:"UIA_ScrollHorizontalViewSizePropertyId",30055:"UIA_ScrollVerticalScrollPercentPropertyId",30056:"UIA_ScrollVerticalViewSizePropertyId",30057:"UIA_ScrollHorizontallyScrollablePropertyId",30058:"UIA_ScrollVerticallyScrollablePropertyId",30059:"UIA_SelectionSelectionPropertyId",30060:"UIA_SelectionCanSelectMultiplePropertyId",30061:"UIA_SelectionIsSelectionRequiredPropertyId",30062:"UIA_GridRowCountPropertyId",30063:"UIA_GridColumnCountPropertyId",30064:"UIA_GridItemRowPropertyId",30065:"UIA_GridItemColumnPropertyId",30066:"UIA_GridItemRowSpanPropertyId",30067:"UIA_GridItemColumnSpanPropertyId",30068:"UIA_GridItemContainingGridPropertyId",30069:"UIA_DockDockPositionPropertyId",30070:"UIA_ExpandCollapseExpandCollapseStatePropertyId",30071:"UIA_MultipleViewCurrentViewPropertyId",30072:"UIA_MultipleViewSupportedViewsPropertyId",30073:"UIA_WindowCanMaximizePropertyId",30074:"UIA_WindowCanMinimizePropertyId",30075:"UIA_WindowWindowVisualStatePropertyId",30076:"UIA_WindowWindowInteractionStatePropertyId",30077:"UIA_WindowIsModalPropertyId",30078:"UIA_WindowIsTopmostPropertyId",30079:"UIA_SelectionItemIsSelectedPropertyId",30080:"UIA_SelectionItemSelectionContainerPropertyId",30081:"UIA_TableRowHeadersPropertyId",30082:"UIA_TableColumnHeadersPropertyId",30083:"UIA_TableRowOrColumnMajorPropertyId",30084:"UIA_TableItemRowHeaderItemsPropertyId",30085:"UIA_TableItemColumnHeaderItemsPropertyId",30086:"UIA_ToggleToggleStatePropertyId",30087:"UIA_TransformCanMovePropertyId",30088:"UIA_TransformCanResizePropertyId",30089:"UIA_TransformCanRotatePropertyId",30090:"UIA_IsLegacyIAccessiblePatternAvailablePropertyId",30091:"UIA_LegacyIAccessibleChildIdPropertyId",30092:"UIA_LegacyIAccessibleNamePropertyId",30093:"UIA_LegacyIAccessibleValuePropertyId",30094:"UIA_LegacyIAccessibleDescriptionPropertyId",30095:"UIA_LegacyIAccessibleRolePropertyId",30096:"UIA_LegacyIAccessibleStatePropertyId",30097:"UIA_LegacyIAccessibleHelpPropertyId",30098:"UIA_LegacyIAccessibleKeyboardShortcutPropertyId",30099:"UIA_LegacyIAccessibleSelectionPropertyId",30100:"UIA_LegacyIAccessibleDefaultActionPropertyId",30101:"UIA_AriaRolePropertyId",30102:"UIA_AriaPropertiesPropertyId",30103:"UIA_IsDataValidForFormPropertyId",30104:"UIA_ControllerForPropertyId",30105:"UIA_DescribedByPropertyId",30106:"UIA_FlowsToPropertyId",30107:"UIA_ProviderDescriptionPropertyId",30108:"UIA_IsItemContainerPatternAvailablePropertyId",30109:"UIA_IsVirtualizedItemPatternAvailablePropertyId",30110:"UIA_IsSynchronizedInputPatternAvailablePropertyId"}
+
 */
 ;;;;;;;;;;;;;;;;;
 ;;IUIAutomation;;
@@ -23,7 +18,7 @@ global UiaConstant:={0:0
 class IUIAutomation ;extends IUnknown
 {
 	__new(){
-		;DllCall("ole32\CoInitializeEx", "Uint", 0,"uint",8)
+		;DllCall("ole32\CoInitializeEx", "Uint", 0,"uint",8) ; Multithread flag
 		;DllCall("ole32\CoCreateInstance","Uint",guid(CLSID,"{ff48dba4-60ef-4201-aa87-54103eef594e}"),"Uint",0,"Uint",5,"Uint",guid(iid,"{30cbe57d-d9d0-452a-ab13-7ac5ac4825ee}"),"UintP", ppv)
 		;this.__:=ppv
 		this.__:=ComObjCreate("{ff48dba4-60ef-4201-aa87-54103eef594e}","{30cbe57d-d9d0-452a-ab13-7ac5ac4825ee}")
@@ -32,8 +27,9 @@ class IUIAutomation ;extends IUnknown
 	}
 	__call(aName,aParam*){
 		if aName is Integer
-			if this._i.HasKey(aName)
+			if this._i.HasKey(aName){
 				return this[this._i[aName]](aParam*)
+			}
 		else if (aName=""){
 			aP:=aParam.1
 			if aP is Integer
@@ -522,13 +518,14 @@ class IUIAutomationCondition
 		this._p:=0,this._i:=0,this._t:={property:"property_",bool:"bool_",and:"and_",or:"or_",not:"not_"}
 	}
 	__get(aName){
-		if ObjHasKey(this,this._i aName)
+		if !instr(aName,"_")
 			return this[this._i aName]()
+		else return this[aName]()
 	}
 	__call(aName,aParam*){
 		if (aName="")&&(this._p:=aParam.1)&&(this._i:=this._t[aParam.2])
 			return this
-		else if ObjHasKey(this,this._i aName)
+		else if !instr(aName,"_")
 			return this[this._i aName](aParam*)
 	}
 	property_id(){
@@ -582,7 +579,7 @@ class IUIAutomationCondition
 class IUIAutomationTreeWalker
 {
 	__new(){
-		
+		this._p:=0
 	}
 	__get(aName){
 		
@@ -706,8 +703,27 @@ variant(ByRef var,type=0,val=0){
 vt(p,n){
 	return NumGet(NumGet(p+0,"ptr")+n*A_PtrSize,"ptr")
 }
-SafeArray(){ ; //not completed
+SafeArray(p){ ; //not completed, only 1 dim
+	/*
+	cDims:=NumGet(p+0,"ushort")
+	fFeatures:=NumGet(p+2,"ushort")
+	cbElements:=NumGet(p+4,"uint")
+	cLocks:=NumGet(p+8,"uint")
+	pvData:=NumGet(p+8+A_PtrSize,"ptr")
+	;dim 1
+	cElements:=NumGet(p+8+2*A_PtrSize,"uint") 
+	lLbound:=NumGet(p+12+2*A_PtrSize,"uint")
+	;dim 2
+	cElements:=NumGet(p+16+2*A_PtrSize,"uint") 
+	lLbound:=NumGet(p+20+2*A_PtrSize,"uint")
 	
+	r1:=NumGet(pvData+0)
+	r2:=NumGet(pvData+A_PtrSize)
+	*/
+	item:={},pv:=NumGet(p+8+A_PtrSize,"ptr")
+	loop % NumGet(p+8+2*A_PtrSize,"uint")
+		item.Insert(NumGet(pv+(A_Index-1)*A_PtrSize))
+	return item
 }
 GUID(ByRef GUID, sGUID){
     VarSetCapacity(GUID, 16, 0)
