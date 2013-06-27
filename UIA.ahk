@@ -40,7 +40,7 @@ class IUIAutomation ;extends IUnknown
 			else
 				this._if:=aParam
 		}else if this._e.haskey(aName)
-			return this[this._e[aName]](aParams*)
+			return this[this._e[aName]](aParam*)
 	}
 	__delete(){
 		ObjRelease(this.__)
