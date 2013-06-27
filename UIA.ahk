@@ -35,10 +35,11 @@ class IUIAutomation ;extends IUnknown
 			if this._i.HasKey(aName)
 				return this[this._i[aName]](aParam*)
 		else if (aName=""){
+			aP:=aParam.1
 			if aParam is Integer
-				this._p:=aParam
+				this._p:=aP
 			else
-				this._if:=aParam
+				this._if:=aP
 		}else if this._e.haskey(aName)
 			return this[this._e[aName]](aParam*)
 	}
