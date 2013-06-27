@@ -36,7 +36,7 @@ class IUIAutomation ;extends IUnknown
 				return this[this._i[aName]](aParam*)
 		else if (aName=""){
 			aP:=aParam.1
-			if aParam is Integer
+			if aP is Integer
 				this._p:=aP
 			else
 				this._if:=aP
