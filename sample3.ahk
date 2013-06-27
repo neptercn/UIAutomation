@@ -4,10 +4,7 @@
 #SingleInstance,force
 #Persistent
 #Include uia.ahk
-global event
-,$u:=new IUIAutomation
-,$e:=new IUIAutomationElement
-,$c:=new IUIAutomationCacheRequest
+global $u:=new IUIAutomation,$e:=new IUIAutomationElement
 $u.39(0,uia_event(pEvent,"OnFocus"))
 return
 OnFocus(self,sender){
