@@ -12,6 +12,27 @@ global UiaConstant:={0:0
 UIA_PropertyId:={30000:"UIA_RuntimeIdPropertyId",30001:"UIA_BoundingRectanglePropertyId",30002:"UIA_ProcessIdPropertyId",30003:"UIA_ControlTypePropertyId",30004:"UIA_LocalizedControlTypePropertyId",30005:"UIA_NamePropertyId",30006:"UIA_AcceleratorKeyPropertyId",30007:"UIA_AccessKeyPropertyId",30008:"UIA_HasKeyboardFocusPropertyId",30009:"UIA_IsKeyboardFocusablePropertyId",30010:"UIA_IsEnabledPropertyId",30011:"UIA_AutomationIdPropertyId",30012:"UIA_ClassNamePropertyId",30013:"UIA_HelpTextPropertyId",30014:"UIA_ClickablePointPropertyId",30015:"UIA_CulturePropertyId",30016:"UIA_IsControlElementPropertyId",30017:"UIA_IsContentElementPropertyId",30018:"UIA_LabeledByPropertyId",30019:"UIA_IsPasswordPropertyId",30020:"UIA_NativeWindowHandlePropertyId",30021:"UIA_ItemTypePropertyId",30022:"UIA_IsOffscreenPropertyId",30023:"UIA_OrientationPropertyId",30024:"UIA_FrameworkIdPropertyId",30025:"UIA_IsRequiredForFormPropertyId",30026:"UIA_ItemStatusPropertyId",30027:"UIA_IsDockPatternAvailablePropertyId",30028:"UIA_IsExpandCollapsePatternAvailablePropertyId",30029:"UIA_IsGridItemPatternAvailablePropertyId",30030:"UIA_IsGridPatternAvailablePropertyId",30031:"UIA_IsInvokePatternAvailablePropertyId",30032:"UIA_IsMultipleViewPatternAvailablePropertyId",30033:"UIA_IsRangeValuePatternAvailablePropertyId",30034:"UIA_IsScrollPatternAvailablePropertyId",30035:"UIA_IsScrollItemPatternAvailablePropertyId",30036:"UIA_IsSelectionItemPatternAvailablePropertyId",30037:"UIA_IsSelectionPatternAvailablePropertyId",30038:"UIA_IsTablePatternAvailablePropertyId",30039:"UIA_IsTableItemPatternAvailablePropertyId",30040:"UIA_IsTextPatternAvailablePropertyId",30041:"UIA_IsTogglePatternAvailablePropertyId",30042:"UIA_IsTransformPatternAvailablePropertyId",30043:"UIA_IsValuePatternAvailablePropertyId",30044:"UIA_IsWindowPatternAvailablePropertyId",30045:"UIA_ValueValuePropertyId",30046:"UIA_ValueIsReadOnlyPropertyId",30047:"UIA_RangeValueValuePropertyId",30048:"UIA_RangeValueIsReadOnlyPropertyId",30049:"UIA_RangeValueMinimumPropertyId",30050:"UIA_RangeValueMaximumPropertyId",30051:"UIA_RangeValueLargeChangePropertyId",30052:"UIA_RangeValueSmallChangePropertyId",30053:"UIA_ScrollHorizontalScrollPercentPropertyId",30054:"UIA_ScrollHorizontalViewSizePropertyId",30055:"UIA_ScrollVerticalScrollPercentPropertyId",30056:"UIA_ScrollVerticalViewSizePropertyId",30057:"UIA_ScrollHorizontallyScrollablePropertyId",30058:"UIA_ScrollVerticallyScrollablePropertyId",30059:"UIA_SelectionSelectionPropertyId",30060:"UIA_SelectionCanSelectMultiplePropertyId",30061:"UIA_SelectionIsSelectionRequiredPropertyId",30062:"UIA_GridRowCountPropertyId",30063:"UIA_GridColumnCountPropertyId",30064:"UIA_GridItemRowPropertyId",30065:"UIA_GridItemColumnPropertyId",30066:"UIA_GridItemRowSpanPropertyId",30067:"UIA_GridItemColumnSpanPropertyId",30068:"UIA_GridItemContainingGridPropertyId",30069:"UIA_DockDockPositionPropertyId",30070:"UIA_ExpandCollapseExpandCollapseStatePropertyId",30071:"UIA_MultipleViewCurrentViewPropertyId",30072:"UIA_MultipleViewSupportedViewsPropertyId",30073:"UIA_WindowCanMaximizePropertyId",30074:"UIA_WindowCanMinimizePropertyId",30075:"UIA_WindowWindowVisualStatePropertyId",30076:"UIA_WindowWindowInteractionStatePropertyId",30077:"UIA_WindowIsModalPropertyId",30078:"UIA_WindowIsTopmostPropertyId",30079:"UIA_SelectionItemIsSelectedPropertyId",30080:"UIA_SelectionItemSelectionContainerPropertyId",30081:"UIA_TableRowHeadersPropertyId",30082:"UIA_TableColumnHeadersPropertyId",30083:"UIA_TableRowOrColumnMajorPropertyId",30084:"UIA_TableItemRowHeaderItemsPropertyId",30085:"UIA_TableItemColumnHeaderItemsPropertyId",30086:"UIA_ToggleToggleStatePropertyId",30087:"UIA_TransformCanMovePropertyId",30088:"UIA_TransformCanResizePropertyId",30089:"UIA_TransformCanRotatePropertyId",30090:"UIA_IsLegacyIAccessiblePatternAvailablePropertyId",30091:"UIA_LegacyIAccessibleChildIdPropertyId",30092:"UIA_LegacyIAccessibleNamePropertyId",30093:"UIA_LegacyIAccessibleValuePropertyId",30094:"UIA_LegacyIAccessibleDescriptionPropertyId",30095:"UIA_LegacyIAccessibleRolePropertyId",30096:"UIA_LegacyIAccessibleStatePropertyId",30097:"UIA_LegacyIAccessibleHelpPropertyId",30098:"UIA_LegacyIAccessibleKeyboardShortcutPropertyId",30099:"UIA_LegacyIAccessibleSelectionPropertyId",30100:"UIA_LegacyIAccessibleDefaultActionPropertyId",30101:"UIA_AriaRolePropertyId",30102:"UIA_AriaPropertiesPropertyId",30103:"UIA_IsDataValidForFormPropertyId",30104:"UIA_ControllerForPropertyId",30105:"UIA_DescribedByPropertyId",30106:"UIA_FlowsToPropertyId",30107:"UIA_ProviderDescriptionPropertyId",30108:"UIA_IsItemContainerPatternAvailablePropertyId",30109:"UIA_IsVirtualizedItemPatternAvailablePropertyId",30110:"UIA_IsSynchronizedInputPatternAvailablePropertyId"}
 
 */
+;;
+;;
+;;
+class IBase
+{
+	__new(){
+		clsid:=this.clsid&&iid:=this.iid?this.__:=ComObjCreate(clsid,iid):this._p:=0
+	}
+	__call(aName,aParam*){
+		if aName is Integer
+			if this._i.HasKey(aName)
+				return this[this._i[aName]](aParam*)
+	}
+	__delete(){
+		ObjRelease(this.__)
+	}
+	__get(aName){
+		if this._i.haskey(aName)
+			return this[this._i[aName]]()
+	}
+}
 ;;;;;;;;;;;;;;;;;
 ;;IUIAutomation;;
 ;;;;;;;;;;;;;;;;;
@@ -40,7 +61,7 @@ class IUIAutomation ;extends IUnknown
 			return this[this._e[aName]](aParam*)
 	}
 	__delete(){
-		ObjRelease(this.__)
+		ObjRelease(this._p)
 	}
 	__get(aName){
 		if this._i.haskey(aName)
@@ -356,7 +377,16 @@ class IUIAutomationElement
 		else if this._n.haskey(aName){
 			DllCall(vt(this._p,aName),"ptr",this._p,this._n[aName]=2?"int64*":"ptr*",retVal)
 			return this._n[aName]?StrGet(retVal):retVal
-		}
+		}else if this._t.haskey(aName){
+			DllCall(vt(this._p,this._t[aName]),"ptr",this._p,"ptr*",retVal)
+			return retVal
+		}else if this._s.haskey(aName){
+			DllCall(vt(this._p,this._s[aName]),"ptr",this._p,"ptr*",retVal)
+			return StrGet(retVal)
+		}else if this._6.haskey(aName){
+			DllCall(vt(this._p,this._s[aName]),"ptr",this._p,"int64*",retVal)
+			return retVal
+		}else msgbox %aName% does not exist.
 	}
 
 	SetFocus(){
@@ -450,7 +480,7 @@ class IUIAutomationElement
 ;;;;;;;;;;;;;;
 ;;propertyid;;
 ;;;;;;;;;;;;;;
-	Value(id,v){ ; //not completed
+	Value(id,v){
 		
 	}
 ;;;;;;;;;;;;;;;;
@@ -472,7 +502,7 @@ class IUIAutomationElement
 class IUIAutomationCacheRequest
 {
 	__new(){
-		this._p:=0
+		this._p:=0,this._i:={3:"AddProperty",4:"AddPattern",5:"Clone"}
 	}
 	__get(aName){
 		if (aName="TreeScope"){
@@ -487,7 +517,11 @@ class IUIAutomationCacheRequest
 		}
 	}
 	__call(aName,aParam*){
-		if (aName="")&&(this._p:=aParam.1)
+		if aName is Integer
+		{
+			if this._i.HasKey(aName)
+				return this[this._i[aName]](aParam*)
+		}else if (aName="")&&(this._p:=aParam.1)
 			return this
 	}
 	__set(aName,aValue){
@@ -498,7 +532,7 @@ class IUIAutomationCacheRequest
 		else if (aName="AutomationElementMode")
 			return _Error(DllCall(vt(this._p,11),"ptr",this._p,"int",aValue),"put_AutomationElementMode")
 	}
-	AddProperty(propertyId){
+  AddProperty(propertyId){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",propertyId),"AddProperty")
   }
   AddPattern(patternId){
