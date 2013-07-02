@@ -15,9 +15,9 @@ MouseGetPos,x,y,hwnd
 BuildElementTree(hwnd)
 return
 BuildElementTree(hwnd){
-  TV_Delete()
+	TV_Delete()
 	$r.(_r:=$u.20).TreeScope:=7 
-	$r.3(30005)
+	$r.3(30005),$r.3(30004)
 	if $u.3(_e:=$u.10(hwnd,_r),desktop:=$u.5),ObjRelease(desktop) 
 		return
 	id:=TV_Add($e.(_e).55)
@@ -26,7 +26,7 @@ BuildElementTree(hwnd){
 AddChildren(element,id){
 	array:=$e.(element).19
 	loop % $e.(array).length()
-		i:=TV_Add($e.(newElement:=$e.(array).element(A_Index-1)).55,id)
+		i:=TV_Add("""" $e.(newElement:=$e.(array).element(A_Index-1)).55 """ " $e.54,id)
 		,AddChildren(newElement,i)
 		,ObjRelease(newElement)
 	ObjRelease(array)
