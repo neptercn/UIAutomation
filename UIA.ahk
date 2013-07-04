@@ -782,7 +782,7 @@ SafeArray(p,type){ ; //not completed, only 1 dim, type not defined
 	:type=4?(s:=4,t:="float")	; 32 位浮点数
 	:type=5?(s:=8,t:="double")	; 64 位浮点数
 	:type=0xA?(s:=4,t:="uint")	; Error 码 (32 位整数)
-	:type=0xB?(s:=1,t:="char")	; 布尔值 True (-1) 或 False (0)
+	:type=0xB?(s:=1,t:="short")	; 布尔值 True (-1) 或 False (0)
 	:type=0x10?(s:=1,t:="char")	; 8 位有符号整数
 	:type=0x11?(s:=1,t:="uchar")	; 8 位无符号整数
 	:type=0x12?(s:=2,t:="ushort")	; 16 位无符号整数
