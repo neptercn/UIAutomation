@@ -5,7 +5,7 @@
 #Persistent
 #Include uia.ahk
 global $u:=new IUIAutomation,$e:=new IUIAutomationElement
-$u.39(0,uia_event(pEvent,"OnFocus"))
+$u.39(0,uia_OnEvent(pEvent,"OnFocus"))
 return
 OnFocus(self,sender){
 	Critical
