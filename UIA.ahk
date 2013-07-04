@@ -13,7 +13,7 @@ UIA_PropertyId:={30000:"UIA_RuntimeIdPropertyId",30001:"UIA_BoundingRectanglePro
 
 */
 ;;
-;;
+;;Base Interface;;not completed
 ;;
 class IBase
 {
@@ -292,12 +292,12 @@ class IUIAutomation ;extends IUnknown
 	; 获取属性名称
 	GetPropertyProgrammaticName(property){
 		_Error(DllCall(vt(this.__,49),"ptr",this.__,"int",property,"ptr*",name),"GetPropertyProgrammaticName")
-		return name
+		return StrGet(name,"utf-16")
 	}
 	; 获取模式名称
 	GetPatternProgrammaticName(pattern){
 		_Error(DllCall(vt(this.__,50),"ptr",this.__,"int",pattern,"ptr*",name),"GetPatternProgrammaticName")
-		return name
+		return StrGet(name,"utf-16")
 	}
 	; 
 	PollForPotentialSupportedPatterns(pElement,Byref patternIds,Byref patternNames){
@@ -341,7 +341,7 @@ class IUIAutomation ;extends IUnknown
 class IUIAutomationElement
 {
 	__new(){
-		this._p:=0,this._:=0,this._v:=variant(this._)
+		this._p:=0
 		this._i:={0:"QueryInterface",1:"AddRef",2:"Release",3:"SetFocus",4:"GetRuntimeId",5:"FindFirst",6:"FindAll",7:"FindFirstBuildCache",8:"FindAllBuildCache",9:"BuildUpdatedCache",10:"GetCurrentPropertyValue",11:"GetCurrentPropertyValueEx",12:"GetCachedPropertyValue",13:"GetCachedPropertyValueEx",14:"GetCurrentPatternAs",15:"GetCachedPatternAs",16:"GetCurrentPattern",17:"GetCachedPattern",18:"GetCachedParent",19:"GetCachedChildren",84:"GetClickablePoint"}
 		this._n:={20:0,21:0,22:1,23:1,24:1,25:1,26:0,27:0,28:0,29:1,30:1,31:1,32:0,33:0,34:0,35:0,36:0,37:1,38:0,39:0,40:1,41:0,42:1,43:2,44:0,45:1,46:1,47:1,48:1,49:1,50:1,51:1,52:1,53:1,54:1,55:1,56:1,57:1,58:1,59:1,60:1,61:1,62:1,63:1,64:1,65:1,66:1,67:1,68:1,69:1,70:1,71:1,72:1,73:1,74:1,75:1,76:1,77:1,78:1,79:1,80:1,81:1,82:1,83:1}
 		this._t:={CurrentProcessId:20,CurrentControlType:21,CurrentHasKeyboardFocus:26,CurrentIsKeyboardFocusable:27,CurrentIsEnabled:28,CurrentCulture:32,CurrentIsControlElement:33,CurrentIsContentElement:34,CurrentIsPassword:35,CurrentNativeWindowHandle:36,CurrentIsOffscreen:38,CurrentOrientation:39,CurrentIsRequiredForForm:41,CurrentLabeledBy:44}
@@ -424,23 +424,27 @@ class IUIAutomationElement
 	}
 
 	GetCurrentPropertyValue(propertyId){
-	_Error(DllCall(vt(this._p,10),"ptr",this._p,"int",propertyId,"ptr",this._v),"GetCurrentPropertyValue")
-	return this._getValue(propertyId,this._v)
+	static _,_v:=variant(_)
+	_Error(DllCall(vt(this._p,10),"ptr",this._p,"int",propertyId,"ptr",_v),"GetCurrentPropertyValue")
+	return this.Value(_v)
 	}
 
 	GetCurrentPropertyValueEx(propertyId,ignoreDefaultValue){
-	return _Error(DllCall(vt(this._p,11),"ptr",this._p,"int",propertyId,"int",ignoreDefaultValue,"ptr",this._v),"GetCurrentPropertyValueEx")
-	return this._getValue(propertyId,this._v)
+	static _,_v:=variant(_)
+	return _Error(DllCall(vt(this._p,11),"ptr",this._p,"int",propertyId,"int",ignoreDefaultValue,"ptr",_v),"GetCurrentPropertyValueEx")
+	return this.Value(_v)
 	}
 
 	GetCachedPropertyValue(propertyId){
-	_Error(DllCall(vt(this._p,12),"ptr",this._p,"int",propertyId,"ptr",this._v),"GetCachedPropertyValue")
-	return this._getValue(propertyId,this._v)
+	static _,_v:=variant(_)
+	_Error(DllCall(vt(this._p,12),"ptr",this._p,"int",propertyId,"ptr",_v),"GetCachedPropertyValue")
+	return this.Value(_v)
 	}
 
 	GetCachedPropertyValueEx(propertyId,ignoreDefaultValue,retVal){
-	_Error(DllCall(vt(this._p,13),"ptr",this._p,"int",propertyId,"int",ignoreDefaultValue,"ptr",this._v),"GetCachedPropertyValueEx")
-	return this._getValue(propertyId,this._v)
+	static _,_v:=variant(_)
+	_Error(DllCall(vt(this._p,13),"ptr",this._p,"int",propertyId,"int",ignoreDefaultValue,"ptr",_v),"GetCachedPropertyValueEx")
+	return this.Value(_v)
 	}
 
 	GetCurrentPatternAs(patternId,riid){
@@ -480,9 +484,28 @@ class IUIAutomationElement
 ;;;;;;;;;;;;;;
 ;;propertyid;;
 ;;;;;;;;;;;;;;
-	Value(id,v){
-		
+	Value(v){ ; v:variant
+		if (type:=NumGet(v+0,"ushort"))&0x2000{
+			return SafeArray(NumGet(v+8),type&0xFF)
+		}else {
+			out:=type=2?NumGet(v+8,"short")	; 16 位有符号整数
+			:type=3?NumGet(v+8,"int")	; 32 位有符号整数
+			:type=4?NumGet(v+8,"float")	; 32 位浮点数
+			:type=5?NumGet(v+8,"double")	; 64 位浮点数
+			:type=8?StrGet(NumGet(v+8),"utf-16")	; COM 字符串 (带长度前缀的 Unicode 字符串)
+			:type=0xA?NumGet(v+8,"uint")	; Error 码 (32 位整数)
+			:type=0xB?NumGet(v+8,"short")	; 布尔值 True (-1) 或 False (0)
+			:type=0x10?NumGet(v+8,"char")	; 8 位有符号整数
+			:type=0x11?NumGet(v+8,"uchar")	; 8 位无符号整数
+			:type=0x12?NumGet(v+8,"ushort")	; 16 位无符号整数
+			:type=0x13?NumGet(v+8,"uint")	; 32 位无符号整数
+			:type=0x14?NumGet(v+8,"int64")	; 64 位有符号整数
+			:type=0x15?NumGet(v+8,"uint64")	; 64 位无符号整数
+			:NumGet(v+8)
+			return out
+		}
 	}
+
 ;;;;;;;;;;;;;;;;
 ;;ElementArray;;
 ;;;;;;;;;;;;;;;;
@@ -533,10 +556,16 @@ class IUIAutomationCacheRequest
 			return _Error(DllCall(vt(this._p,11),"ptr",this._p,"int",aValue),"put_AutomationElementMode")
 	}
   AddProperty(propertyId){
-	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",propertyId),"AddProperty")
+	if IsObject(propertyId)
+		loop % propertyId.maxindex()
+			_Error(DllCall(vt(this._p,3),"ptr",this._p,"int",propertyId[A_Index]),"AddProperty")
+	else return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",propertyId),"AddProperty")
   }
   AddPattern(patternId){
-	return _Error(DllCall(vt(this._p,4),"ptr",this._p,"int",patternId),"AddPattern")
+	if IsObject(patternId)
+		loop % patternId.maxindex()
+			_Error(DllCall(vt(this._p,3),"ptr",this._p,"int",patternId[A_Index]),"AddProperty")
+	else return _Error(DllCall(vt(this._p,4),"ptr",this._p,"int",patternId),"AddPattern")
   }
   Clone(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"ptr*",clonedRequest),"Clone")
@@ -613,13 +642,16 @@ class IUIAutomationCondition
 class IUIAutomationTreeWalker
 {
 	__new(){
-		this._p:=0
-	}
-	__get(aName){
-		
+		this._p:=0,this._i:={3:"GetParentElement",4:"GetFirstChildElement",5:"GetLastChildElement",6:"GetNextSiblingElement",7:"GetPreviousSiblingElement",8:"NormalizeElement",9:"GetParentElementBuildCache",10:"GetFirstChildElementBuildCache",11:"GetLastChildElementBuildCache",12:"GetNextSiblingElementBuildCache",13:"GetPreviousSiblingElementBuildCache",14:"NormalizeElementBuildCache",15:"get_Condition"}
 	}
 	__call(aName,aParam*){
-		
+		if aName is Integer
+			if this._i.HasKey(aName)
+				return this[this._i[aName]](aParam*)
+	}
+	__get(aName){
+		if this._i.haskey(aName)
+			return this[this._i[aName]]()
 	}
 	ParentElement(element){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr",element,"ptr*",parent),"ParentElement")
@@ -686,24 +718,15 @@ class IUIAutomationTreeWalker
 	return condition
 	}
 }
-;;;;;;;;;;;;;;;;;;;;;;;;
-;;IUIAutomationPattern;;
-;;;;;;;;;;;;;;;;;;;;;;;;
-class IUIAutomationPattern
-{
-	__new(){
-		this._p:=0,this._t:={Invoke:"Invoke_",Dock:"Dock_",ExpandCollapse:"ExpandCollapse_",Grid:"Grid_",GridItem:"GridItem_",MultipleView:"MultipleView_",RangeValue:"RangeValue_",Scroll:"Scroll_",ScrollItem:"ScrollItem_",Selection:"Selection_",SelectionItem:"SelectionItem_",SynchronizedInput:"SynchronizedInput_",Table:"Table_",TableItem:"TableItem_",Toggle:"Toggle_",Transform:"Transform_",Value:"Value_",Window:"Window_",LegacyIAccessible:"LegacyIAccessible_",ItemContainer:"ItemContainer_",VirtualizedItem:"VirtualizedItem_"}
-	}
-	__get(aName){
-		
-	}
-	__call(aName,aParam*){
-		
-	}
-	
-}
+
 ;;;;;;;;;;;;;;;;;;;;;
 ;;Wrapped Functions;;
+;;;;;;;;;;;;;;;;;;;;;
+; ControlType
+UIA_ControlType(n){
+	static ControlType:={50000:"UIA_ButtonControlTypeId",50001:"UIA_CalendarControlTypeId",50002:"UIA_CheckBoxControlTypeId",50003:"UIA_ComboBoxControlTypeId",50004:"UIA_EditControlTypeId",50005:"UIA_HyperlinkControlTypeId",50006:"UIA_ImageControlTypeId",50007:"UIA_ListItemControlTypeId",50008:"UIA_ListControlTypeId",50009:"UIA_MenuControlTypeId",50010:"UIA_MenuBarControlTypeId",50011:"UIA_MenuItemControlTypeId",50012:"UIA_ProgressBarControlTypeId",50013:"UIA_RadioButtonControlTypeId",50014:"UIA_ScrollBarControlTypeId",50015:"UIA_SliderControlTypeId",50016:"UIA_SpinnerControlTypeId",50017:"UIA_StatusBarControlTypeId",50018:"UIA_TabControlTypeId",50019:"UIA_TabItemControlTypeId",50020:"UIA_TextControlTypeId",50021:"UIA_ToolBarControlTypeId",50022:"UIA_ToolTipControlTypeId",50023:"UIA_TreeControlTypeId",50024:"UIA_TreeItemControlTypeId",50025:"UIA_CustomControlTypeId",50026:"UIA_GroupControlTypeId",50027:"UIA_ThumbControlTypeId",50028:"UIA_DataGridControlTypeId",50029:"UIA_DataItemControlTypeId",50030:"UIA_DocumentControlTypeId",50031:"UIA_SplitButtonControlTypeId",50032:"UIA_WindowControlTypeId",50033:"UIA_PaneControlTypeId",50034:"UIA_HeaderControlTypeId",50035:"UIA_HeaderItemControlTypeId",50036:"UIA_TableControlTypeId",50037:"UIA_TitleBarControlTypeId",50038:"UIA_SeparatorControlTypeId"}
+	return ControlType[n]
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;IUIAutomationEventHandle;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -731,13 +754,14 @@ _UIA_Release(pSelf){
 ;;;;;;;;;;;;;;;;;;
 ;;Base Functions;;
 ;;;;;;;;;;;;;;;;;;
-variant(ByRef var,type=0,val=0){
-	return (VarSetCapacity(var,8+2*A_PtrSize)+NumPut(type,var,0,"short")+NumPut(val,var,8,"ptr"))*0+&var
+variant(ByRef var,type=0,val=0){ ; //not completed, type not defined
+	static t:={2:"short",3:"int",4:"float",5:"double",0xA:"int",0xB:"short",0x10:"uchar",0x11:"char",0x12:"ushort",0x13:"uint",0x14:"int64",0x15:"uint64",0x17:"uptr"}
+	return (VarSetCapacity(var,8+2*A_PtrSize)+NumPut(type,var,0,"short")+NumPut(val,var,8,t[type]?t[type]:"uptr"))*0+&var
 }
 vt(p,n){
 	return NumGet(NumGet(p+0,"ptr")+n*A_PtrSize,"ptr")
 }
-SafeArray(p){ ; //not completed, only 1 dim
+SafeArray(p,type){ ; //not completed, only 1 dim, type not defined
 	/*
 	cDims:=NumGet(p+0,"ushort")
 	fFeatures:=NumGet(p+2,"ushort")
@@ -752,11 +776,23 @@ SafeArray(p){ ; //not completed, only 1 dim
 	lLbound:=NumGet(p+20+2*A_PtrSize,"uint")
 	
 	r1:=NumGet(pvData+0)
-	r2:=NumGet(pvData+A_PtrSize)
 	*/
+	0+(type=2)?(s:=2,t:="short")	; 16 位有符号整数
+	:type=3?(s:=4,t:="int")	; 32 位有符号整数
+	:type=4?(s:=4,t:="float")	; 32 位浮点数
+	:type=5?(s:=8,t:="double")	; 64 位浮点数
+	:type=0xA?(s:=4,t:="uint")	; Error 码 (32 位整数)
+	:type=0xB?(s:=1,t:="char")	; 布尔值 True (-1) 或 False (0)
+	:type=0x10?(s:=1,t:="char")	; 8 位有符号整数
+	:type=0x11?(s:=1,t:="uchar")	; 8 位无符号整数
+	:type=0x12?(s:=2,t:="ushort")	; 16 位无符号整数
+	:type=0x13?(s:=4,t:="uint")	; 32 位无符号整数
+	:type=0x14?(s:=8,t:="int64")	; 64 位有符号整数
+	:type=0x15?(s:=8,t:="uint64")	; 64 位无符号整数
+	:(s:=A_PtrSize,t:="uptr")
 	item:={},pv:=NumGet(p+8+A_PtrSize,"ptr")
 	loop % NumGet(p+8+2*A_PtrSize,"uint")
-		item.Insert(NumGet(pv+(A_Index-1)*A_PtrSize))
+		item.Insert((type=8)?StrGet(NumGet(pv+(A_Index-1)*s,t),"utf-16"):NumGet(pv+(A_Index-1)*s,t)) ; COM 字符串 (带长度前缀的 Unicode 字符串)
 	return item
 }
 GUID(ByRef GUID, sGUID){
