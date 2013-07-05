@@ -1,15 +1,3 @@
-;;;;;;;;;;;;;;;;;
-;;UIA_Constants;;
-;;;;;;;;;;;;;;;;;
-/*
-global UIA_Constant:={0:0
-; enum TreeScope
-	,TreeScope_Element:0x1,TreeScope_Children:0x2,TreeScope_Descendants:0x4,TreeScope_Parent:0x8,TreeScope_Ancestors:0x10,TreeScope_Subtree:0x7
-; enum PropertyConditionFlags	
-	,PropertyConditionFlags_None:0,PropertyConditionFlags_IgnoreCase:1
-; enum AutomationElementMode
-	,AutomationElementMode_None:0,AutomationElementMode_Full:1}
-*/
 ;;
 ;;Base Interface;;not completed
 ;;
@@ -59,7 +47,7 @@ class IUIAutomation ;extends IUnknown
 			return this[this._e[aName]](aParam*)
 	}
 	__delete(){
-		ObjRelease(this._p)
+		ObjRelease(this.__)
 	}
 	__get(aName){
 		if this._i.haskey(aName)
@@ -67,274 +55,307 @@ class IUIAutomation ;extends IUnknown
 		else if this._e.haskey(aName)
 			return this[this._e[aName]]()
 	}
-	; 比较两个el是否相同
+	; Compares two UI Automation elements to determine whether they represent the same underlying UI element.
 	CompareElements(el1,el2){
 		_Error(DllCall(vt(this.__,3),"ptr",this.__,"ptr",el1,"ptr",el2,"int*",areSame),"CompareElements")
 		return areSame
 	}
-	; 比较runtimeid是否相同
+	; Compares two integer arrays containing run-time identifiers (IDs) to determine whether their content is the same and they belong to the same UI element.
 	CompareRuntimeIds(runtimeId1,runtimeId2){
 		_Error(DllCall(vt(this.__,4),"ptr",this.__,"ptr",runtimeId1,"ptr",runtimeId2,"int*",areSame),"CompareRuntimeIds")
 		return areSame
 	}
-	; 获取桌面元素
+	; Retrieves the UI Automation element that represents the desktop.
 	GetRootElement(){
 		_Error(DllCall(vt(this.__,5),"ptr",this.__,"ptr*",root),"GetRootElement")
 		return root
 	}
-	; 根据窗口句柄获得元素
+	; Retrieves a UI Automation element for the specified window.
 	ElementFromHandle(hwnd){
 		_Error(DllCall(vt(this.__,6),"ptr",this.__,"ptr",hwnd,"ptr*",element),"ElementFromHandle")
 		return element
 	}
-	; 根据坐标获取元素
+	; Retrieves the UI Automation element at the specified point on the desktop.
 	ElementFromPoint(pt){
 		_Error(DllCall(vt(this.__,7),"ptr",this.__,"int64",pt,"ptr*",element),"ElementFromPoint")
 		return element
 	}
-	; 获得焦点元素
+	; Retrieves the UI Automation element that has the input focus.
 	GetFocusedElement(){
 		_Error(DllCall(vt(this.__,8),"ptr",this.__,"ptr*",element),"GetFocusedElement")
 		return element
 	}
-	; 获取桌面元素 Cache
+	; Retrieves the UI Automation element that has the input focus, prefetches the requested properties and control patterns, and stores the prefetched items in the cache.
 	GetRootElementBuildCache(cacheRequest){
 		_Error(DllCall(vt(this.__,9),"ptr",this.__,"ptr",cacheRequest,"ptr*",root),"GetRootElementBuildCache")
 		return root
 	}
-	; 根据窗口句柄获得元素 cache
+	; Retrieves a UI Automation element for the specified window, prefetches the requested properties and control patterns, and stores the prefetched items in the cache.
 	ElementFromHandleBuildCache(hwnd,cacheRequest){
 		_Error(DllCall(vt(this.__,10),"ptr",this.__,"ptr",hwnd,"ptr",cacheRequest,"ptr*",element),"ElementFromHandleBuildCache")
 		return element
 	}
-	; 根据坐标获取元素 cache
+	; Retrieves the UI Automation element at the specified point on the desktop, prefetches the requested properties and control patterns, and stores the prefetched items in the cache.
 	ElementFromPointBuildCache(pt,cacheRequest){
 		_Error(DllCall(vt(this.__,11),"ptr",this.__,"int64",pt,"ptr",cacheRequest,"ptr*",element),"ElementFromPointBuildCache")
 		return element
 	}
-	; 获得焦点元素 cache
+	; Retrieves the UI Automation element that has the input focus, prefetches the requested properties and control patterns, and stores the prefetched items in the cache.
 	GetFocusedElementBuildCache(cacheRequest){
 		_Error(DllCall(vt(this.__,12),"ptr",this.__,"ptr",cacheRequest,"ptr*",element),"GetFocusedElementBuildCache")
 		return element
 	}
-	; 创建walker
+	; Retrieves a tree walker object that can be used to traverse the Microsoft UI Automation tree.
 	CreateTreeWalker(pCondition){
 		_Error(DllCall(vt(this.__,13),"ptr",this.__,"ptr",pCondition,"ptr*",walker),"CreateTreeWalker")
 		return walker
 	}
-	; 获取控件walker
+	; Retrieves an IUIAutomationTreeWalker interface used to discover control elements.
 	ControlViewWalker(){
 		_Error(DllCall(vt(this.__,14),"ptr",this.__,"ptr*",walker),"ControlViewWalker")
 		return walker
 	}
-	; 获取内容walker
+	; Retrieves an IUIAutomationTreeWalker interface used to discover content elements.
 	ContentViewWalker(){
 		_Error(DllCall(vt(this.__,15),"ptr",this.__,"ptr*",walker),"ContentViewWalker")
 		return walker
 	}
-	; 获取元素walker
+	; Retrieves a tree walker object used to traverse an unfiltered view of the UI Automation tree.
 	RawViewWalker(){
 		_Error(DllCall(vt(this.__,16),"ptr",this.__,"ptr*",walker),"RawViewWalker")
 		return walker
 	}
-	; 获取元素条件
+	; Retrieves a predefined IUIAutomationCondition interface that selects all UI elements in an unfiltered view.
 	RawViewCondition(){
 		_Error(DllCall(vt(this.__,17),"ptr",this.__,"ptr*",condition),"RawViewCondition")
 		return condition
 	}
-	; 获取控件条件
+	; Retrieves a predefined IUIAutomationCondition interface that selects control elements.
 	ControlViewCondition(){
 		_Error(DllCall(vt(this.__,18),"ptr",this.__,"ptr*",condition),"ControlViewCondition")
 		return condition
 	}
-	; 获取内容条件
+	; Retrieves a predefined IUIAutomationCondition interface that selects content elements.
 	ContentViewCondition(){
 		_Error(DllCall(vt(this.__,19),"ptr",this.__,"ptr*",condition),"ContentViewCondition")
 		return condition
 	}
-	; 创建cache
+	; Creates a cache request.
+	; After obtaining the IUIAutomationCacheRequest interface, use its methods to specify properties and control patterns to be cached when a UI Automation element is obtained. 
 	CreateCacheRequest(){
 		_Error(DllCall(vt(this.__,20),"ptr",this.__,"ptr*",cacheRequest),"CreateCacheRequest")
 		return cacheRequest
 	}
-	; 创建True条件
+	; Retrieves a predefined condition that selects all elements.
 	CreateTrueCondition(){
 		_Error(DllCall(vt(this.__,21),"ptr",this.__,"ptr*",newCondition),"CreateTrueCondition")
 		return newCondition
 	}
-	; 创建False条件
+	; Creates a condition that is always false.
+	; This method exists only for symmetry with IUIAutomation::CreateTrueCondition. A false condition will never enable a match with UI Automation elements, and it cannot usefully be combined with any other condition.
 	CreateFalseCondition(){
 		_Error(DllCall(vt(this.__,22),"ptr",this.__,"ptr*",newCondition),"CreateFalseCondition")
 		return newCondition
 	}
-	; 创建属性条件
+	; Creates a condition that selects elements that have a property with the specified value.
 	CreatePropertyCondition(propertyId,value){
-		_Error(DllCall(vt(this.__,23),"ptr",this.__,"int",propertyId,"ptr",value,"ptr*",newCondition),"CreatePropertyCondition")
+		_Error(DllCall(vt(this.__,23),"ptr",this.__,"int",propertyId,"ptr",UIA_Property(ptr,propertyId,value),"ptr*",newCondition),"CreatePropertyCondition")
 		return newCondition
 	}
-	; 创建属性条件ex
+	; Creates a condition that selects elements that have a property with the specified value, using optional flags.
 	CreatePropertyConditionEx(propertyId,value,flags){
-		_Error(DllCall(vt(this.__,24),"ptr",this.__,"int",propertyId,"ptr",value,"int",flags,"ptr*",newCondition),"CreatePropertyConditionEx")
+		_Error(DllCall(vt(this.__,24),"ptr",this.__,"int",propertyId,"ptr",UIA_Property(ptr,propertyId,value),"int",flags,"ptr*",newCondition),"CreatePropertyConditionEx")
 		return newCondition
 	}
-	; 创建and条件
+	
+	; The Create**Condition** method calls AddRef on each pointers. This means you can call Release on those pointers after the call to Create**Condition** returns without invalidating the pointer returned from Create**Condition**. When you call Release on the pointer returned from Create**Condition**, UI Automation calls Release on those pointers.
+
+	; Creates a condition that selects elements that match both of two conditions.
 	CreateAndCondition(condition1,condition2){
 		_Error(DllCall(vt(this.__,25),"ptr",this.__,"ptr",condition1,"ptr",condition2,"ptr*",newCondition),"CreateAndCondition")
 		return newCondition
 	}
-	; 从array中创建and条件
+	; Creates a condition that selects elements based on multiple conditions, all of which must be true.
 	CreateAndConditionFromArray(conditions){
 		_Error(DllCall(vt(this.__,26),"ptr",this.__,"ptr",conditions,"ptr*",newCondition),"CreateAndConditionFromArray")
 		return newCondition
 	}
-	; 从native array中创建and条件
+	; Creates a condition that selects elements based on multiple conditions, all of which must be true.
 	CreateAndConditionFromNativeArray(conditions,conditionCount){
 		_Error(DllCall(vt(this.__,27),"ptr",this.__,"ptr",conditions,"int",conditionCount,"ptr*",newCondition),"CreateAndConditionFromNativeArray")
 		return newCondition
 	}
-	; 创建or条件
+	; Creates a combination of two conditions where a match exists if either of the conditions is true. 
+	; 
 	CreateOrCondition(condition1,condition2){
 		_Error(DllCall(vt(this.__,28),"ptr",this.__,"ptr",condition1,"ptr",condition2,"ptr*",newCondition),"CreateOrCondition")
 		return newCondition
 	}
-	; 从array中创建or条件
+	; Creates a combination of two or more conditions where a match exists if any of the conditions is true. 
 	CreateOrConditionFromArray(conditions){
 		_Error(DllCall(vt(this.__,29),"ptr",this.__,"ptr",conditions,"ptr*",newCondition),"CreateOrConditionFromArray")
 		return newCondition
 	}
-	; 从native array中创建or条件
+	; Creates a combination of two or more conditions where a match exists if any one of the conditions is true.
 	CreateOrConditionFromNativeArray(conditions,conditionCount){
 		_Error(DllCall(vt(this.__,30),"ptr",this.__,"ptr",conditions,"ptr",conditionCount,"ptr*",newCondition),"CreateOrConditionFromNativeArray")
 		return newCondition
 	}
-	; 创建not条件
+	; Creates a condition that is the negative of a specified condition.
 	CreateNotCondition(condition){
 		_Error(DllCall(vt(this.__,31),"ptr",this.__,"ptr",condition,"ptr*",newCondition),"CreateNotCondition")
 		return newCondition
 	}
-	; 添加自动化事件响应
+	
+	; Note:  Before implementing an event handler, you should be familiar with the threading issues described in Understanding Threading Issues. http://msdn.microsoft.com/en-us/library/ee671692(v=vs.85).aspx
+	; A UI Automation client should not use multiple threads to add or remove event handlers. Unexpected behavior can result if one event handler is being added or removed while another is being added or removed in the same client process.
+	; It is possible for an event to be delivered to an event handler after the handler has been unsubscribed, if the event is received simultaneously with the request to unsubscribe the event. The best practice is to follow the Component Object Model (COM) standard and avoid destroying the event handler object until its reference count has reached zero. Destroying an event handler immediately after unsubscribing for events may result in an access violation if an event is delivered late.
+	
+	; Registers a method that handles Microsoft UI Automation events.
 	AddAutomationEventHandler(eventId,element,scope,cacheRequest,handler){
 		return _Error(DllCall(vt(this.__,32),"ptr",this.__,"int",eventId,"ptr",element,"int",scope,"ptr",cacheRequest,"ptr",handler),"AddAutomationEventHandler")
 	}
-	; 移除自动化事件响应
+	; Removes the specified UI Automation event handler.
 	RemoveAutomationEventHandler(eventId,element,handler){
 		return _Error(DllCall(vt(this.__,33),"ptr",this.__,"int",eventId,"ptr",element,"ptr",handler),"RemoveAutomationEventHandler")
 	}
-	; 从NativeArray添加属性变化事件响应
+	; Registers a method that handles property-changed events. 
+	; The UI item specified by element might not support the properties specified by the propertyArray parameter. 
+	; This method serves the same purpose as IUIAutomation::AddPropertyChangedEventHandler, but takes a normal array of property identifiers instead of a SAFEARRAY. 
 	AddPropertyChangedEventHandlerNativeArray(element,scope,cacheRequest,handler,propertyArray,propertyCount){
 		return _Error(DllCall(vt(this.__,34),"ptr",this.__,"ptr",element,"int",scope,"ptr",cacheRequest,"ptr",handler,"ptr",propertyArray,"int",propertyCount),"AddPropertyChangedEventHandlerNativeArray")
 	}
-	; 添加属性变化事件响应
+	; Registers a method that handles property-changed events. 
+	; The UI item specified by element might not support the properties specified by the propertyArray parameter. 
 	AddPropertyChangedEventHandler(element,scope,cacheRequest,handler,propertyArray){
 		return _Error(DllCall(vt(this.__,35),"ptr",this.__,"ptr",element,"int",scope,"ptr",cacheRequest,"ptr",handler,"ptr",propertyArray),"AddPropertyChangedEventHandler")
 	}
-	; 移除属性变化事件响应
+	; Removes a property-changed event handler.
 	RemovePropertyChangedEventHandler(element,handler){
 		return _Error(DllCall(vt(this.__,36),"ptr",this.__,"ptr",element,"ptr",handler),"RemovePropertyChangedEventHandler")
 	}
-	; 添加结构变化事件响应
+	; Registers a method that handles structure-changed events.
 	AddStructureChangedEventHandler(element,scope,cacheRequest,handler){
 		return _Error(DllCall(vt(this.__,37),"ptr",this.__,"ptr",element,"int",scope,"ptr",cacheRequest,"ptr",handler),"AddStructureChangedEventHandler")
 	}
-	; 移除结构变化事件响应
+	; Removes a structure-changed event handler.
 	RemoveStructureChangedEventHandler(element,handler){
 		return _Error(DllCall(vt(this.__,38),"ptr",this.__,"ptr",element,"ptr",handler),"RemoveStructureChangedEventHandler")
 	}
-	; 添加焦点变化事件响应
+	; Registers a method that handles focus-changed events.
+	; Focus-changed events are system-wide; you cannot set a narrower scope.
 	AddFocusChangedEventHandler(cacheRequest,handler){
 		return _Error(DllCall(vt(this.__,39),"ptr",this.__,"ptr",cacheRequest,"ptr",handler),"AddFocusChangedEventHandler")
 	}
-	; 移除焦点变化事件响应
+	; Removes a focus-changed event handler. 
 	RemoveFocusChangedEventHandler(handler){
 		return _Error(DllCall(vt(this.__,40),"ptr",this.__,"ptr",handler),"RemoveFocusChangedEventHandler")
 	}
-	; 焦点所有事件响应
+	; Removes all registered Microsoft UI Automation event handlers.
 	RemoveAllEventHandlers(){
 		return _Error(DllCall(vt(this.__,41),"ptr",this.__),"RemoveAllEventHandlers")
 	}
-	; NativeArray转SafeArray
+	; Converts an array of integers to a SAFEARRAY.
 	IntNativeArrayToSafeArray(array,arrayCount){
 		_Error(DllCall(vt(this.__,42),"ptr",this.__,"ptr",array,"int",arrayCount,"ptr*",safeArray),"IntNativeArrayToSafeArray")
 		return safeArray
 	}
-	; SafeArray转NativeArray
-	IntSafeArrayToNativeArray(intArray,Byref array,Byref arrayCount){
+	; Converts a SAFEARRAY of integers to an array.
+	IntSafeArrayToNativeArray(intArray){
 		_Error(DllCall(vt(this.__,43),"ptr",this.__,"ptr",intArray,"ptr*",array,"int*",arrayCount),"IntSafeArrayToNativeArray")
-		return 
+		return [array,arrayCount]
 	}
-	; RectTo转Variant
+	; Creates a VARIANT that contains the coordinates of a rectangle.
+	; The returned VARIANT has a data type of VT_ARRAY | VT_R8. 
 	RectToVariant(rc){
 		_Error(DllCall(vt(this.__,44),"ptr",this.__,"ptr",rc,"ptr*",var),"RectToVariant")
 		return var
 	}
-	; Variant转Rect
+	; Converts a VARIANT containing rectangle coordinates to a RECT.
 	VariantToRect(var){
 		_Error(DllCall(vt(this.__,45),"ptr",this.__,"ptr",var,"ptr*",rc),"VariantToRect")
 		return rc
 	}
-	; SafeArray转RectNativeArray
-	SafeArrayToRectNativeArray(rects,Byref rectArray,Byref rectArrayCount){
+	; Converts a SAFEARRAY containing rectangle coordinates to an array of type RECT. 
+	SafeArrayToRectNativeArray(rects){
 		_Error(DllCall(vt(this.__,46),"ptr",this.__,"ptr",rects,"ptr*",rectArray,"int*",rectArrayCount),"SafeArrayToRectNativeArray")
-		return 
+		return [rectArray,rectArrayCount]
 	}
-	; 
+	; Creates a new instance of a proxy factory object.
+	; Use the IUIAutomationProxyFactoryMapping interface to enter the proxy factory into the table of available proxies. 
 	CreateProxyFactoryEntry(factory){
 		_Error(DllCall(vt(this.__,47),"ptr",this.__,"ptr",factory,"ptr*",factoryEntry),"CreateProxyFactoryEntry")
 		return factoryEntry
 	}
-	; 
+	; Retrieves an object that represents the mapping of Window classnames and associated data to individual proxy factories. This property is read-only.
 	ProxyFactoryMapping(){
 		_Error(DllCall(vt(this.__,48),"ptr",this.__,"ptr*",factoryMapping),"ProxyFactoryMapping")
 		return factoryMapping
 	}
-	; 获取属性名称
+	
+	; The programmatic name is intended for debugging and diagnostic purposes only. The string is not localized.
+	; This property should not be used in string comparisons. To determine whether two properties are the same, compare the property identifiers directly.
+	
+	; Retrieves the registered programmatic name of a property.
 	GetPropertyProgrammaticName(property){
 		_Error(DllCall(vt(this.__,49),"ptr",this.__,"int",property,"ptr*",name),"GetPropertyProgrammaticName")
 		return StrGet(name,"utf-16")
 	}
-	; 获取模式名称
+	; Retrieves the registered programmatic name of a control pattern.
 	GetPatternProgrammaticName(pattern){
 		_Error(DllCall(vt(this.__,50),"ptr",this.__,"int",pattern,"ptr*",name),"GetPatternProgrammaticName")
 		return StrGet(name,"utf-16")
 	}
-	; 
-	PollForPotentialSupportedPatterns(pElement,Byref patternIds,Byref patternNames){
+	
+	; This method is intended only for use by Microsoft UI Automation tools that need to scan for properties. It is not intended to be used by UI Automation clients.
+	; There is no guarantee that the element will support any particular control pattern when asked for it later.
+	
+	; Retrieves the control patterns that might be supported on a UI Automation element.
+	PollForPotentialSupportedPatterns(pElement){
 		_Error(DllCall(vt(this.__,51),"ptr",this.__,"ptr",pElement,"ptr*",patternIds,"ptr*",patternNames),"PollForPotentialSupportedPatterns")
-		return 
+		return [patternIds,patternNames] ; SafeArray
 	}
-	; 
-	PollForPotentialSupportedProperties(pElement,Byref propertyIds,Byref propertyNames){
+	; Retrieves the properties that might be supported on a UI Automation element.
+	PollForPotentialSupportedProperties(pElement){
 		_Error(DllCall(vt(this.__,52),"ptr",this.__,"ptr",pElement,"ptr*",propertyIds,"ptr*",propertyNames),"PollForPotentialSupportedProperties")
-		return 
+		return [propertyIds,propertyNames]
 	}
-	; 
+	; Checks a provided VARIANT to see if it contains the Not Supported identifier.
+	; After retrieving a property for a UI Automation element, call this method to determine whether the element supports the retrieved property. CheckNotSupported is typically called after calling a property retrieving method such as GetCurrentPropertyValue. 
 	CheckNotSupported(value){
 		_Error(DllCall(vt(this.__,53),"ptr",this.__,"ptr",value,"int*",isNotSupported),"CheckNotSupported")
 		return isNotSupported
 	}
-	; 
+	; Retrieves a static token object representing a property or text attribute that is not supported. This property is read-only.
+	; This object can be used for comparison with the results from IUIAutomationElement::GetCurrentPropertyValue or IUIAutomationTextRange::GetAttributeValue.
 	ReservedNotSupportedValue(){
 		_Error(DllCall(vt(this.__,54),"ptr",this.__,"ptr*",notSupportedValue),"ReservedNotSupportedValue")
 		return notSupportedValue
 	}
-	; 
+	; Retrieves a static token object representing a text attribute that is a mixed attribute. This property is read-only.
+	; The object retrieved by IUIAutomation::ReservedMixedAttributeValue can be used for comparison with the results from IUIAutomationTextRange::GetAttributeValue to determine if a text range contains more than one value for a particular text attribute.
 	ReservedMixedAttributeValue(){
 		_Error(DllCall(vt(this.__,55),"ptr",this.__,"ptr*",mixedAttributeValue),"ReservedMixedAttributeValue")
 		return mixedAttributeValue
 	}
-	; 获取acc元素
+	
+	; This method enables UI Automation clients to get IUIAutomationElement interfaces for accessible objects implemented by a Microsoft Active Accessiblity server. 
+	; This method may fail if the server implements UI Automation provider interfaces alongside Microsoft Active Accessibility support. 
+	; The method returns E_INVALIDARG if the underlying implementation of the Microsoft UI Automation element is not a native Microsoft Active Accessibility server; that is, if a client attempts to retrieve the IAccessible interface for an element originally supported by a proxy object from Oleacc.dll, or by the UIA-to-MSAA Bridge.
+	
+	; Retrieves a UI Automation element for the specified accessible object from a Microsoft Active Accessibility server.
 	ElementFromIAccessible(accessible,childId){
 		_Error(DllCall(vt(this.__,56),"ptr",this.__,"ptr",accessible,"int",childId,"ptr*",element),"ElementFromIAccessible")
 		return element
 	}
-	; 获取acc元素 cache
+	; Retrieves a UI Automation element for the specified accessible object from a Microsoft Active Accessibility server, prefetches the requested properties and control patterns, and stores the prefetched items in the cache.
 	ElementFromIAccessibleBuildCache(accessible,childId,cacheRequest){
 		_Error(DllCall(vt(this.__,57),"ptr",this.__,"ptr",accessible,"int",childId,"ptr",cacheRequest,"ptr*",element),"ElementFromIAccessibleBuildCache")
 		return element
 	}
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;
-;;IUIAutomationElement;;
+;;IUIAutomationElement;;will be modified
 ;;;;;;;;;;;;;;;;;;;;;;;;
 class IUIAutomationElement
 {
@@ -386,136 +407,135 @@ class IUIAutomationElement
 			return retVal
 		}else msgbox %aName% does not exist.
 	}
-
+	; Sets the keyboard focus to this UI Automation element.
 	SetFocus(){
 	return _Error(DllCall(vt(this._p,3),"ptr",this.ptr),"SetFocus")
 	}
-
+	; Retrieves the unique identifier assigned to the UI element. 
+	; The identifier is only guaranteed to be unique to the UI of the desktop on which it was generated. Identifiers can be reused over time.
+	; The format of run-time identifiers might change in the future. The returned identifier should be treated as an opaque value and used only for comparison; for example, to determine whether a Microsoft UI Automation element is in the cache.
 	GetRuntimeId(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr*",runtimeId),"GetRuntimeId")
 	return runtimeId
 	}
-
+	
+	; The scope of the search is relative to the element on which the method is called. Elements are returned in the order in which they are encountered in the tree.
+	; This function cannot search for ancestor elements in the Microsoft UI Automation tree; that is, TreeScope_Ancestors is not a valid value for the scope parameter.
+	; When searching for top-level windows on the desktop, be sure to specify TreeScope_Children in the scope parameter, not TreeScope_Descendants. A search through the entire subtree of the desktop could iterate through thousands of items and lead to a stack overflow.
+	; If your client application might try to find elements in its own user interface, you must make all UI Automation calls on a separate thread. 
+	
+	; Retrieves the first child or descendant element that matches the specified condition. 
 	FindFirst(scope,condition){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int",scope,"ptr",condition,"ptr*",found),"FindFirst")
 	return found
 	}
-
+	; Returns all UI Automation elements that satisfy the specified condition. 
 	FindAll(scope,condition){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int",scope,"ptr",condition,"ptr*",found),"FindAll")
 	return found
 	}
-
+	; Retrieves the first child or descendant element that matches the specified condition, prefetches the requested properties and control patterns, and stores the prefetched items in the cache.
 	FindFirstBuildCache(scope,condition,cacheRequest){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int",scope,"ptr",condition,"ptr",cacheRequest,"ptr*",found),"FindFirstBuildCache")
 	return found
 	}
-
+	; Returns all UI Automation elements that satisfy the specified condition, prefetches the requested properties and control patterns, and stores the prefetched items in the cache.
 	FindAllBuildCache(scope,condition,cacheRequest){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int",scope,"ptr",condition,"ptr",cacheRequest,"ptr*",found),"FindAllBuildCache")
 	return found
 	}
-
+	; Retrieves a new UI Automation element with an updated cache.
+	; The original UI Automation element is unchanged. The new IUIAutomationElement interface refers to the same element and has the same runtime identifier. 
 	BuildUpdatedCache(cacheRequest){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"ptr",cacheRequest,"ptr*",updatedElement),"BuildUpdatedCache")
 	return updatedElement
 	}
-
+	
+	; Microsoft UI Automation properties of the double type support Not a Number (NaN) values. When retrieving a property of the double type, a client can use the _isnan function to determine whether the property is a NaN value. 
+	
+	; Retrieves the current value of a property for this UI Automation element.
 	GetCurrentPropertyValue(propertyId){
 	static _,_v:=variant(_)
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"int",propertyId,"ptr",_v),"GetCurrentPropertyValue")
-	return this.Value(_v)
+	return UIA_PropertyValue(_v)
 	}
-
+	; Retrieves a property value for this UI Automation element, optionally ignoring any default value.
+	; Passing FALSE in the ignoreDefaultValue parameter is equivalent to calling IUIAutomationElement::GetCurrentPropertyValue.
+	; If the Microsoft UI Automation provider for the element itself supports the property, the value of the property is returned. Otherwise, if ignoreDefaultValue is FALSE, a default value specified by UI Automation is returned. 
+	; This method returns a failure code if the requested property was not previously cached.
 	GetCurrentPropertyValueEx(propertyId,ignoreDefaultValue){
 	static _,_v:=variant(_)
-	return _Error(DllCall(vt(this._p,11),"ptr",this._p,"int",propertyId,"int",ignoreDefaultValue,"ptr",_v),"GetCurrentPropertyValueEx")
-	return this.Value(_v)
+	_Error(DllCall(vt(this._p,11),"ptr",this._p,"int",propertyId,"int",ignoreDefaultValue,"ptr",_v),"GetCurrentPropertyValueEx")
+	return UIA_PropertyValue(_v)
 	}
-
+	; Retrieves a property value from the cache for this UI Automation element.
 	GetCachedPropertyValue(propertyId){
 	static _,_v:=variant(_)
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"int",propertyId,"ptr",_v),"GetCachedPropertyValue")
-	return this.Value(_v)
+	return UIA_PropertyValue(_v)
 	}
-
+	; Retrieves a property value from the cache for this UI Automation element, optionally ignoring any default value.
 	GetCachedPropertyValueEx(propertyId,ignoreDefaultValue,retVal){
 	static _,_v:=variant(_)
 	_Error(DllCall(vt(this._p,13),"ptr",this._p,"int",propertyId,"int",ignoreDefaultValue,"ptr",_v),"GetCachedPropertyValueEx")
-	return this.Value(_v)
+	return UIA_PropertyValue(_v)
 	}
-
+	; Retrieves the control pattern interface of the specified pattern on this UI Automation element.
 	GetCurrentPatternAs(patternId,riid){
 	_Error(DllCall(vt(this._p,14),"ptr",this._p,"int",patternId,"ptr",riid,"ptr*",patternObject),"GetCurrentPatternAs")
 	return patternObject
 	}
-
+	; Retrieves the control pattern interface of the specified pattern from the cache of this UI Automation element.
 	GetCachedPatternAs(patternId,riid){
 	_Error(DllCall(vt(this._p,15),"ptr",this._p,"int",patternId,"ptr",riid,"ptr*",patternObject),"GetCachedPatternAs")
 	return patternObject
 	}
-
+	; Retrieves the IUnknown interface of the specified control pattern on this UI Automation element. 
+	; This method gets the specified control pattern based on its availability at the time of the call.
+	; For some forms of UI, this method will incur cross-process performance overhead. Applications can reduce overhead by caching control patterns and then retrieving them by using IUIAutomationElement::GetCachedPattern.
 	GetCurrentPattern(patternId){
 	_Error(DllCall(vt(this._p,16),"ptr",this._p,"int",patternId,"ptr*",patternObject),"GetCurrentPattern")
 	return patternObject
 	}
-
+	; Retrieves from the cache the IUnknown interface of the specified control pattern of this UI Automation element. 
 	GetCachedPattern(patternId){
 	_Error(DllCall(vt(this._p,17),"ptr",this._p,"int",patternId,"ptr*",patternObject),"GetCachedPattern")
 	return patternObject
 	}
-
+	; Retrieves from the cache the parent of this UI Automation element. 
 	GetCachedParent(){
 	_Error(DllCall(vt(this._p,18),"ptr",this._p,"ptr*",parent),"GetCachedParent")
 	return parent
 	}
-
+	; Retrieves the cached child elements of this UI Automation element. 
+	; The view of the returned collection is determined by the TreeFilter property of the IUIAutomationCacheRequest that was active when this element was obtained.
+	; Children are cached only if the scope of the cache request included TreeScope_Subtree, TreeScope_Children, or TreeScope_Descendants.
+	; If the cache request specified that children were to be cached at this level, but there are no children, the value of this property is 0. However, if no request was made to cache children at this level, an attempt to retrieve the property returns an error.
 	GetCachedChildren(){
 	_Error(DllCall(vt(this._p,19),"ptr",this._p,"ptr*",children),"GetCachedChildren")
 	return children
 	}
-	
-	GetClickablePoint(Byref clickable,Byref gotClickable){
+	; Retrieves a point on the element that can be clicked. 
+	; A client application can use this method to simulate clicking the left or right mouse button. For example, to simulate clicking the right mouse button to display the context menu for a control: 
+	; • Call the GetClickablePoint method to find a clickable point on the control.
+	; • Call the SendInput function to send a right-mouse-down, right-mouse-up sequence.
+	GetClickablePoint(){
 	_Error(DllCall(vt(this._p,84),"ptr",this._p,"int64*",clickable,"int*",gotClickable),"GetClickablePoint")
-	return
+	return [clickable,gotClickable]
 	}
-;;;;;;;;;;;;;;
-;;propertyid;;
-;;;;;;;;;;;;;;
-	Value(v){ ; v:variant
-		if (type:=NumGet(v+0,"ushort"))&0x2000{
-			return SafeArray(NumGet(v+8),type&0xFF)
-		}else {
-			out:=type=2?NumGet(v+8,"short")	; 16 位有符号整数
-			:type=3?NumGet(v+8,"int")	; 32 位有符号整数
-			:type=4?NumGet(v+8,"float")	; 32 位浮点数
-			:type=5?NumGet(v+8,"double")	; 64 位浮点数
-			:type=8?StrGet(NumGet(v+8),"utf-16")	; COM 字符串 (带长度前缀的 Unicode 字符串)
-			:type=0xA?NumGet(v+8,"uint")	; Error 码 (32 位整数)
-			:type=0xB?NumGet(v+8,"short")	; 布尔值 True (-1) 或 False (0)
-			:type=0x10?NumGet(v+8,"char")	; 8 位有符号整数
-			:type=0x11?NumGet(v+8,"uchar")	; 8 位无符号整数
-			:type=0x12?NumGet(v+8,"ushort")	; 16 位无符号整数
-			:type=0x13?NumGet(v+8,"uint")	; 32 位无符号整数
-			:type=0x14?NumGet(v+8,"int64")	; 64 位有符号整数
-			:type=0x15?NumGet(v+8,"uint64")	; 64 位无符号整数
-			:NumGet(v+8)
-			return out
-		}
-	}
-
-;;;;;;;;;;;;;;;;
-;;ElementArray;;
-;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;IUIAutomationElementArray;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	; Retrieves the number of elements in the collection.
 	Length(){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"int*",length),"get_Length")
 	return length
-  }
-
-  Element(index){
+	}
+	; Retrieves a Microsoft UI Automation element from the collection.
+	Element(index){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int",index,"ptr*",element),"GetElement")
 	return element
-  }
+	}
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;IUIAutomationCacheRequest;;
@@ -526,12 +546,19 @@ class IUIAutomationCacheRequest
 		this._p:=0,this._i:={3:"AddProperty",4:"AddPattern",5:"Clone"}
 	}
 	__get(aName){
+	; Specifies the scope of caching.
+	; When an element is retrieved, caching can be performed for only the element itself (the default behavior), or for the element and its children or descendants. This property describes the scope of the request.
 		if (aName="TreeScope"){
 			_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",scope),"get_TreeScope")
 			return scope
+	; Specifies the view of the UI Automation element tree that is used when caching.
 		}else if (aName="TreeFilter"){
 			_Error(DllCall(vt(this._p,8),"ptr",this._p,"ptr*",filter),"get_TreeFilter")
 			return filter
+	; Indicates whether returned elements contain full references to the underlying UI, or only cached information. 
+	; AutomationElementMode_Full is the default value, and specifies that returned elements contain a full reference to the underlying UI. AutomationElementMode_None specifies that the returned elements have no reference to the underlying UI, and contain only cached information.
+	; Certain operations on elements, including GetCurrentPropertyValue, and SetFocus, require a full reference; attempting to perform these on an element that has none results in an error.
+	; Using AutomationElementMode_None can be more efficient when only properties are needed, as it avoids the overhead involved in setting up full references.
 		}else if (aName="AutomationElementMode"){
 			_Error(DllCall(vt(this._p,10),"ptr",this._p,"int*",mode),"get_AutomationElementMode")
 			return mode
@@ -553,22 +580,24 @@ class IUIAutomationCacheRequest
 		else if (aName="AutomationElementMode")
 			return _Error(DllCall(vt(this._p,11),"ptr",this._p,"int",aValue),"put_AutomationElementMode")
 	}
-  AddProperty(propertyId){
+	; Adds a property to the cache request.
+	AddProperty(propertyId){
 	if IsObject(propertyId)
 		loop % propertyId.maxindex()
 			_Error(DllCall(vt(this._p,3),"ptr",this._p,"int",propertyId[A_Index]),"AddProperty")
 	else return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",propertyId),"AddProperty")
-  }
-  AddPattern(patternId){
+	}
+	; Adds a control pattern to the cache request. Adding a control pattern that is already in the cache request has no effect.
+	AddPattern(patternId){
 	if IsObject(patternId)
 		loop % patternId.maxindex()
 			_Error(DllCall(vt(this._p,3),"ptr",this._p,"int",patternId[A_Index]),"AddProperty")
 	else return _Error(DllCall(vt(this._p,4),"ptr",this._p,"int",patternId),"AddPattern")
-  }
-  Clone(){
+	}
+	Clone(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"ptr*",clonedRequest),"Clone")
 	return clonedRequest
-  }
+	}
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;IUIAutomationCondition;;
@@ -589,46 +618,58 @@ class IUIAutomationCondition
 		else if !instr(aName,"_")
 			return this[this._i aName](aParam*)
 	}
+	; Retrieves the identifier of the property on which this condition is based.
 	property_id(){
 		_Error(DllCall(vt(this._p,3),"ptr",this._p,"int*",propertyId),"get_PropertyId")
 		return propertyId
 	}
+	; Retrieves the property value that must be matched for the condition to be true.
 	property_value(){
-		_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr",variant(propertyValue)),"get_PropertyValue")
-		;return propertyValue
+		static _,propertyValue:=variant(_)
+		_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr",propertyValue),"get_PropertyValue")
+		return UIA_PropertyValue(propertyValue) ;
 	}
+	; Retrieves a set of flags that specify how the condition is applied.
 	property_flags(){
 		_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",flags),"get_PropertyConditionFlags")
 		return flags
 	}
+	; Retrieves the value of the condition: either TRUE or FALSE.
 	bool_value(){
 		_Error(DllCall(vt(this._p,3),"ptr",this._p,"int*",boolVal),"get_BooleanValue")
 		return boolVal
 	}
+	; Retrieves the number of conditions that make up this condition.
 	and_count(){
 		_Error(DllCall(vt(this._p,3),"ptr",this._p,"int*",childCount),"get_ChildCount")
 		return childCoun
 	}
-	and_ChildrenAsNativeArray(Byref childArray,Byref childArrayCount){
+	; Retrieves the conditions that make up this condition, as an ordinary array.
+	and_ChildrenAsNativeArray(){
 		_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr*",childArray,"int*",childArrayCount),"GetChildrenAsNativeArray")
-		return
+		return [childArray,childArrayCount]
 	}
+	; Retrieves the conditions that make up this condition.
 	and_Children(){
 		_Error(DllCall(vt(this._p,5),"ptr",this._p,"ptr*",childArray),"GetChildren")
-		return childArray
+		return childArray ;SafeArray(iunknown)
 	}
+	; Retrieves the number of conditions that make up this condition.
 	or_count(){
 		_Error(DllCall(vt(this._p,3),"ptr",this._p,"int*",childCount),"get_ChildCount")
 		return childCoun
 	}
-	or_ChildrenAsNativeArray(Byref childArray,Byref childArrayCount){
+	; Retrieves the conditions that make up this condition, as an ordinary array.
+	or_ChildrenAsNativeArray(){
 		_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr*",childArray,"int*",childArrayCount),"GetChildrenAsNativeArray")
-		return
+		return [childArray,childArrayCount]
 	}
+	; Retrieves the conditions that make up this condition.
 	or_Children(){
 		_Error(DllCall(vt(this._p,5),"ptr",this._p,"ptr*",childArray),"GetChildren")
 		return childArray
 	}
+	; Retrieves the condition of which this condition is the negative. The returned condition is the one that was used in creating this condition. 
 	not_Child(){
 		_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",condition),"GetChild")
 		return condition
@@ -656,66 +697,74 @@ class IUIAutomationTreeWalker
 		if this._i.haskey(aName)
 			return this[this._i[aName]]()
 	}
+	
+	; The structure of the Microsoft UI Automation tree changes as the visible UI elements on the desktop change.
+	; An element can have additional child elements that do not match the current view condition and thus are not returned when navigating the element tree.
+
+	; Retrieves the parent element of the specified UI Automation element.
 	GetParentElement(element){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr",element,"ptr*",parent),"ParentElement")
 	return parent
 	}
-
+	; Retrieves the first child element of the specified UI Automation element.
 	GetFirstChildElement(element){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr",element,"ptr*",first),"FirstChildElement")
 	return first
 	}
-
+	; Retrieves the last child element of the specified UI Automation element.
 	GetLastChildElement(element){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"ptr",element,"ptr*",last),"LastChildElement")
 	return last
 	}
-
+	; Retrieves the next sibling element of the specified UI Automation element, and caches properties and control patterns.
 	GetNextSiblingElement(element){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr",element,"ptr*",next),"NextSiblingElement")
 	return next
 	}
-
+	; Retrieves the previous sibling element of the specified UI Automation element, and caches properties and control patterns.
 	GetPreviousSiblingElement(element){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"ptr",element,"ptr*",previous),"PreviousSiblingElement")
 	return previous
 	}
-
+	; Retrieves the ancestor element nearest to the specified Microsoft UI Automation element in the tree view. 
+	; The element is normalized by navigating up the ancestor chain in the tree until an element that satisfies the view condition (specified by a previous call to IUIAutomationTreeWalker::Condition) is reached. If the root element is reached, the root element is returned, even if it does not satisfy the view condition. 
+	; This method is useful for applications that obtain references to UI Automation elements by hit-testing. The application might want to work only with specific types of elements, and can use IUIAutomationTreeWalker::Normalize to make sure that no matter what element is initially retrieved (for example, when a scroll bar gets the input focus), only the element of interest (such as a content element) is ultimately retrieved. 
 	NormalizeElement(element){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"ptr",element,"ptr*",normalized),"NormalizeElement")
 	return normalized
 	}
-
+	; Retrieves the parent element of the specified UI Automation element, and caches properties and control patterns.
 	GetParentElementBuildCache(element,cacheRequest){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"ptr",element,"ptr",cacheRequest,"ptr*",parent),"ParentElementBuildCache")
 	return parent
 	}
-
+	; Retrieves the first child element of the specified UI Automation element, and caches properties and control patterns.
 	GetFirstChildElementBuildCache(element,cacheRequest){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"ptr",element,"ptr",cacheRequest,"ptr*",first),"FirstChildElementBuildCache")
 	return first
 	}
-
+	; Retrieves the last child element of the specified UI Automation element, and caches properties and control patterns.
 	GetLastChildElementBuildCache(element,cacheRequest){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"ptr",element,"ptr",cacheRequest,"ptr*",last),"LastChildElementBuildCache")
 	return last
 	}
-
+	; Retrieves the next sibling element of the specified UI Automation element, and caches properties and control patterns.
 	GetNextSiblingElementBuildCache(element,cacheRequest){
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"ptr",element,"ptr",cacheRequest,"ptr*",next),"NextSiblingElementBuildCache")
 	return next
 	}
-
+	; Retrieves the previous sibling element of the specified UI Automation element, and caches properties and control patterns.
 	GetPreviousSiblingElementBuildCache(element,cacheRequest){
 	_Error(DllCall(vt(this._p,13),"ptr",this._p,"ptr",element,"ptr",cacheRequest,"ptr*",previous),"PreviousSiblingElementBuildCache")
 	return previous
 	}
-
+	; Retrieves the ancestor element nearest to the specified Microsoft UI Automation element in the tree view, prefetches the requested properties and control patterns, and stores the prefetched items in the cache.
 	NormalizeElementBuildCache(element,cacheRequest){
 	_Error(DllCall(vt(this._p,14),"ptr",this._p,"ptr",element,"ptr",cacheRequest,"ptr*",normalized),"NormalizeElementBuildCache")
 	return normalized
 	}
-
+	; Retrieves the condition that defines the view of the UI Automation tree. This property is read-only.
+	; The condition that defines the view. This is the interface that was passed to CreateTreeWalker.
 	Condition(){
 	_Error(DllCall(vt(this._p,15),"ptr",this._p,"ptr*",condition),"_Condition")
 	return condition
@@ -748,22 +797,23 @@ class IUIAutomationPattern{
 	}
 
 ; IUIAutomationInvokePattern
-
-  Invoke_Invoke(){
+	; Invokes the action of a control, such as a button click. 
+	; Calls to this method should return immediately without blocking. However, this behavior depends on the implementation.
+	Invoke_Invoke(){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Invoke")
-  }
+	}
 
 ; IUIAutomationDockPattern
-
+	; Sets the dock position of this element.
   Dock_SetDockPosition(dockPos){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",dockPos),"SetDockPosition")
   }
-
+	; Retrieves the dock position of this element within its docking container.
   Dock_CurrentDockPosition(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int*",retVal),"CurrentDockPosition")
 	return retVal
   }
-
+	; Retrieves the cached dock position of this element within its docking container.
   Dock_CachedDockPosition(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CachedDockPosition")
 	return retVal
@@ -771,417 +821,436 @@ class IUIAutomationPattern{
 
 ; IUIAutomationExpandCollapsePattern
 
+	; This is a blocking method that returns after the element has been collapsed.
+	; There are cases when a element that is marked as a leaf node might not know whether it has children until either the IUIAutomationExpandCollapsePattern::Collapse or the IUIAutomationExpandCollapsePattern::Expand method is called. This behavior is possible with a tree view control that does delayed loading of its child items. For example, Microsoft Windows Explorer might display the expand icon for a node even though there are currently no child items; when the icon is clicked, the control polls for child items, finds none, and removes the expand icon. In these cases clients should listen for a property-changed event on the IUIAutomationExpandCollapsePattern::CurrentExpandCollapseState property.
+
+	; Displays all child nodes, controls, or content of the element. 
   ExpandCollapse_Expand(){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Expand")
   }
-
+	; Hides all child nodes, controls, or content of the element.
   ExpandCollapse_Collapse(){
 	return _Error(DllCall(vt(this._p,4),"ptr",this._p),"Collapse")
   }
-
+	; Retrieves a value that indicates the state, expanded or collapsed, of the element.
   ExpandCollapse_CurrentExpandCollapseState(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentExpandCollapseState")
 	return retVal
   }
-
+	; Retrieves a cached value that indicates the state, expanded or collapsed, of the element.
   ExpandCollapse_CachedExpandCollapseState(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CachedExpandCollapseState")
 	return retVal
   }
 
 ; IUIAutomationGridPattern
-
+	; Retrieves a UI Automation element representing an item in the grid.
   Grid_GetItem(row,column){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"int",row,"int",column,"ptr*",element),"GetItem")
 	return element
   }
 
+	; Hidden rows and columns, depending on the provider implementation, may be loaded in the Microsoft UI Automation tree and will therefore be reflected in the row count and column count properties. If the hidden rows and columns have not yet been loaded they are not counted.
+	
+	; Retrieves the number of rows in the grid.
   Grid_CurrentRowCount(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int*",retVal),"CurrentRowCount")
 	return retVal
   }
-
+	; The number of columns in the grid.
   Grid_CurrentColumnCount(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentColumnCount")
 	return retVal
   }
-
+	; Retrieves the cached number of rows in the grid.
   Grid_CachedRowCount(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CachedRowCount")
 	return retVal
   }
-
+	; Retrieves the cached number of columns in the grid.
   Grid_CachedColumnCount(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CachedColumnCount")
 	return retVal
   }
 
 ; IUIAutomationGridItemPattern
-
+	; Retrieves the element that contains the grid item. 
   GridItem_CurrentContainingGrid(){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",retVal),"CurrentContainingGrid")
 	return retVal
   }
-
+	; Retrieves the zero-based index of the row that contains the grid item.
   GridItem_CurrentRow(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int*",retVal),"CurrentRow")
 	return retVal
   }
-
+	; Retrieves the zero-based index of the column that contains the item.
   GridItem_CurrentColumn(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentColumn")
 	return retVal
   }
-
+	; Retrieves the number of rows spanned by the grid item. 
   GridItem_CurrentRowSpan(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CurrentRowSpan")
 	return retVal
   }
-
+	
+	; Retrieves the number of columns spanned by the grid item.
   GridItem_CurrentColumnSpan(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CurrentColumnSpan")
 	return retVal
   }
-
+	; Retrieves the cached element that contains the grid item. 
   GridItem_CachedContainingGrid(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"ptr*",retVal),"CachedContainingGrid")
 	return retVal
   }
-
+	; Retrieves the cached zero-based index of the row that contains the item. 
   GridItem_CachedRow(){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int*",retVal),"CachedRow")
 	return retVal
   }
-
+	; Retrieves the cached zero-based index of the column that contains the grid item.
   GridItem_CachedColumn(){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"int*",retVal),"CachedColumn")
 	return retVal
   }
-
+	; Retrieves the cached number of rows spanned by a grid item. 
   GridItem_CachedRowSpan(){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"int*",retVal),"CachedRowSpan")
 	return retVal
   }
-
+	; Retrieves the cached number of columns spanned by the grid item.
   GridItem_CachedColumnSpan(){
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"int*",retVal),"CachedColumnSpan")
 	return retVal
   }
 
 ; IUIAutomationMultipleViewPattern
-
+	; Retrieves the name of a control-specific view.
   MultipleView_GetViewName(view){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"int",view,"ptr*",name),"GetViewName")
 	return StrGet(name,"utf-16")
   }
-
+	; Sets the view of the control.
   MultipleView_SetCurrentView(view){
 	return _Error(DllCall(vt(this._p,4),"ptr",this._p,"int",view),"SetCurrentView")
   }
-
+	; Retrieves the control-specific identifier of the current view of the control.
   MultipleView_CurrentCurrentView(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentCurrentView")
 	return retVal
   }
-
+	; Retrieves a collection of control-specific view identifiers.
   MultipleView_GetCurrentSupportedViews(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",retVal),"GetCurrentSupportedViews")
 	return SAFEARRAY(retVal,3)
   }
-
+	; Retrieves the cached control-specific identifier of the current view of the control.
   MultipleView_CachedCurrentView(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CachedCurrentView")
 	return retVal
   }
-
+	; Retrieves a collection of control-specific view identifiers from the cache.
   MultipleView_GetCachedSupportedViews(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"ptr*",retVal),"GetCachedSupportedViews")
 	return SAFEARRAY(retVal,3)
   }
 
 ; IUIAutomationRangeValuePattern
-
+	; Sets the value of the control.
   RangeValue_SetValue(val){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"double",val),"SetValue")
   }
-
+	; Retrieves the value of the control.
   RangeValue_CurrentValue(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"double*",retVal),"CurrentValue")
 	return retVal
   }
-
+	; Indicates whether the value of the element can be changed.
   RangeValue_CurrentIsReadOnly(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentIsReadOnly")
 	return retVal
   }
-
+	; Retrieves the maximum value of the control.
   RangeValue_CurrentMaximum(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"double*",retVal),"CurrentMaximum")
 	return retVal
   }
-
+	; Retrieves the minimum value of the control.
   RangeValue_CurrentMinimum(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"double*",retVal),"CurrentMinimum")
 	return retVal
   }
+  
+	; The LargeChange and SmallChange property can support a Not a Number (NaN) value. When retrieving this property, a client can use the _isnan function to determine whether the property is a NaN value. 
 
+	; Retrieves the value that is added to or subtracted from the value of the control when a large change is made, such as when the PAGE DOWN key is pressed.
   RangeValue_CurrentLargeChange(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"double*",retVal),"CurrentLargeChange")
 	return retVal
   }
-
+	; Retrieves the value that is added to or subtracted from the value of the control when a small change is made, such as when an arrow key is pressed.
   RangeValue_CurrentSmallChange(){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"double*",retVal),"CurrentSmallChange")
 	return retVal
   }
-
+	; Retrieves the cached value of the control.
   RangeValue_CachedValue(){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"double*",retVal),"CachedValue")
 	return retVal
   }
-
+	; Retrieves a cached value that indicates whether the value of the element can be changed.
   RangeValue_CachedIsReadOnly(){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"int*",retVal),"CachedIsReadOnly")
 	return retVal
   }
-
+	; Retrieves the cached maximum value of the control.
   RangeValue_CachedMaximum(){
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"double*",retVal),"CachedMaximum")
 	return retVal
   }
-
+	; Retrieves the cached minimum value of the control.
   RangeValue_CachedMinimum(){
 	_Error(DllCall(vt(this._p,13),"ptr",this._p,"double*",retVal),"CachedMinimum")
 	return retVal
   }
-
+	; Retrieves, from the cache, the value that is added to or subtracted from the value of the control when a large change is made, such as when the PAGE DOWN key is pressed.
   RangeValue_CachedLargeChange(){
 	_Error(DllCall(vt(this._p,14),"ptr",this._p,"double*",retVal),"CachedLargeChange")
 	return retVal
   }
-
+	; Retrieves, from the cache, the value that is added to or subtracted from the value of the control when a small change is made, such as when an arrow key is pressed.
   RangeValue_CachedSmallChange(){
 	_Error(DllCall(vt(this._p,15),"ptr",this._p,"double*",retVal),"CachedSmallChange")
 	return retVal
   }
 
 ; IUIAutomationScrollPattern
-
+	; Scrolls the visible region of the content area horizontally and vertically.
   Scroll_Scroll(horizontalAmount,verticalAmount){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",horizontalAmount,"int",verticalAmount),"Scroll")
   }
-
+	; Sets the horizontal and vertical scroll positions as a percentage of the total content area within the UI Automation element.
+	; This method is useful only when the content area of the control is larger than the visible region.
   Scroll_SetScrollPercent(horizontalPercent,verticalPercent){
 	return _Error(DllCall(vt(this._p,4),"ptr",this._p,"double",horizontalPercent,"double",verticalPercent),"SetScrollPercent")
   }
-
+	; Retrieves the horizontal scroll position.
   Scroll_CurrentHorizontalScrollPercent(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"double*",retVal),"CurrentHorizontalScrollPercent")
 	return retVal
   }
-
+	; Retrieves the vertical scroll position.
   Scroll_CurrentVerticalScrollPercent(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"double*",retVal),"CurrentVerticalScrollPercent")
 	return retVal
   }
-
+	; Retrieves the horizontal size of the viewable region of a scrollable element.
   Scroll_CurrentHorizontalViewSize(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"double*",retVal),"CurrentHorizontalViewSize")
 	return retVal
   }
-
+	; Retrieves the vertical size of the viewable region of a scrollable element.
   Scroll_CurrentVerticalViewSize(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"double*",retVal),"CurrentVerticalViewSize")
 	return retVal
   }
-
+	; Indicates whether the element can scroll horizontally.
+	; This property can be dynamic. For example, the content area of the element might not be larger than the current viewable area, meaning that the property is FALSE. However, resizing the element or adding child items can increase the bounds of the content area beyond the viewable area, making the property TRUE.
   Scroll_CurrentHorizontallyScrollable(){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int*",retVal),"CurrentHorizontallyScrollable")
 	return retVal
   }
-
+	; Indicates whether the element can scroll vertically.
   Scroll_CurrentVerticallyScrollable(){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"int*",retVal),"CurrentVerticallyScrollable")
 	return retVal
   }
-
+	; Retrieves the cached horizontal scroll position.
   Scroll_CachedHorizontalScrollPercent(){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"double*",retVal),"CachedHorizontalScrollPercent")
 	return retVal
   }
-
+	; Retrieves the cached vertical scroll position.
   Scroll_CachedVerticalScrollPercent(){
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"double*",retVal),"CachedVerticalScrollPercent")
 	return retVal
   }
-
+	; Retrieves the cached horizontal size of the viewable region of a scrollable element.
   Scroll_CachedHorizontalViewSize(){
 	_Error(DllCall(vt(this._p,13),"ptr",this._p,"double*",retVal),"CachedHorizontalViewSize")
 	return retVal
   }
-
+	; Retrieves the cached vertical size of the viewable region of a scrollable element.
   Scroll_CachedVerticalViewSize(){
 	_Error(DllCall(vt(this._p,14),"ptr",this._p,"double*",retVal),"CachedVerticalViewSize")
 	return retVal
   }
-
+	; Retrieves a cached value that indicates whether the element can scroll horizontally.
   Scroll_CachedHorizontallyScrollable(){
 	_Error(DllCall(vt(this._p,15),"ptr",this._p,"int*",retVal),"CachedHorizontallyScrollable")
 	return retVal
   }
-
+	; Retrieves a cached value that indicates whether the element can scroll vertically.
   Scroll_CachedVerticallyScrollable(){
 	_Error(DllCall(vt(this._p,16),"ptr",this._p,"int*",retVal),"CachedVerticallyScrollable")
 	return retVal
   }
 
 ; IUIAutomationScrollItemPattern
-
+	; Scrolls the content area of a container object to display the UI Automation element within the visible region (viewport) of the container.
+	; This method does not provide the ability to specify the position of the element within the viewport.
   ScrollItem_ScrollIntoView(){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"ScrollIntoView")
   }
 
 ; IUIAutomationSelectionPattern
-
+	; Retrieves the selected elements in the container.
   Selection_GetCurrentSelection(){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",retVal),"GetCurrentSelection")
 	return retVal
   }
-
+	; Indicates whether more than one item in the container can be selected at one time.
   Selection_CurrentCanSelectMultiple(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int*",retVal),"CurrentCanSelectMultiple")
 	return retVal
   }
-
+	; Indicates whether at least one item must be selected at all times.
   Selection_CurrentIsSelectionRequired(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentIsSelectionRequired")
 	return retVal
   }
-
+	; Retrieves the cached selected elements in the container.
   Selection_GetCachedSelection(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",retVal),"GetCachedSelection")
 	return retVal
   }
-
+	; Retrieves a cached value that indicates whether more than one item in the container can be selected at one time.
   Selection_CachedCanSelectMultiple(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CachedCanSelectMultiple")
 	return retVal
   }
-
+	; Retrieves a cached value that indicates whether at least one item must be selected at all times.
   Selection_CachedIsSelectionRequired(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",retVal),"CachedIsSelectionRequired")
 	return retVal
   }
 
 ; IUIAutomationSelectionItemPattern
-
+	; Clears any selected items and then selects the current element.
   SelectionItem_Select(){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Select")
   }
-
+	; Adds the current element to the collection of selected items.
   SelectionItem_AddToSelection(){
 	return _Error(DllCall(vt(this._p,4),"ptr",this._p),"AddToSelection")
   }
-
+	; Removes this element from the selection. 
+	; An error code is returned if this element is the only one in the selection and the selection container requires at least one element to be selected. 
   SelectionItem_RemoveFromSelection(){
 	return _Error(DllCall(vt(this._p,5),"ptr",this._p),"RemoveFromSelection")
   }
-
+	; Indicates whether this item is selected.
   SelectionItem_CurrentIsSelected(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CurrentIsSelected")
 	return retVal
   }
-
+	; Retrieves the element that supports IUIAutomationSelectionPattern and acts as the container for this item. 
   SelectionItem_CurrentSelectionContainer(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"ptr*",retVal),"CurrentSelectionContainer")
 	return retVal
   }
-
+	; A cached value that indicates whether this item is selected.
   SelectionItem_CachedIsSelected(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",retVal),"CachedIsSelected")
 	return retVal
   }
-
+	; Retrieves the cached element that supports IUIAutomationSelectionPattern and acts as the container for this item.
   SelectionItem_CachedSelectionContainer(){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"ptr*",retVal),"CachedSelectionContainer")
 	return retVal
   }
 
 ; IUIAutomationSynchronizedInputPattern
-
+	; Causes the Microsoft UI Automation provider to start listening for mouse or keyboard input.
+	; When matching input is found, the provider checks whether the target element matches the current element. If they match, the provider raises the UIA_InputReachedTargetEventId event; otherwise it raises the UIA_InputReachedOtherElementEventId or UIA_InputDiscardedEventId event.
+	; After receiving input of the specified type, the provider stops checking for input and continues as normal.
+	; If the provider is already listening for input, this method returns E_INVALIDOPERATION.
   SynchronizedInput_StartListening(inputType){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",inputType),"StartListening")
   }
-
+	; Causes the Microsoft UI Automation provider to stop listening for mouse or keyboard input.
   SynchronizedInput_Cancel(){
 	return _Error(DllCall(vt(this._p,4),"ptr",this._p),"Cancel")
   }
 
 ; IUIAutomationTablePattern
-
+	; Retrieves a collection of UI Automation elements representing all the row headers in a table.
   Table_GetCurrentRowHeaders(){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",retVal),"GetCurrentRowHeaders")
 	return retVal
   }
-
+	; Retrieves a collection of UI Automation elements representing all the column headers in a table.
   Table_GetCurrentColumnHeaders(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr*",retVal),"GetCurrentColumnHeaders")
 	return retVal
   }
-
+	; Retrieves the primary direction of traversal for the table.
   Table_CurrentRowOrColumnMajor(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentRowOrColumnMajor")
 	return retVal
   }
-
+	; Retrieves a cached collection of UI Automation elements representing all the row headers in a table.
   Table_GetCachedRowHeaders(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",retVal),"GetCachedRowHeaders")
 	return retVal
   }
-
+	; Retrieves a cached collection of UI Automation elements representing all the column headers in a table.
   Table_GetCachedColumnHeaders(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"ptr*",retVal),"GetCachedColumnHeaders")
 	return retVal
   }
-
+	; Retrieves the cached primary direction of traversal for the table.
   Table_CachedRowOrColumnMajor(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",retVal),"CachedRowOrColumnMajor")
 	return retVal
   }
 
 ; IUIAutomationTableItemPattern
-
+	; Retrieves the row headers associated with a table item or cell.
   TableItem_GetCurrentRowHeaderItems(){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",retVal),"GetCurrentRowHeaderItems")
 	return retVal
   }
-
+	; Retrieves the column headers associated with a table item or cell.
   TableItem_GetCurrentColumnHeaderItems(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr*",retVal),"GetCurrentColumnHeaderItems")
 	return retVal
   }
-
+	; Retrieves the cached row headers associated with a table item or cell.
   TableItem_GetCachedRowHeaderItems(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"ptr*",retVal),"GetCachedRowHeaderItems")
 	return retVal
   }
-
+	; Retrieves the cached column headers associated with a table item or cell.
   TableItem_GetCachedColumnHeaderItems(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",retVal),"GetCachedColumnHeaderItems")
 	return retVal
   }
 
 ; IUIAutomationTogglePattern
-
+	; Cycles through the toggle states of the control.
+	; A control cycles through its states in this order: ToggleState_On, ToggleState_Off and, if supported, ToggleState_Indeterminate.
   Toggle_Toggle(){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Toggle")
   }
-
+	; Retrieves the state of the control.
   Toggle_CurrentToggleState(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int*",retVal),"CurrentToggleState")
 	return retVal
   }
-
+	; Retrieves the cached state of the control.
   Toggle_CachedToggleState(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CachedToggleState")
 	return retVal
@@ -1189,409 +1258,420 @@ class IUIAutomationPattern{
 
 ; IUIAutomationTransformPattern
 
+	; An element cannot be moved, resized or rotated such that its resulting screen location would be completely outside the coordinates of its container and inaccessible to the keyboard or mouse. For example, when a top-level window is moved completely off-screen or a child object is moved outside the boundaries of the container's viewport, the object is placed as close to the requested screen coordinates as possible with the top or left coordinates overridden to be within the container boundaries.
+	
+	; Moves the UI Automation element.
   Transform_Move(x,y){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"double",x,"double",y),"Move")
   }
-
+	; Resizes the UI Automation element.
+	; When called on a control that supports split panes, this method can have the side effect of resizing other contiguous panes. 
   Transform_Resize(width,height){
 	return _Error(DllCall(vt(this._p,4),"ptr",this._p,"double",width,"double",height),"Resize")
   }
-
+	; Rotates the UI Automation element.
   Transform_Rotate(degrees){
 	return _Error(DllCall(vt(this._p,5),"ptr",this._p,"double",degrees),"Rotate")
   }
-
+	; Indicates whether the element can be moved.
   Transform_CurrentCanMove(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CurrentCanMove")
 	return retVal
   }
-
+	; Indicates whether the element can be resized.
   Transform_CurrentCanResize(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CurrentCanResize")
 	return retVal
   }
-
+	; Indicates whether the element can be rotated.
   Transform_CurrentCanRotate(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",retVal),"CurrentCanRotate")
 	return retVal
   }
-
+	; Retrieves a cached value that indicates whether the element can be moved.
   Transform_CachedCanMove(){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int*",retVal),"CachedCanMove")
 	return retVal
   }
-
+	; Retrieves a cached value that indicates whether the element can be resized.
   Transform_CachedCanResize(){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"int*",retVal),"CachedCanResize")
 	return retVal
   }
-
+	; Retrieves a cached value that indicates whether the element can be rotated.
   Transform_CachedCanRotate(){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"int*",retVal),"CachedCanRotate")
 	return retVal
   }
 
 ; IUIAutomationValuePattern
-
+	; Sets the value of the element.
+	; The CurrentIsEnabled property must be TRUE, and the IUIAutomationValuePattern::CurrentIsReadOnly property must be FALSE. 
   Value_SetValue(val){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"str",val),"SetValue")
 	return 
   }
-
+	; Retrieves the value of the element.
+	; Single-line edit controls support programmatic access to their contents through IUIAutomationValuePattern. However, multiline edit controls do not support this control pattern, and their contents must be retrieved by using IUIAutomationTextPattern.
+	; This property does not support the retrieval of formatting information or substring values. IUIAutomationTextPattern must be used in these scenarios as well.
   Value_CurrentValue(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr*",retVal),"CurrentValue")
 	return StrGet(retVal,"utf-16")
   }
-
+	; Indicates whether the value of the element is read-only.
   Value_CurrentIsReadOnly(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentIsReadOnly")
 	return retVal
   }
-
+	; Retrieves the cached value of the element.
   Value_CachedValue(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",retVal),"CachedValue")
 	return StrGet(retVal,"utf-16")
   }
-
+	; Retrieves a cached value that indicates whether the value of the element is read-only.
+	; This property must be TRUE for IUIAutomationValuePattern::SetValue to succeed.
   Value_CachedIsReadOnly(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CachedIsReadOnly")
 	return retVal
   }
 
 ; IUIAutomationWindowPattern
-
+	; Closes the window.
+	; When called on a split pane control, this method closes the pane and removes the associated split. This method may also close all other panes, depending on implementation.
   Window_Close(){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Close")
   }
-
+	; Causes the calling code to block for the specified time or until the associated process enters an idle state, whichever completes first. 
   Window_WaitForInputIdle(milliseconds){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int",milliseconds,"int*",success),"WaitForInputIdle")
 	return success
   }
-
+	; Minimizes, maximizes, or restores the window.
   Window_SetWindowVisualState(state){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int",state),"SetWindowVisualState")
 	return 
   }
-
+	; Indicates whether the window can be maximized.
   Window_CurrentCanMaximize(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CurrentCanMaximize")
 	return retVal
   }
-
+	; Indicates whether the window can be minimized.
   Window_CurrentCanMinimize(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CurrentCanMinimize")
 	return retVal
   }
-
+	; Indicates whether the window is modal.
   Window_CurrentIsModal(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",retVal),"CurrentIsModal")
 	return retVal
   }
-
+	; Indicates whether the window is the topmost element in the z-order.
   Window_CurrentIsTopmost(){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int*",retVal),"CurrentIsTopmost")
 	return retVal
   }
-
+	; Retrieves the visual state of the window; that is, whether it is in the normal, maximized, or minimized state.
   Window_CurrentWindowVisualState(){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"int*",retVal),"CurrentWindowVisualState")
 	return retVal
   }
-
+	; Retrieves the current state of the window for the purposes of user interaction.
   Window_CurrentWindowInteractionState(){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"int*",retVal),"CurrentWindowInteractionState")
-	return retVal
+	return retVal ; WindowInteractionState
   }
-
+	; Retrieves a cached value that indicates whether the window can be maximized.
   Window_CachedCanMaximize(){
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"int*",retVal),"CachedCanMaximize")
 	return retVal
   }
-
+	; Retrieves a cached value that indicates whether the window can be minimized.
   Window_CachedCanMinimize(){
 	_Error(DllCall(vt(this._p,13),"ptr",this._p,"int*",retVal),"CachedCanMinimize")
 	return retVal
   }
-
+	; Retrieves a cached value that indicates whether the window is modal.
   Window_CachedIsModal(){
 	_Error(DllCall(vt(this._p,14),"ptr",this._p,"int*",retVal),"CachedIsModal")
 	return retVal
   }
-
+	; Retrieves a cached value that indicates whether the window is the topmost element in the z-order.
   Window_CachedIsTopmost(){
 	_Error(DllCall(vt(this._p,15),"ptr",this._p,"int*",retVal),"CachedIsTopmost")
 	return retVal
   }
-
+	; Retrieves a cached value that indicates the visual state of the window; that is, whether it is in the normal, maximized, or minimized state.
   Window_CachedWindowVisualState(){
 	_Error(DllCall(vt(this._p,16),"ptr",this._p,"int*",retVal),"CachedWindowVisualState")
 	return retVal
   }
-
+	; Retrieves a cached value that indicates the current state of the window for the purposes of user interaction.
   Window_CachedWindowInteractionState(){
 	_Error(DllCall(vt(this._p,17),"ptr",this._p,"int*",retVal),"CachedWindowInteractionState")
-	return retVal
+	return retVal ; WindowInteractionState
   }
 
 ; IUIAutomationTextRange
-
+	; Retrieves a new IUIAutomationTextRange identical to the original and inheriting all properties of the original.
+	; The new range can be manipulated independently of the original.
   TextRange_Clone(){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",clonedRange),"Clone")
 	return clonedRange
   }
-
+	; Retrieves a value that specifies whether this text range has the same endpoints as another text range.
+	; This method compares the endpoints of the two text ranges, not the text in the ranges. The ranges are identical if they share the same endpoints. If two text ranges have different endpoints, they are not identical even if the text in both ranges is exactly the same. 
   TextRange_Compare(range){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr",range,"int*",areSame),"Compare")
 	return areSame
   }
-
+	; Retrieves a value that specifies whether the start or end endpoint of this text range is the same as the start or end endpoint of another text range.
   TextRange_CompareEndpoints(srcEndPoint,range,targetEndPoint){
-	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int",srcEndPoint,"ptr",range,"int",targetEndPoint,"int*",compValue),"CompareEndpoints")
+	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int",srcEndPoint,"ptr",range,"int",targetEndPoint,"int*",compValue),"CompareEndpoints") ; TextPatternRangeEndpoint
 	return compValue
   }
-
+	; Normalizes the text range by the specified text unit. The range is expanded if it is smaller than the specified unit, or shortened if it is longer than the specified unit.
   TextRange_ExpandToEnclosingUnit(textUnit){
-	return _Error(DllCall(vt(this._p,6),"ptr",this._p,"int",textUnit),"ExpandToEnclosingUnit")
+	return _Error(DllCall(vt(this._p,6),"ptr",this._p,"int",textUnit),"ExpandToEnclosingUnit") ; textUnit
   }
-
+	; 
   TextRange_FindAttribute(attr,val,backward){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int",attr,"ptr",val,"int",backward,"ptr*",found),"FindAttribute")
 	return found
   }
-
+	; 
   TextRange_FindText(text,backward,ignoreCase){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"str",text,"int",backward,"int",ignoreCase,"ptr*",found),"FindText")
 	return StrGet(found,"utf-16")
   }
-
+	; 
   TextRange_GetAttributeValue(attr,value){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int",attr,"ptr",variant(value)),"GetAttributeValue")
 	return NumGet(value,8,"int")
   }
-
+	; 
   TextRange_GetBoundingRectangles(){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"ptr*",boundingRects),"GetBoundingRectangles")
 	return SAFEARRAY(boundingRects,5)
   }
-
+	; 
   TextRange_GetEnclosingElement(){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"ptr*",enclosingElement),"GetEnclosingElement")
 	return 
   }
-
+	; 
   TextRange_GetText(maxLength){
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"int",maxLength,"ptr*",text),"GetText")
 	return StrGet(text,"utf-16")
   }
-
+	; 
   TextRange_Move(unit,count){
 	_Error(DllCall(vt(this._p,13),"ptr",this._p,"int",unit,"int",count,"int*",moved),"Move")
 	return moved
   }
-
+	; 
   TextRange_MoveEndpointByUnit(endpoint,unit,count){
 	_Error(DllCall(vt(this._p,14),"ptr",this._p,"int",endpoint,"int",unit,"int",count,"int*",moved),"MoveEndpointByUnit")
 	return moved
   }
-
+	; 
   TextRange_MoveEndpointByRange(srcEndPoint,range,targetEndPoint){
 	return _Error(DllCall(vt(this._p,15),"ptr",this._p,"int",srcEndPoint,"ptr",range,"int",targetEndPoint),"MoveEndpointByRange")
   }
-
+	; 
   TextRange_Select(){
 	return _Error(DllCall(vt(this._p,16),"ptr",this._p),"Select")
   }
-
+	; 
   TextRange_AddToSelection(){
 	return _Error(DllCall(vt(this._p,17),"ptr",this._p),"AddToSelection")
   }
-
+	; 
   TextRange_RemoveFromSelection(){
 	return _Error(DllCall(vt(this._p,18),"ptr",this._p),"RemoveFromSelection")
   }
-
+	; 
   TextRange_ScrollIntoView(alignToTop){
 	return _Error(DllCall(vt(this._p,19),"ptr",this._p,"int",alignToTop),"ScrollIntoView")
   }
-
+	; 
   TextRange_GetChildren(){
 	_Error(DllCall(vt(this._p,20),"ptr",this._p,"ptr*",children),"GetChildren")
 	return children
   }
 
 ; IUIAutomationTextRangeArray
-
+	; 
   TextRangeArray_Length(){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"int*",length),"Length")
 	return length
   }
-
+	; 
   TextRangeArray_GetElement(index){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int",index,"ptr*",element),"GetElement")
 	return element
   }
 
 ; IUIAutomationTextPattern
-
+	; 
   Text_RangeFromPoint(pt){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"int64",pt,"ptr*",range),"RangeFromPoint")
 	return range
   }
-
+	; 
   Text_RangeFromChild(child){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr",child,"ptr*",range),"RangeFromChild")
 	return range
   }
-
+	; 
   Text_GetSelection(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"ptr*",ranges),"GetSelection")
 	return ranges
   }
-
+	; 
   Text_GetVisibleRanges(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",ranges),"GetVisibleRanges")
 	return ranges
   }
-
+	; 
   Text_DocumentRange(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"ptr*",range),"DocumentRange")
 	return range
   }
-
+	; 
   Text_SupportedTextSelection(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",supportedTextSelection),"SupportedTextSelection")
 	return supportedTextSelection
   }
 
 ; IUIAutomationLegacyIAccessiblePattern
-
+	; 
   LegacyIAccessible_Select(flagsSelect){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",flagsSelect),"Select")
   }
-
+	; 
   LegacyIAccessible_DoDefaultAction(){
 	return _Error(DllCall(vt(this._p,4),"ptr",this._p),"DoDefaultAction")
   }
-
+	; 
   LegacyIAccessible_SetValue(szValue){
 	return _Error(DllCall(vt(this._p,5),"ptr",this._p,"str",szValue),"SetValue")
   }
-
+	; 
   LegacyIAccessible_CurrentChildId(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",pRetVal),"CurrentChildId")
 	return pRetVal
   }
-
+	; 
   LegacyIAccessible_CurrentName(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"ptr*",pszName),"CurrentName")
 	return StrGet(pszName,"utf-16")
   }
-
+	; 
   LegacyIAccessible_CurrentValue(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"ptr*",pszValue),"CurrentValue")
 	return StrGet(pszValue,"utf-16")
   }
-
+	; 
   LegacyIAccessible_CurrentDescription(){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"ptr*",pszDescription),"CurrentDescription")
 	return StrGet(pszDescription,"utf-16")
   }
-
+	; 
   LegacyIAccessible_CurrentRole(){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"uint*",pdwRole),"CurrentRole")
 	return pdwRole
   }
-
+	; 
   LegacyIAccessible_CurrentState(){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"uint*",pdwState),"CurrentState")
 	return pdwState
   }
-
+	; 
   LegacyIAccessible_CurrentHelp(){
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"ptr*",pszHelp),"CurrentHelp")
 	return StrGet(pszHelp,"utf-16")
   }
-
+	; 
   LegacyIAccessible_CurrentKeyboardShortcut(){
 	_Error(DllCall(vt(this._p,13),"ptr",this._p,"ptr*",pszKeyboardShortcut),"CurrentKeyboardShortcut")
 	return StrGet(pszKeyboardShortcut,"utf-16")
   }
-
+	; 
   LegacyIAccessible_GetCurrentSelection(){
 	_Error(DllCall(vt(this._p,14),"ptr",this._p,"ptr*",pvarSelectedChildren),"GetCurrentSelection")
 	return pvarSelectedChildren
   }
-
+	; 
   LegacyIAccessible_CurrentDefaultAction(){
 	_Error(DllCall(vt(this._p,15),"ptr",this._p,"ptr*",pszDefaultAction),"CurrentDefaultAction")
 	return StrGet(pszDefaultAction,"utf-16")
   }
-
+	; 
   LegacyIAccessible_CachedChildId(){
 	_Error(DllCall(vt(this._p,16),"ptr",this._p,"int*",pRetVal),"CachedChildId")
 	return pRetVal
   }
-
+	; 
   LegacyIAccessible_CachedName(){
 	_Error(DllCall(vt(this._p,17),"ptr",this._p,"ptr*",pszName),"CachedName")
 	return StrGet(pszName,"utf-16")
   }
-
+	; 
   LegacyIAccessible_CachedValue(){
 	_Error(DllCall(vt(this._p,18),"ptr",this._p,"ptr*",pszValue),"CachedValue")
 	return StrGet(pszValue,"utf-16")
   }
-
+	; 
   LegacyIAccessible_CachedDescription(){
 	_Error(DllCall(vt(this._p,19),"ptr",this._p,"ptr*",pszDescription),"CachedDescription")
 	return StrGet(pszDescription,"utf-16")
   }
-
+	; 
   LegacyIAccessible_CachedRole(){
 	_Error(DllCall(vt(this._p,20),"ptr",this._p,"uint*",pdwRole),"CachedRole")
 	return pdwRole
   }
-
+	; 
   LegacyIAccessible_CachedState(){
 	_Error(DllCall(vt(this._p,21),"ptr",this._p,"uint*",pdwState),"CachedState")
 	return pdwState
   }
-
+	; 
   LegacyIAccessible_CachedHelp(){
 	_Error(DllCall(vt(this._p,22),"ptr",this._p,"ptr*",pszHelp),"CachedHelp")
 	return StrGet(pszHelp,"utf-16")
   }
-
+	; 
   LegacyIAccessible_CachedKeyboardShortcut(){
 	_Error(DllCall(vt(this._p,23),"ptr",this._p,"ptr*",pszKeyboardShortcut),"CachedKeyboardShortcut")
 	return StrGet(pszKeyboardShortcut,"utf-16")
   }
-
+	; 
   LegacyIAccessible_GetCachedSelection(){
 	_Error(DllCall(vt(this._p,24),"ptr",this._p,"ptr*",pvarSelectedChildren),"GetCachedSelection")
 	return pvarSelectedChildren
   }
-
+	; 
   LegacyIAccessible_CachedDefaultAction(){
 	_Error(DllCall(vt(this._p,25),"ptr",this._p,"ptr*",pszDefaultAction),"CachedDefaultAction")
 	return StrGet(pszDefaultAction,"utf-16")
   }
-
+	; 
   LegacyIAccessible_GetIAccessible(){
 	_Error(DllCall(vt(this._p,26),"ptr",this._p,"ptr*",ppAccessible),"GetIAccessible")
 	return ppAccessible
   }
 
 ; IUIAutomationItemContainerPattern
-
+	; 
   ItemContainer_FindItemByProperty(pStartAfter,propertyId,value){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr",pStartAfter,"int",propertyId,"ptr",value,"ptr*",pFound),"FindItemByProperty")
 	return pFound
   }
 
 ; IUIAutomationVirtualizedItemPattern
-
+	; 
   VirtualizedItem_Realize(){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Realize")
   }
@@ -1606,6 +1686,28 @@ class IUIAutomationEvent
 ;;;;;;;;;;;;;;;;;;;;;
 ;;Wrapped Functions;;
 ;;;;;;;;;;;;;;;;;;;;;
+; retrieves property value
+UIA_PropertyValue(v){
+	if (type:=NumGet(v+0,"ushort"))&0x2000{
+		return SafeArray(NumGet(v+8),type&0xFF)
+	}else {
+		out:=type=2?NumGet(v+8,"short")	; 16 位有符号整数
+		:type=3?NumGet(v+8,"int")	; 32 位有符号整数
+		:type=4?NumGet(v+8,"float")	; 32 位浮点数
+		:type=5?NumGet(v+8,"double")	; 64 位浮点数
+		:type=8?StrGet(NumGet(v+8),"utf-16")	; COM 字符串 (带长度前缀的 Unicode 字符串)
+		:type=0xA?NumGet(v+8,"uint")	; Error 码 (32 位整数)
+		:type=0xB?NumGet(v+8,"short")	; 布尔值 True (-1) 或 False (0)
+		:type=0x10?NumGet(v+8,"char")	; 8 位有符号整数
+		:type=0x11?NumGet(v+8,"uchar")	; 8 位无符号整数
+		:type=0x12?NumGet(v+8,"ushort")	; 16 位无符号整数
+		:type=0x13?NumGet(v+8,"uint")	; 32 位无符号整数
+		:type=0x14?NumGet(v+8,"int64")	; 64 位有符号整数
+		:type=0x15?NumGet(v+8,"uint64")	; 64 位无符号整数
+		:NumGet(v+8)
+		return out
+	}
+}
 ; Property
 UIA_Property(n){
 	static id:={RuntimeId:30000,BoundingRectangle:30001,ProcessId:30002,ControlType:30003,LocalizedControlType:30004,Name:30005,AcceleratorKey:30006,AccessKey:30007,HasKeyboardFocus:30008,IsKeyboardFocusable:30009,IsEnabled:30010,AutomationId:30011,ClassName:30012,HelpText:30013,ClickablePoint:30014,Culture:30015,IsControlElement:30016,IsContentElement:30017,LabeledBy:30018,IsPassword:30019,NativeWindowHandle:30020,ItemType:30021,IsOffscreen:30022,Orientation:30023,FrameworkId:30024,IsRequiredForForm:30025,ItemStatus:30026,IsDockPatternAvailable:30027,IsExpandCollapsePatternAvailable:30028,IsGridItemPatternAvailable:30029,IsGridPatternAvailable:30030,IsInvokePatternAvailable:30031,IsMultipleViewPatternAvailable:30032,IsRangeValuePatternAvailable:30033,IsScrollPatternAvailable:30034,IsScrollItemPatternAvailable:30035,IsSelectionItemPatternAvailable:30036,IsSelectionPatternAvailable:30037,IsTablePatternAvailable:30038,IsTableItemPatternAvailable:30039,IsTextPatternAvailable:30040,IsTogglePatternAvailable:30041,IsTransformPatternAvailable:30042,IsValuePatternAvailable:30043,IsWindowPatternAvailable:30044,ValueValue:30045,ValueIsReadOnly:30046,RangeValueValue:30047,RangeValueIsReadOnly:30048,RangeValueMinimum:30049,RangeValueMaximum:30050,RangeValueLargeChange:30051,RangeValueSmallChange:30052,ScrollHorizontalScrollPercent:30053,ScrollHorizontalViewSize:30054,ScrollVerticalScrollPercent:30055,ScrollVerticalViewSize:30056,ScrollHorizontallyScrollable:30057,ScrollVerticallyScrollable:30058,SelectionSelection:30059,SelectionCanSelectMultiple:30060,SelectionIsSelectionRequired:30061,GridRowCount:30062,GridColumnCount:30063,GridItemRow:30064,GridItemColumn:30065,GridItemRowSpan:30066,GridItemColumnSpan:30067,GridItemContainingGrid:30068,DockDockPosition:30069,ExpandCollapseExpandCollapseState:30070,MultipleViewCurrentView:30071,MultipleViewSupportedViews:30072,WindowCanMaximize:30073,WindowCanMinimize:30074,WindowWindowVisualState:30075,WindowWindowInteractionState:30076,WindowIsModal:30077,WindowIsTopmost:30078,SelectionItemIsSelected:30079,SelectionItemSelectionContainer:30080,TableRowHeaders:30081,TableColumnHeaders:30082,TableRowOrColumnMajor:30083,TableItemRowHeaderItems:30084,TableItemColumnHeaderItems:30085,ToggleToggleState:30086,TransformCanMove:30087,TransformCanResize:30088,TransformCanRotate:30089,IsLegacyIAccessiblePatternAvailable:30090,LegacyIAccessibleChildId:30091,LegacyIAccessibleName:30092,LegacyIAccessibleValue:30093,LegacyIAccessibleDescription:30094,LegacyIAccessibleRole:30095,LegacyIAccessibleState:30096,LegacyIAccessibleHelp:30097,LegacyIAccessibleKeyboardShortcut:30098,LegacyIAccessibleSelection:30099,LegacyIAccessibleDefaultAction:30100,AriaRole:30101,AriaProperties:30102,IsDataValidForForm:30103,ControllerFor:30104,DescribedBy:30105,FlowsTo:30106,ProviderDescription:30107,IsItemContainerPatternAvailable:30108,IsVirtualizedItemPatternAvailable:30109,IsSynchronizedInputPatternAvailable:30110}
@@ -1725,3 +1827,64 @@ _error(a,b){
 		msgbox, % b " : " (err.haskey(a)?err[a]:a)
 	return a
 }
+;;;;;;;;;;;;;;;;;
+;;UIA_Constants;;
+;;;;;;;;;;;;;;;;;
+;/*
+UIA_Constant(t){
+	static _:={0:0
+; enum TreeScope Contains values that specify the scope of various operations in the Microsoft UI Automation tree.
+	,TreeScope_Element:0x1
+	,TreeScope_Children:0x2
+	,TreeScope_Descendants:0x4
+	,TreeScope_Parent:0x8
+	,TreeScope_Ancestors:0x10
+	,TreeScope_Subtree:0x7
+; enum PropertyConditionFlags Contains values used in creating property conditions.
+	,PropertyConditionFlags_None:0
+	,PropertyConditionFlags_IgnoreCase:1
+; enum AutomationElementMode Contains values that specify the type of reference to use when returning UI Automation elements.
+	,AutomationElementMode_None:0
+	,AutomationElementMode_Full:1
+;; pattern
+; enum WindowInteractionState Contains values that specify the current state of the window for purposes of user interaction.
+	,WindowInteractionState_Running:0
+	,WindowInteractionState_Closing:1
+	,WindowInteractionState_ReadyForUserInteraction:2
+	,WindowInteractionState_BlockedByModalWindow:3
+	,WindowInteractionState_NotResponding:4
+; enum WindowVisualState Contains values that specify the visual state of a window.
+	,WindowVisualState_Normal:0
+	,WindowVisualState_Maximized:1
+	,WindowVisualState_Minimized:2
+; enum TextPatternRangeEndpoint Contains values that specify the endpoints of a text range.
+	,TextPatternRangeEndpoint_Start:0
+	,TextPatternRangeEndpoint_End:1
+; enum textUnit
+	,TextUnit_Character:0
+	,TextUnit_Format:1
+	,TextUnit_Word:2
+	,TextUnit_Line:3
+	,TextUnit_Paragraph:4
+	,TextUnit_Page:5
+	,TextUnit_Document:6
+; enum 
+	, ; 
+	, ; 
+; enum 
+	, ; 
+	, ; 
+; enum 
+	, ; 
+	, ; 
+; enum 
+	, ; 
+	, ; 
+; enum 
+	, ; 
+	, ; 
+
+	}
+	return _[t]
+}
+;*/
