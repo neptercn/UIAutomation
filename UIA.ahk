@@ -159,12 +159,12 @@ class IUIAutomation ;extends IUnknown
 	}
 	; Creates a condition that selects elements that have a property with the specified value.
 	CreatePropertyCondition(propertyId,value){
-		_Error(DllCall(vt(this.__,23),"ptr",this.__,"int",propertyId,"ptr",UIA_Property(ptr,propertyId,value),"ptr*",newCondition),"CreatePropertyCondition")
+		_Error(DllCall(vt(this.__,23),"ptr",this.__,"int",propertyId,"ptr",variant(ptr,UIA_PropertyType(propertyId),value),"ptr*",newCondition),"CreatePropertyCondition")
 		return newCondition
 	}
 	; Creates a condition that selects elements that have a property with the specified value, using optional flags.
 	CreatePropertyConditionEx(propertyId,value,flags){
-		_Error(DllCall(vt(this.__,24),"ptr",this.__,"int",propertyId,"ptr",UIA_Property(ptr,propertyId,value),"int",flags,"ptr*",newCondition),"CreatePropertyConditionEx")
+		_Error(DllCall(vt(this.__,24),"ptr",this.__,"int",propertyId,"ptr",variant(ptr,UIA_PropertyType(propertyId),value),"int",flags,"ptr*",newCondition),"CreatePropertyConditionEx")
 		return newCondition
 	}
 	
@@ -1431,247 +1431,290 @@ class IUIAutomationPattern{
 	return compValue
   }
 	; Normalizes the text range by the specified text unit. The range is expanded if it is smaller than the specified unit, or shortened if it is longer than the specified unit.
+	; Client applications such as screen readers use this method to retrieve the full word, sentence, or paragraph that exists at the insertion point or caret position.
+	; Despite its name, the ExpandToEnclosingUnit method does not necessarily expand a text range. Instead, it "normalizes" a text range by moving the endpoints so that the range encompasses the specified text unit. The range is expanded if it is smaller than the specified unit, or shortened if it is longer than the specified unit. If the range is already an exact quantity of the specified units, it remains unchanged. The following diagram shows how ExpandToEnclosingUnit normalizes a text range by moving the endpoints of the range. 
+	; ExpandToEnclosingUnit defaults to the next largest text unit supported if the specified text unit is not supported by the control. The order, from smallest unit to largest, is as follows: Character Format Word Line Paragraph Page Document
+	; ExpandToEnclosingUnit respects both visible and hidden text. 
   TextRange_ExpandToEnclosingUnit(textUnit){
 	return _Error(DllCall(vt(this._p,6),"ptr",this._p,"int",textUnit),"ExpandToEnclosingUnit") ; textUnit
   }
-	; 
+	; Retrieves a text range subset that has the specified text attribute value.
+	; The FindAttribute method retrieves matching text regardless of whether the text is hidden or visible. Use UIA_IsHiddenAttributeId to check text visibility.
   TextRange_FindAttribute(attr,val,backward){
-	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int",attr,"ptr",val,"int",backward,"ptr*",found),"FindAttribute")
+	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int",attr,"ptr",UIA_Attribute_Variant(v,attr,val),"int",backward,"ptr*",found),"FindAttribute")
 	return found
   }
-	; 
+	; Retrieves a text range subset that contains the specified text. There is no differentiation between hidden and visible text. 
   TextRange_FindText(text,backward,ignoreCase){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"str",text,"int",backward,"int",ignoreCase,"ptr*",found),"FindText")
 	return StrGet(found,"utf-16")
   }
-	; 
+	; Retrieves the value of the specified text attribute across the entire text range.
+	; The type of value retrieved by this method depends on the attr parameter. For example, calling GetAttributeValue with the attr parameter set to UIA_FontNameAttributeId returns a string that represents the font name of the text range, while calling GetAttributeValue with attr set to UIA_IsItalicAttributeId would return a boolean. 
+	; If the attribute specified by attr is not supported, the value parameter receives a value that is equivalent to the IUIAutomation::ReservedNotSupportedValue property. 
+	; A text range can include more than one value for a particular attribute. For example, if a text range includes more than one font, the FontName attribute will have multiple values. An attribute with more than one value is called a mixed attribute. You can determine if a particular attribute is a mixed attribute by comparing the value retrieved from GetAttributeValue with the UIAutomation::ReservedMixedAttributeValue property.
+	; The GetAttributeValue method retrieves the attribute value regardless of whether the text is hidden or visible. Use UIA_ IsHiddenAttributeId to check text visibility.
   TextRange_GetAttributeValue(attr,value){
-	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int",attr,"ptr",variant(value)),"GetAttributeValue")
-	return NumGet(value,8,"int")
+	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int",attr,"ptr",variant(value)),"GetAttributeValue") ; Text Attribute
+	return UIA_GetAttributeValue(value,attr)
   }
-	; 
+	; Retrieves a collection of bounding rectangles for each fully or partially visible line of text in a text range.
   TextRange_GetBoundingRectangles(){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"ptr*",boundingRects),"GetBoundingRectangles")
 	return SAFEARRAY(boundingRects,5)
   }
-	; 
+	; Returns the innermost UI Automation element that encloses the text range.
   TextRange_GetEnclosingElement(){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"ptr*",enclosingElement),"GetEnclosingElement")
 	return 
   }
-	; 
+	; Returns the plain text of the text range.
   TextRange_GetText(maxLength){
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"int",maxLength,"ptr*",text),"GetText")
 	return StrGet(text,"utf-16")
   }
-	; 
+	; Moves the text range forward or backward by the specified number of text units .
+	; IUIAutomationTextRange::Move moves the text range to span a different part of the text; it does not alter the text in any way. 
+	; more info
+	; http://msdn.microsoft.com/en-us/library/ee671450%28v=vs.85%29.aspx
   TextRange_Move(unit,count){
-	_Error(DllCall(vt(this._p,13),"ptr",this._p,"int",unit,"int",count,"int*",moved),"Move")
+	_Error(DllCall(vt(this._p,13),"ptr",this._p,"int",unit,"int",count,"int*",moved),"Move") ; TextUnit
 	return moved
   }
-	; 
+	; Moves one endpoint of the text range the specified number of text units within the document range.
   TextRange_MoveEndpointByUnit(endpoint,unit,count){
-	_Error(DllCall(vt(this._p,14),"ptr",this._p,"int",endpoint,"int",unit,"int",count,"int*",moved),"MoveEndpointByUnit")
+	_Error(DllCall(vt(this._p,14),"ptr",this._p,"int",endpoint,"int",unit,"int",count,"int*",moved),"MoveEndpointByUnit") ; TextPatternRangeEndpoint,TextUnit
 	return moved
   }
-	; 
+	; Moves one endpoint of the current text range to the specified endpoint of a second text range.
+	; If the endpoint being moved crosses the other endpoint of the same text range, that other endpoint is moved also, resulting in a degenerate (empty) range and ensuring the correct ordering of the endpoints (that is, the start is always less than or equal to the end).
   TextRange_MoveEndpointByRange(srcEndPoint,range,targetEndPoint){
 	return _Error(DllCall(vt(this._p,15),"ptr",this._p,"int",srcEndPoint,"ptr",range,"int",targetEndPoint),"MoveEndpointByRange")
   }
-	; 
+	; Selects the span of text that corresponds to this text range, and removes any previous selection.
+	; If the Select method is called on a text range object that represents a degenerate (empty) text range, the text insertion point moves to the starting endpoint of the text range.
   TextRange_Select(){
 	return _Error(DllCall(vt(this._p,16),"ptr",this._p),"Select")
   }
-	; 
+	; Adds the text range to the collection of selected text ranges in a control that supports multiple, disjoint spans of selected text.
+	; The text insertion point moves to the newly selected text. If AddToSelection is called on a text range object that represents a degenerate (empty) text range, the text insertion point moves to the starting endpoint of the text range.
   TextRange_AddToSelection(){
 	return _Error(DllCall(vt(this._p,17),"ptr",this._p),"AddToSelection")
   }
-	; 
+	; Removes the text range from an existing collection of selected text in a text container that supports multiple, disjoint selections.
+	; The text insertion point moves to the area of the removed highlight. Providing a degenerate text range also moves the insertion point.
   TextRange_RemoveFromSelection(){
 	return _Error(DllCall(vt(this._p,18),"ptr",this._p),"RemoveFromSelection")
   }
-	; 
+	; Causes the text control to scroll until the text range is visible in the viewport.
+	; The method respects both hidden and visible text. If the text range is hidden, the text control will scroll only if the hidden text has an anchor in the viewport. 
+	; A Microsoft UI Automation client can check text visibility by calling IUIAutomationTextRange::GetAttributeValue with the attr parameter set to UIA_IsHiddenAttributeId. 
   TextRange_ScrollIntoView(alignToTop){
 	return _Error(DllCall(vt(this._p,19),"ptr",this._p,"int",alignToTop),"ScrollIntoView")
   }
-	; 
+	; Retrieves a collection of all embedded objects that fall within the text range.
   TextRange_GetChildren(){
 	_Error(DllCall(vt(this._p,20),"ptr",this._p,"ptr*",children),"GetChildren")
 	return children
   }
 
 ; IUIAutomationTextRangeArray
-	; 
+	; Retrieves the number of text ranges in the collection.
   TextRangeArray_Length(){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"int*",length),"Length")
 	return length
   }
-	; 
+	; Retrieves a text range from the collection.
   TextRangeArray_GetElement(index){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int",index,"ptr*",element),"GetElement")
 	return element
   }
 
 ; IUIAutomationTextPattern
-	; 
+	; Retrieves the degenerate (empty) text range nearest to the specified screen coordinates.
+	/*
+	A text range that wraps a child object is returned if the screen coordinates are within the coordinates of an image, hyperlink, Microsoft Excel spreadsheet, or other embedded object.
+	Because hidden text is not ignored, this method retrieves a degenerate range from the visible text closest to the specified coordinates.
+	The implementation of RangeFromPoint in Windows Internet Explorer 9 does not return the expected result. Instead, clients should:
+		1. Call the GetVisibleRanges method to retrieve an array of visible text ranges.Call the GetVisibleRanges method to retrieve an array of visible text ranges.
+		2. Call the GetVisibleRanges method to retrieve an array of visible text ranges.For each text range in the array, call IUIAutomationTextRange::GetBoundingRectangles to retrieve the bounding rectangles.
+		3. Call the GetVisibleRanges method to retrieve an array of visible text ranges.Check the bounding rectangles to find the text range that occupies the particular screen coordinates.
+	*/
   Text_RangeFromPoint(pt){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"int64",pt,"ptr*",range),"RangeFromPoint")
 	return range
   }
-	; 
+	; Retrieves a text range enclosing a child element such as an image, hyperlink, Microsoft Excel spreadsheet, or other embedded object.
+	; If there is no text in the range that encloses the child element, a degenerate (empty) range is returned.
+	; The child parameter is either a child of the element associated with a IUIAutomationTextPattern or from the array of children of a IUIAutomationTextRange.
   Text_RangeFromChild(child){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr",child,"ptr*",range),"RangeFromChild")
 	return range
   }
-	; 
+	; Retrieves a collection of text ranges that represents the currently selected text in a text-based control. 
+	; If the control supports the selection of multiple, non-contiguous spans of text, the ranges collection receives one text range for each selected span. 
+	; If the control contains only a single span of selected text, the ranges collection receives a single text range. 
+	; If the control contains a text insertion point but no text is selected, the ranges collection receives a degenerate (empty) text range at the position of the text insertion point.
+	; If the control does not contain a text insertion point or does not support text selection, ranges is set to NULL.
+	; Use the IUIAutomationTextPattern::SupportedTextSelection property to test whether a control supports text selection.
   Text_GetSelection(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"ptr*",ranges),"GetSelection")
 	return ranges
   }
-	; 
+	; Retrieves an array of disjoint text ranges from a text-based control where each text range represents a contiguous span of visible text.
+	; If the visible text consists of one contiguous span of text, the ranges array will contain a single text range that represents all of the visible text. 
+	; If the visible text consists of multiple, disjoint spans of text, the ranges array will contain one text range for each visible span, beginning with the first visible span, and ending with the last visible span. Disjoint spans of visible text can occur when the content of a text-based control is partially obscured by an overlapping window or other object, or when a text-based control with multiple pages or columns has content that is partially scrolled out of view. 
+	; IUIAutomationTextPattern::GetVisibleRanges retrieves a degenerate (empty) text range if no text is visible, if all text is scrolled out of view, or if the text-based control contains no text.
   Text_GetVisibleRanges(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",ranges),"GetVisibleRanges")
 	return ranges
   }
-	; 
+	; Retrieves a text range that encloses the main text of a document.
+	; Some auxiliary text such as headers, footnotes, or annotations might not be included. 
   Text_DocumentRange(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"ptr*",range),"DocumentRange")
 	return range
   }
-	; 
+	; Retrieves a value that specifies the type of text selection that is supported by the control. 
   Text_SupportedTextSelection(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",supportedTextSelection),"SupportedTextSelection")
 	return supportedTextSelection
   }
 
 ; IUIAutomationLegacyIAccessiblePattern
-	; 
+	; Performs a Microsoft Active Accessibility selection.
   LegacyIAccessible_Select(flagsSelect){
-	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",flagsSelect),"Select")
+	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",flagsSelect),"Select") ; SELFLAG
   }
-	; 
+	; Performs the Microsoft Active Accessibility default action for the element.
   LegacyIAccessible_DoDefaultAction(){
 	return _Error(DllCall(vt(this._p,4),"ptr",this._p),"DoDefaultAction")
   }
-	; 
+	; Sets the Microsoft Active Accessibility value property for the element. This method is supported only for some elements (usually edit controls). 
   LegacyIAccessible_SetValue(szValue){
 	return _Error(DllCall(vt(this._p,5),"ptr",this._p,"str",szValue),"SetValue")
   }
-	; 
+	; Retrieves the Microsoft Active Accessibility child identifier for the element. If the element is not a child element, CHILDID_SELF (0) is returned.
   LegacyIAccessible_CurrentChildId(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",pRetVal),"CurrentChildId")
 	return pRetVal
   }
-	; 
+	; Retrieves the Microsoft Active Accessibility name property of the element. The name of an element can be used to find the element in the element tree when the automation ID property is not supported on the element.
   LegacyIAccessible_CurrentName(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"ptr*",pszName),"CurrentName")
 	return StrGet(pszName,"utf-16")
   }
-	; 
+	; Retrieves the Microsoft Active Accessibility value property.
   LegacyIAccessible_CurrentValue(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"ptr*",pszValue),"CurrentValue")
 	return StrGet(pszValue,"utf-16")
   }
-	; 
+	; Retrieves the Microsoft Active Accessibility description of the element.
   LegacyIAccessible_CurrentDescription(){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"ptr*",pszDescription),"CurrentDescription")
 	return StrGet(pszDescription,"utf-16")
   }
-	; 
+	; Retrieves the Microsoft Active Accessibility role identifier of the element.
   LegacyIAccessible_CurrentRole(){
-	_Error(DllCall(vt(this._p,10),"ptr",this._p,"uint*",pdwRole),"CurrentRole")
+	_Error(DllCall(vt(this._p,10),"ptr",this._p,"uint*",pdwRole),"CurrentRole") ; role
 	return pdwRole
   }
-	; 
+	; Retrieves the Microsoft Active Accessibility state identifier for the element.
   LegacyIAccessible_CurrentState(){
-	_Error(DllCall(vt(this._p,11),"ptr",this._p,"uint*",pdwState),"CurrentState")
+	_Error(DllCall(vt(this._p,11),"ptr",this._p,"uint*",pdwState),"CurrentState") ; state id
 	return pdwState
   }
-	; 
+	; Retrieves the Microsoft Active Accessibility help string for the element.
   LegacyIAccessible_CurrentHelp(){
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"ptr*",pszHelp),"CurrentHelp")
 	return StrGet(pszHelp,"utf-16")
   }
-	; 
+	; Retrieves the Microsoft Active Accessibility keyboard shortcut property for the element.
   LegacyIAccessible_CurrentKeyboardShortcut(){
 	_Error(DllCall(vt(this._p,13),"ptr",this._p,"ptr*",pszKeyboardShortcut),"CurrentKeyboardShortcut")
 	return StrGet(pszKeyboardShortcut,"utf-16")
   }
-	; 
+	; Retrieves the Microsoft Active Accessibility property that identifies the selected children of this element.
   LegacyIAccessible_GetCurrentSelection(){
 	_Error(DllCall(vt(this._p,14),"ptr",this._p,"ptr*",pvarSelectedChildren),"GetCurrentSelection")
 	return pvarSelectedChildren
   }
-	; 
+	; Retrieves the Microsoft Active Accessibility default action for the element.
   LegacyIAccessible_CurrentDefaultAction(){
 	_Error(DllCall(vt(this._p,15),"ptr",this._p,"ptr*",pszDefaultAction),"CurrentDefaultAction")
 	return StrGet(pszDefaultAction,"utf-16")
   }
-	; 
+	; Retrieves the cached Microsoft Active Accessibility child identifier for the element.
   LegacyIAccessible_CachedChildId(){
 	_Error(DllCall(vt(this._p,16),"ptr",this._p,"int*",pRetVal),"CachedChildId")
 	return pRetVal
   }
-	; 
+	; Retrieves the cached Microsoft Active Accessibility name property of the element.
   LegacyIAccessible_CachedName(){
 	_Error(DllCall(vt(this._p,17),"ptr",this._p,"ptr*",pszName),"CachedName")
 	return StrGet(pszName,"utf-16")
   }
-	; 
+	; Retrieves the cached Microsoft Active Accessibility value property.
   LegacyIAccessible_CachedValue(){
 	_Error(DllCall(vt(this._p,18),"ptr",this._p,"ptr*",pszValue),"CachedValue")
 	return StrGet(pszValue,"utf-16")
   }
-	; 
+	; Retrieves the cached Microsoft Active Accessibility description of the element.
   LegacyIAccessible_CachedDescription(){
 	_Error(DllCall(vt(this._p,19),"ptr",this._p,"ptr*",pszDescription),"CachedDescription")
 	return StrGet(pszDescription,"utf-16")
   }
-	; 
+	; Retrieves the cached Microsoft Active Accessibility role of the element.
   LegacyIAccessible_CachedRole(){
 	_Error(DllCall(vt(this._p,20),"ptr",this._p,"uint*",pdwRole),"CachedRole")
 	return pdwRole
   }
-	; 
+	; Retrieves the cached Microsoft Active Accessibility state identifier for the element.
   LegacyIAccessible_CachedState(){
 	_Error(DllCall(vt(this._p,21),"ptr",this._p,"uint*",pdwState),"CachedState")
 	return pdwState
   }
-	; 
+	; Retrieves the cached Microsoft Active Accessibility help string for the element.
   LegacyIAccessible_CachedHelp(){
 	_Error(DllCall(vt(this._p,22),"ptr",this._p,"ptr*",pszHelp),"CachedHelp")
 	return StrGet(pszHelp,"utf-16")
   }
-	; 
+	; Retrieves the cached Microsoft Active Accessibility keyboard shortcut property for the element.
   LegacyIAccessible_CachedKeyboardShortcut(){
 	_Error(DllCall(vt(this._p,23),"ptr",this._p,"ptr*",pszKeyboardShortcut),"CachedKeyboardShortcut")
 	return StrGet(pszKeyboardShortcut,"utf-16")
   }
-	; 
+	; Retrieves the cached Microsoft Active Accessibility property that identifies the selected children of this element.
   LegacyIAccessible_GetCachedSelection(){
 	_Error(DllCall(vt(this._p,24),"ptr",this._p,"ptr*",pvarSelectedChildren),"GetCachedSelection")
 	return pvarSelectedChildren
   }
-	; 
+	; Retrieves the Microsoft Active Accessibility default action for the element.
   LegacyIAccessible_CachedDefaultAction(){
 	_Error(DllCall(vt(this._p,25),"ptr",this._p,"ptr*",pszDefaultAction),"CachedDefaultAction")
 	return StrGet(pszDefaultAction,"utf-16")
   }
-	; 
+	; Retrieves an IAccessible object that corresponds to the Microsoft UI Automation element.
+	; This method returns NULL if the underlying implementation of the UI Automation element is not a native Microsoft Active Accessibility server; that is, if a client attempts to retrieve the IAccessible interface for an element originally supported by a proxy object from OLEACC.dll, or by the UIA-to-MSAA Bridge.
   LegacyIAccessible_GetIAccessible(){
 	_Error(DllCall(vt(this._p,26),"ptr",this._p,"ptr*",ppAccessible),"GetIAccessible")
 	return ppAccessible
   }
 
 ; IUIAutomationItemContainerPattern
-	; 
+	; Retrieves an element within a containing element, based on a specified property value.
+	; The provider may return an actual IUIAutomationElement interface or a placeholder if the matching element is virtualized. 
+	; This method returns E_INVALIDARG if the property requested is not one that the container supports searching over. It is expected that most containers will support Name property, and if appropriate for the container, AutomationId and IsSelected. 
+	; This method can be slow, because it may need to traverse multiple objects to find a matching one. When used in a loop to return multiple items, no specific order is defined so long as each item is returned only once (that is, the loop should terminate). This method is also item-centric, not UI-centric, so items with multiple UI representations need to be hit only once. 
+	; When the propertyId parameter is specified as 0 (zero), the provider is expected to return the next item after pStartAfter. If pStartAfter is specified as NULL with a propertyId of 0, the provider should return the first item in the container. When propertyId is specified as 0, the value parameter should be VT_EMPTY. 
   ItemContainer_FindItemByProperty(pStartAfter,propertyId,value){
-	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr",pStartAfter,"int",propertyId,"ptr",value,"ptr*",pFound),"FindItemByProperty")
+	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr",pStartAfter,"int",propertyId,"ptr",variant(_,UIA_PropertyType(propertyId),value),"ptr*",pFound),"FindItemByProperty")
 	return pFound
   }
 
 ; IUIAutomationVirtualizedItemPattern
-	; 
+	; Creates a full UI Automation element for a virtualized item.
+	; A virtualized item is represented by a placeholder automation element in the UI Automation tree. The Realize method causes the provider to make full information available for the item so that a full UI Automation element can be created for the item. 
   VirtualizedItem_Realize(){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Realize")
   }
@@ -1716,6 +1759,10 @@ UIA_Property(n){
 		return type[n]
 	else return id[n]
 }
+; Property Type
+UIA_PropertyType(id){ ; not completed
+	
+}
 ; Pattern
 UIA_Pattern(n){
 	static id:={Invoke:10000,Selection:10001,Value:10002,RangeValue:10003,Scroll:10004,ExpandCollapse:10005,Grid:10006,GridItem:10007,MultipleView:10008,Window:10009,SelectionItem:10010,Dock:10011,Table:10012,TableItem:10013,Text:10014,Toggle:10015,Transform:10016,ScrollItem:10017,LegacyIAccessible:10018,ItemContainer:10019,VirtualizedItem:10020,SynchronizedInput:10021}
@@ -1731,6 +1778,16 @@ UIA_Attribute(n){
 	if n is integer
 		return type[n]
 	else return id[n]
+}
+; value of the attribute in Variant
+UIA_Attribute_Variant(v,attr,val){ ; not completed
+	static type:={}
+	; ....
+	return &v
+}
+UIA_GetAttributeValue(ByRef val,attr){ ; not completed
+	
+	
 }
 ; ControlType
 UIA_ControlType(n){
@@ -1828,7 +1885,7 @@ _error(a,b){
 	return a
 }
 ;;;;;;;;;;;;;;;;;
-;;UIA_Constants;;
+;;UIA_Constants;;not completed
 ;;;;;;;;;;;;;;;;;
 ;/*
 UIA_Constant(t){
@@ -1868,23 +1925,14 @@ UIA_Constant(t){
 	,TextUnit_Paragraph:4
 	,TextUnit_Page:5
 	,TextUnit_Document:6
+; enum SupportedTextSelection Contains values that specify the supported text selection attribute.
+	,SupportedTextSelection_Multiple:2
+	,SupportedTextSelection_None:0
+	,SupportedTextSelection_Single:1}
 ; enum 
-	, ; 
-	, ; 
-; enum 
-	, ; 
-	, ; 
-; enum 
-	, ; 
-	, ; 
-; enum 
-	, ; 
-	, ; 
-; enum 
-	, ; 
-	, ; 
-
-	}
+; enum SELFLAG http://msdn.microsoft.com/en-us/library/dd373634%28v=vs.85%29.aspx
+; enum Roles http://msdn.microsoft.com/en-us/library/dd373608%28v=vs.85%29.aspx
+; enum State http://msdn.microsoft.com/en-us/library/dd373609%28v=vs.85%29.aspx
 	return _[t]
 }
 ;*/
