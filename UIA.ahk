@@ -726,10 +726,9 @@ class IUIAutomationTreeWalker
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;;IUIAutomationPattern;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
-class IUIAutomationPattern
-{
+class IUIAutomationPattern{
 	__new(){
-		this._p:=0,this._i:=0,this._t:={}
+		this._p:=0,this._i:="",this._t:={Invoke:"Invoke_",Dock:"Dock_",ExpandCollapse:"ExpandCollapse_",Grid:"Grid_",GridItem:"GridItem_",MultipleView:"MultipleView_",RangeValue:"RangeValue_",Scroll:"Scroll_",ScrollItem:"ScrollItem_",Selection:"Selection_",SelectionItem:"SelectionItem_",SynchronizedInput:"SynchronizedInput_",Table:"Table_",TableItem:"TableItem_",Toggle:"Toggle_",Transform:"Transform_",Value:"Value_",Window:"Window_",TextRange:"TextRange_",TextRangeArray:"TextRangeArray_",Text:"Text_",LegacyIAccessible:"LegacyIAccessible_",ItemContainer:"ItemContainer_",VirtualizedItem:"VirtualizedItem_"}
 	}
 	__get(aName){
 		if !instr(aName,"_")
@@ -738,11 +737,866 @@ class IUIAutomationPattern
 	}
 	__call(aName,aParam*){
 		if (aName=""){
+			loop % aParam.maxindex(){
+				v:=aParam[A_Index]
+				if v is Integer
+					this._p:=v
+				else this._i:=this._t[v]
+			}
 			return this
 		}else if !instr(aName,"_")
 			return this[this._i aName](aParam*)
+		else return this[aName](aParam*)
 	}
 
+; IUIAutomationInvokePattern
+
+  Invoke_Invoke(){
+	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Invoke")
+  }
+
+; IUIAutomationDockPattern
+
+  Dock_SetDockPosition(dockPos){
+	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",dockPos),"SetDockPosition")
+  }
+
+  Dock_CurrentDockPosition(){
+	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int*",retVal),"CurrentDockPosition")
+	return retVal
+  }
+
+  Dock_CachedDockPosition(){
+	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CachedDockPosition")
+	return retVal
+  }
+
+; IUIAutomationExpandCollapsePattern
+
+  ExpandCollapse_Expand(){
+	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Expand")
+  }
+
+  ExpandCollapse_Collapse(){
+	return _Error(DllCall(vt(this._p,4),"ptr",this._p),"Collapse")
+  }
+
+  ExpandCollapse_CurrentExpandCollapseState(){
+	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentExpandCollapseState")
+	return retVal
+  }
+
+  ExpandCollapse_CachedExpandCollapseState(){
+	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CachedExpandCollapseState")
+	return retVal
+  }
+
+; IUIAutomationGridPattern
+
+  Grid_GetItem(row,column){
+	_Error(DllCall(vt(this._p,3),"ptr",this._p,"int",row,"int",column,"ptr*",element),"GetItem")
+	return element
+  }
+
+  Grid_CurrentRowCount(){
+	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int*",retVal),"CurrentRowCount")
+	return retVal
+  }
+
+  Grid_CurrentColumnCount(){
+	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentColumnCount")
+	return retVal
+  }
+
+  Grid_CachedRowCount(){
+	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CachedRowCount")
+	return retVal
+  }
+
+  Grid_CachedColumnCount(){
+	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CachedColumnCount")
+	return retVal
+  }
+
+; IUIAutomationGridItemPattern
+
+  GridItem_CurrentContainingGrid(){
+	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",retVal),"CurrentContainingGrid")
+	return retVal
+  }
+
+  GridItem_CurrentRow(){
+	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int*",retVal),"CurrentRow")
+	return retVal
+  }
+
+  GridItem_CurrentColumn(){
+	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentColumn")
+	return retVal
+  }
+
+  GridItem_CurrentRowSpan(){
+	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CurrentRowSpan")
+	return retVal
+  }
+
+  GridItem_CurrentColumnSpan(){
+	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CurrentColumnSpan")
+	return retVal
+  }
+
+  GridItem_CachedContainingGrid(){
+	_Error(DllCall(vt(this._p,8),"ptr",this._p,"ptr*",retVal),"CachedContainingGrid")
+	return retVal
+  }
+
+  GridItem_CachedRow(){
+	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int*",retVal),"CachedRow")
+	return retVal
+  }
+
+  GridItem_CachedColumn(){
+	_Error(DllCall(vt(this._p,10),"ptr",this._p,"int*",retVal),"CachedColumn")
+	return retVal
+  }
+
+  GridItem_CachedRowSpan(){
+	_Error(DllCall(vt(this._p,11),"ptr",this._p,"int*",retVal),"CachedRowSpan")
+	return retVal
+  }
+
+  GridItem_CachedColumnSpan(){
+	_Error(DllCall(vt(this._p,12),"ptr",this._p,"int*",retVal),"CachedColumnSpan")
+	return retVal
+  }
+
+; IUIAutomationMultipleViewPattern
+
+  MultipleView_GetViewName(view){
+	_Error(DllCall(vt(this._p,3),"ptr",this._p,"int",view,"ptr*",name),"GetViewName")
+	return StrGet(name,"utf-16")
+  }
+
+  MultipleView_SetCurrentView(view){
+	return _Error(DllCall(vt(this._p,4),"ptr",this._p,"int",view),"SetCurrentView")
+  }
+
+  MultipleView_CurrentCurrentView(){
+	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentCurrentView")
+	return retVal
+  }
+
+  MultipleView_GetCurrentSupportedViews(){
+	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",retVal),"GetCurrentSupportedViews")
+	return SAFEARRAY(retVal,3)
+  }
+
+  MultipleView_CachedCurrentView(){
+	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CachedCurrentView")
+	return retVal
+  }
+
+  MultipleView_GetCachedSupportedViews(){
+	_Error(DllCall(vt(this._p,8),"ptr",this._p,"ptr*",retVal),"GetCachedSupportedViews")
+	return SAFEARRAY(retVal,3)
+  }
+
+; IUIAutomationRangeValuePattern
+
+  RangeValue_SetValue(val){
+	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"double",val),"SetValue")
+  }
+
+  RangeValue_CurrentValue(){
+	_Error(DllCall(vt(this._p,4),"ptr",this._p,"double*",retVal),"CurrentValue")
+	return retVal
+  }
+
+  RangeValue_CurrentIsReadOnly(){
+	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentIsReadOnly")
+	return retVal
+  }
+
+  RangeValue_CurrentMaximum(){
+	_Error(DllCall(vt(this._p,6),"ptr",this._p,"double*",retVal),"CurrentMaximum")
+	return retVal
+  }
+
+  RangeValue_CurrentMinimum(){
+	_Error(DllCall(vt(this._p,7),"ptr",this._p,"double*",retVal),"CurrentMinimum")
+	return retVal
+  }
+
+  RangeValue_CurrentLargeChange(){
+	_Error(DllCall(vt(this._p,8),"ptr",this._p,"double*",retVal),"CurrentLargeChange")
+	return retVal
+  }
+
+  RangeValue_CurrentSmallChange(){
+	_Error(DllCall(vt(this._p,9),"ptr",this._p,"double*",retVal),"CurrentSmallChange")
+	return retVal
+  }
+
+  RangeValue_CachedValue(){
+	_Error(DllCall(vt(this._p,10),"ptr",this._p,"double*",retVal),"CachedValue")
+	return retVal
+  }
+
+  RangeValue_CachedIsReadOnly(){
+	_Error(DllCall(vt(this._p,11),"ptr",this._p,"int*",retVal),"CachedIsReadOnly")
+	return retVal
+  }
+
+  RangeValue_CachedMaximum(){
+	_Error(DllCall(vt(this._p,12),"ptr",this._p,"double*",retVal),"CachedMaximum")
+	return retVal
+  }
+
+  RangeValue_CachedMinimum(){
+	_Error(DllCall(vt(this._p,13),"ptr",this._p,"double*",retVal),"CachedMinimum")
+	return retVal
+  }
+
+  RangeValue_CachedLargeChange(){
+	_Error(DllCall(vt(this._p,14),"ptr",this._p,"double*",retVal),"CachedLargeChange")
+	return retVal
+  }
+
+  RangeValue_CachedSmallChange(){
+	_Error(DllCall(vt(this._p,15),"ptr",this._p,"double*",retVal),"CachedSmallChange")
+	return retVal
+  }
+
+; IUIAutomationScrollPattern
+
+  Scroll_Scroll(horizontalAmount,verticalAmount){
+	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",horizontalAmount,"int",verticalAmount),"Scroll")
+  }
+
+  Scroll_SetScrollPercent(horizontalPercent,verticalPercent){
+	return _Error(DllCall(vt(this._p,4),"ptr",this._p,"double",horizontalPercent,"double",verticalPercent),"SetScrollPercent")
+  }
+
+  Scroll_CurrentHorizontalScrollPercent(){
+	_Error(DllCall(vt(this._p,5),"ptr",this._p,"double*",retVal),"CurrentHorizontalScrollPercent")
+	return retVal
+  }
+
+  Scroll_CurrentVerticalScrollPercent(){
+	_Error(DllCall(vt(this._p,6),"ptr",this._p,"double*",retVal),"CurrentVerticalScrollPercent")
+	return retVal
+  }
+
+  Scroll_CurrentHorizontalViewSize(){
+	_Error(DllCall(vt(this._p,7),"ptr",this._p,"double*",retVal),"CurrentHorizontalViewSize")
+	return retVal
+  }
+
+  Scroll_CurrentVerticalViewSize(){
+	_Error(DllCall(vt(this._p,8),"ptr",this._p,"double*",retVal),"CurrentVerticalViewSize")
+	return retVal
+  }
+
+  Scroll_CurrentHorizontallyScrollable(){
+	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int*",retVal),"CurrentHorizontallyScrollable")
+	return retVal
+  }
+
+  Scroll_CurrentVerticallyScrollable(){
+	_Error(DllCall(vt(this._p,10),"ptr",this._p,"int*",retVal),"CurrentVerticallyScrollable")
+	return retVal
+  }
+
+  Scroll_CachedHorizontalScrollPercent(){
+	_Error(DllCall(vt(this._p,11),"ptr",this._p,"double*",retVal),"CachedHorizontalScrollPercent")
+	return retVal
+  }
+
+  Scroll_CachedVerticalScrollPercent(){
+	_Error(DllCall(vt(this._p,12),"ptr",this._p,"double*",retVal),"CachedVerticalScrollPercent")
+	return retVal
+  }
+
+  Scroll_CachedHorizontalViewSize(){
+	_Error(DllCall(vt(this._p,13),"ptr",this._p,"double*",retVal),"CachedHorizontalViewSize")
+	return retVal
+  }
+
+  Scroll_CachedVerticalViewSize(){
+	_Error(DllCall(vt(this._p,14),"ptr",this._p,"double*",retVal),"CachedVerticalViewSize")
+	return retVal
+  }
+
+  Scroll_CachedHorizontallyScrollable(){
+	_Error(DllCall(vt(this._p,15),"ptr",this._p,"int*",retVal),"CachedHorizontallyScrollable")
+	return retVal
+  }
+
+  Scroll_CachedVerticallyScrollable(){
+	_Error(DllCall(vt(this._p,16),"ptr",this._p,"int*",retVal),"CachedVerticallyScrollable")
+	return retVal
+  }
+
+; IUIAutomationScrollItemPattern
+
+  ScrollItem_ScrollIntoView(){
+	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"ScrollIntoView")
+  }
+
+; IUIAutomationSelectionPattern
+
+  Selection_GetCurrentSelection(){
+	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",retVal),"GetCurrentSelection")
+	return retVal
+  }
+
+  Selection_CurrentCanSelectMultiple(){
+	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int*",retVal),"CurrentCanSelectMultiple")
+	return retVal
+  }
+
+  Selection_CurrentIsSelectionRequired(){
+	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentIsSelectionRequired")
+	return retVal
+  }
+
+  Selection_GetCachedSelection(){
+	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",retVal),"GetCachedSelection")
+	return retVal
+  }
+
+  Selection_CachedCanSelectMultiple(){
+	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CachedCanSelectMultiple")
+	return retVal
+  }
+
+  Selection_CachedIsSelectionRequired(){
+	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",retVal),"CachedIsSelectionRequired")
+	return retVal
+  }
+
+; IUIAutomationSelectionItemPattern
+
+  SelectionItem_Select(){
+	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Select")
+  }
+
+  SelectionItem_AddToSelection(){
+	return _Error(DllCall(vt(this._p,4),"ptr",this._p),"AddToSelection")
+  }
+
+  SelectionItem_RemoveFromSelection(){
+	return _Error(DllCall(vt(this._p,5),"ptr",this._p),"RemoveFromSelection")
+  }
+
+  SelectionItem_CurrentIsSelected(){
+	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CurrentIsSelected")
+	return retVal
+  }
+
+  SelectionItem_CurrentSelectionContainer(){
+	_Error(DllCall(vt(this._p,7),"ptr",this._p,"ptr*",retVal),"CurrentSelectionContainer")
+	return retVal
+  }
+
+  SelectionItem_CachedIsSelected(){
+	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",retVal),"CachedIsSelected")
+	return retVal
+  }
+
+  SelectionItem_CachedSelectionContainer(){
+	_Error(DllCall(vt(this._p,9),"ptr",this._p,"ptr*",retVal),"CachedSelectionContainer")
+	return retVal
+  }
+
+; IUIAutomationSynchronizedInputPattern
+
+  SynchronizedInput_StartListening(inputType){
+	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",inputType),"StartListening")
+  }
+
+  SynchronizedInput_Cancel(){
+	return _Error(DllCall(vt(this._p,4),"ptr",this._p),"Cancel")
+  }
+
+; IUIAutomationTablePattern
+
+  Table_GetCurrentRowHeaders(){
+	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",retVal),"GetCurrentRowHeaders")
+	return retVal
+  }
+
+  Table_GetCurrentColumnHeaders(){
+	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr*",retVal),"GetCurrentColumnHeaders")
+	return retVal
+  }
+
+  Table_CurrentRowOrColumnMajor(){
+	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentRowOrColumnMajor")
+	return retVal
+  }
+
+  Table_GetCachedRowHeaders(){
+	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",retVal),"GetCachedRowHeaders")
+	return retVal
+  }
+
+  Table_GetCachedColumnHeaders(){
+	_Error(DllCall(vt(this._p,7),"ptr",this._p,"ptr*",retVal),"GetCachedColumnHeaders")
+	return retVal
+  }
+
+  Table_CachedRowOrColumnMajor(){
+	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",retVal),"CachedRowOrColumnMajor")
+	return retVal
+  }
+
+; IUIAutomationTableItemPattern
+
+  TableItem_GetCurrentRowHeaderItems(){
+	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",retVal),"GetCurrentRowHeaderItems")
+	return retVal
+  }
+
+  TableItem_GetCurrentColumnHeaderItems(){
+	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr*",retVal),"GetCurrentColumnHeaderItems")
+	return retVal
+  }
+
+  TableItem_GetCachedRowHeaderItems(){
+	_Error(DllCall(vt(this._p,5),"ptr",this._p,"ptr*",retVal),"GetCachedRowHeaderItems")
+	return retVal
+  }
+
+  TableItem_GetCachedColumnHeaderItems(){
+	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",retVal),"GetCachedColumnHeaderItems")
+	return retVal
+  }
+
+; IUIAutomationTogglePattern
+
+  Toggle_Toggle(){
+	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Toggle")
+  }
+
+  Toggle_CurrentToggleState(){
+	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int*",retVal),"CurrentToggleState")
+	return retVal
+  }
+
+  Toggle_CachedToggleState(){
+	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CachedToggleState")
+	return retVal
+  }
+
+; IUIAutomationTransformPattern
+
+  Transform_Move(x,y){
+	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"double",x,"double",y),"Move")
+  }
+
+  Transform_Resize(width,height){
+	return _Error(DllCall(vt(this._p,4),"ptr",this._p,"double",width,"double",height),"Resize")
+  }
+
+  Transform_Rotate(degrees){
+	return _Error(DllCall(vt(this._p,5),"ptr",this._p,"double",degrees),"Rotate")
+  }
+
+  Transform_CurrentCanMove(){
+	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CurrentCanMove")
+	return retVal
+  }
+
+  Transform_CurrentCanResize(){
+	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CurrentCanResize")
+	return retVal
+  }
+
+  Transform_CurrentCanRotate(){
+	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",retVal),"CurrentCanRotate")
+	return retVal
+  }
+
+  Transform_CachedCanMove(){
+	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int*",retVal),"CachedCanMove")
+	return retVal
+  }
+
+  Transform_CachedCanResize(){
+	_Error(DllCall(vt(this._p,10),"ptr",this._p,"int*",retVal),"CachedCanResize")
+	return retVal
+  }
+
+  Transform_CachedCanRotate(){
+	_Error(DllCall(vt(this._p,11),"ptr",this._p,"int*",retVal),"CachedCanRotate")
+	return retVal
+  }
+
+; IUIAutomationValuePattern
+
+  Value_SetValue(val){
+	_Error(DllCall(vt(this._p,3),"ptr",this._p,"str",val),"SetValue")
+	return 
+  }
+
+  Value_CurrentValue(){
+	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr*",retVal),"CurrentValue")
+	return StrGet(retVal,"utf-16")
+  }
+
+  Value_CurrentIsReadOnly(){
+	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentIsReadOnly")
+	return retVal
+  }
+
+  Value_CachedValue(){
+	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",retVal),"CachedValue")
+	return StrGet(retVal,"utf-16")
+  }
+
+  Value_CachedIsReadOnly(){
+	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CachedIsReadOnly")
+	return retVal
+  }
+
+; IUIAutomationWindowPattern
+
+  Window_Close(){
+	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Close")
+  }
+
+  Window_WaitForInputIdle(milliseconds){
+	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int",milliseconds,"int*",success),"WaitForInputIdle")
+	return success
+  }
+
+  Window_SetWindowVisualState(state){
+	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int",state),"SetWindowVisualState")
+	return 
+  }
+
+  Window_CurrentCanMaximize(){
+	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CurrentCanMaximize")
+	return retVal
+  }
+
+  Window_CurrentCanMinimize(){
+	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CurrentCanMinimize")
+	return retVal
+  }
+
+  Window_CurrentIsModal(){
+	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",retVal),"CurrentIsModal")
+	return retVal
+  }
+
+  Window_CurrentIsTopmost(){
+	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int*",retVal),"CurrentIsTopmost")
+	return retVal
+  }
+
+  Window_CurrentWindowVisualState(){
+	_Error(DllCall(vt(this._p,10),"ptr",this._p,"int*",retVal),"CurrentWindowVisualState")
+	return retVal
+  }
+
+  Window_CurrentWindowInteractionState(){
+	_Error(DllCall(vt(this._p,11),"ptr",this._p,"int*",retVal),"CurrentWindowInteractionState")
+	return retVal
+  }
+
+  Window_CachedCanMaximize(){
+	_Error(DllCall(vt(this._p,12),"ptr",this._p,"int*",retVal),"CachedCanMaximize")
+	return retVal
+  }
+
+  Window_CachedCanMinimize(){
+	_Error(DllCall(vt(this._p,13),"ptr",this._p,"int*",retVal),"CachedCanMinimize")
+	return retVal
+  }
+
+  Window_CachedIsModal(){
+	_Error(DllCall(vt(this._p,14),"ptr",this._p,"int*",retVal),"CachedIsModal")
+	return retVal
+  }
+
+  Window_CachedIsTopmost(){
+	_Error(DllCall(vt(this._p,15),"ptr",this._p,"int*",retVal),"CachedIsTopmost")
+	return retVal
+  }
+
+  Window_CachedWindowVisualState(){
+	_Error(DllCall(vt(this._p,16),"ptr",this._p,"int*",retVal),"CachedWindowVisualState")
+	return retVal
+  }
+
+  Window_CachedWindowInteractionState(){
+	_Error(DllCall(vt(this._p,17),"ptr",this._p,"int*",retVal),"CachedWindowInteractionState")
+	return retVal
+  }
+
+; IUIAutomationTextRange
+
+  TextRange_Clone(){
+	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",clonedRange),"Clone")
+	return clonedRange
+  }
+
+  TextRange_Compare(range){
+	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr",range,"int*",areSame),"Compare")
+	return areSame
+  }
+
+  TextRange_CompareEndpoints(srcEndPoint,range,targetEndPoint){
+	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int",srcEndPoint,"ptr",range,"int",targetEndPoint,"int*",compValue),"CompareEndpoints")
+	return compValue
+  }
+
+  TextRange_ExpandToEnclosingUnit(textUnit){
+	return _Error(DllCall(vt(this._p,6),"ptr",this._p,"int",textUnit),"ExpandToEnclosingUnit")
+  }
+
+  TextRange_FindAttribute(attr,val,backward){
+	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int",attr,"ptr",val,"int",backward,"ptr*",found),"FindAttribute")
+	return found
+  }
+
+  TextRange_FindText(text,backward,ignoreCase){
+	_Error(DllCall(vt(this._p,8),"ptr",this._p,"str",text,"int",backward,"int",ignoreCase,"ptr*",found),"FindText")
+	return StrGet(found,"utf-16")
+  }
+
+  TextRange_GetAttributeValue(attr,value){
+	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int",attr,"ptr",variant(value)),"GetAttributeValue")
+	return NumGet(value,8,"int")
+  }
+
+  TextRange_GetBoundingRectangles(){
+	_Error(DllCall(vt(this._p,10),"ptr",this._p,"ptr*",boundingRects),"GetBoundingRectangles")
+	return SAFEARRAY(boundingRects,5)
+  }
+
+  TextRange_GetEnclosingElement(){
+	_Error(DllCall(vt(this._p,11),"ptr",this._p,"ptr*",enclosingElement),"GetEnclosingElement")
+	return 
+  }
+
+  TextRange_GetText(maxLength){
+	_Error(DllCall(vt(this._p,12),"ptr",this._p,"int",maxLength,"ptr*",text),"GetText")
+	return StrGet(text,"utf-16")
+  }
+
+  TextRange_Move(unit,count){
+	_Error(DllCall(vt(this._p,13),"ptr",this._p,"int",unit,"int",count,"int*",moved),"Move")
+	return moved
+  }
+
+  TextRange_MoveEndpointByUnit(endpoint,unit,count){
+	_Error(DllCall(vt(this._p,14),"ptr",this._p,"int",endpoint,"int",unit,"int",count,"int*",moved),"MoveEndpointByUnit")
+	return moved
+  }
+
+  TextRange_MoveEndpointByRange(srcEndPoint,range,targetEndPoint){
+	return _Error(DllCall(vt(this._p,15),"ptr",this._p,"int",srcEndPoint,"ptr",range,"int",targetEndPoint),"MoveEndpointByRange")
+  }
+
+  TextRange_Select(){
+	return _Error(DllCall(vt(this._p,16),"ptr",this._p),"Select")
+  }
+
+  TextRange_AddToSelection(){
+	return _Error(DllCall(vt(this._p,17),"ptr",this._p),"AddToSelection")
+  }
+
+  TextRange_RemoveFromSelection(){
+	return _Error(DllCall(vt(this._p,18),"ptr",this._p),"RemoveFromSelection")
+  }
+
+  TextRange_ScrollIntoView(alignToTop){
+	return _Error(DllCall(vt(this._p,19),"ptr",this._p,"int",alignToTop),"ScrollIntoView")
+  }
+
+  TextRange_GetChildren(){
+	_Error(DllCall(vt(this._p,20),"ptr",this._p,"ptr*",children),"GetChildren")
+	return children
+  }
+
+; IUIAutomationTextRangeArray
+
+  TextRangeArray_Length(){
+	_Error(DllCall(vt(this._p,3),"ptr",this._p,"int*",length),"Length")
+	return length
+  }
+
+  TextRangeArray_GetElement(index){
+	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int",index,"ptr*",element),"GetElement")
+	return element
+  }
+
+; IUIAutomationTextPattern
+
+  Text_RangeFromPoint(pt){
+	_Error(DllCall(vt(this._p,3),"ptr",this._p,"int64",pt,"ptr*",range),"RangeFromPoint")
+	return range
+  }
+
+  Text_RangeFromChild(child){
+	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr",child,"ptr*",range),"RangeFromChild")
+	return range
+  }
+
+  Text_GetSelection(){
+	_Error(DllCall(vt(this._p,5),"ptr",this._p,"ptr*",ranges),"GetSelection")
+	return ranges
+  }
+
+  Text_GetVisibleRanges(){
+	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",ranges),"GetVisibleRanges")
+	return ranges
+  }
+
+  Text_DocumentRange(){
+	_Error(DllCall(vt(this._p,7),"ptr",this._p,"ptr*",range),"DocumentRange")
+	return range
+  }
+
+  Text_SupportedTextSelection(){
+	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",supportedTextSelection),"SupportedTextSelection")
+	return supportedTextSelection
+  }
+
+; IUIAutomationLegacyIAccessiblePattern
+
+  LegacyIAccessible_Select(flagsSelect){
+	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",flagsSelect),"Select")
+  }
+
+  LegacyIAccessible_DoDefaultAction(){
+	return _Error(DllCall(vt(this._p,4),"ptr",this._p),"DoDefaultAction")
+  }
+
+  LegacyIAccessible_SetValue(szValue){
+	return _Error(DllCall(vt(this._p,5),"ptr",this._p,"str",szValue),"SetValue")
+  }
+
+  LegacyIAccessible_CurrentChildId(){
+	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",pRetVal),"CurrentChildId")
+	return pRetVal
+  }
+
+  LegacyIAccessible_CurrentName(){
+	_Error(DllCall(vt(this._p,7),"ptr",this._p,"ptr*",pszName),"CurrentName")
+	return StrGet(pszName,"utf-16")
+  }
+
+  LegacyIAccessible_CurrentValue(){
+	_Error(DllCall(vt(this._p,8),"ptr",this._p,"ptr*",pszValue),"CurrentValue")
+	return StrGet(pszValue,"utf-16")
+  }
+
+  LegacyIAccessible_CurrentDescription(){
+	_Error(DllCall(vt(this._p,9),"ptr",this._p,"ptr*",pszDescription),"CurrentDescription")
+	return StrGet(pszDescription,"utf-16")
+  }
+
+  LegacyIAccessible_CurrentRole(){
+	_Error(DllCall(vt(this._p,10),"ptr",this._p,"uint*",pdwRole),"CurrentRole")
+	return pdwRole
+  }
+
+  LegacyIAccessible_CurrentState(){
+	_Error(DllCall(vt(this._p,11),"ptr",this._p,"uint*",pdwState),"CurrentState")
+	return pdwState
+  }
+
+  LegacyIAccessible_CurrentHelp(){
+	_Error(DllCall(vt(this._p,12),"ptr",this._p,"ptr*",pszHelp),"CurrentHelp")
+	return StrGet(pszHelp,"utf-16")
+  }
+
+  LegacyIAccessible_CurrentKeyboardShortcut(){
+	_Error(DllCall(vt(this._p,13),"ptr",this._p,"ptr*",pszKeyboardShortcut),"CurrentKeyboardShortcut")
+	return StrGet(pszKeyboardShortcut,"utf-16")
+  }
+
+  LegacyIAccessible_GetCurrentSelection(){
+	_Error(DllCall(vt(this._p,14),"ptr",this._p,"ptr*",pvarSelectedChildren),"GetCurrentSelection")
+	return pvarSelectedChildren
+  }
+
+  LegacyIAccessible_CurrentDefaultAction(){
+	_Error(DllCall(vt(this._p,15),"ptr",this._p,"ptr*",pszDefaultAction),"CurrentDefaultAction")
+	return StrGet(pszDefaultAction,"utf-16")
+  }
+
+  LegacyIAccessible_CachedChildId(){
+	_Error(DllCall(vt(this._p,16),"ptr",this._p,"int*",pRetVal),"CachedChildId")
+	return pRetVal
+  }
+
+  LegacyIAccessible_CachedName(){
+	_Error(DllCall(vt(this._p,17),"ptr",this._p,"ptr*",pszName),"CachedName")
+	return StrGet(pszName,"utf-16")
+  }
+
+  LegacyIAccessible_CachedValue(){
+	_Error(DllCall(vt(this._p,18),"ptr",this._p,"ptr*",pszValue),"CachedValue")
+	return StrGet(pszValue,"utf-16")
+  }
+
+  LegacyIAccessible_CachedDescription(){
+	_Error(DllCall(vt(this._p,19),"ptr",this._p,"ptr*",pszDescription),"CachedDescription")
+	return StrGet(pszDescription,"utf-16")
+  }
+
+  LegacyIAccessible_CachedRole(){
+	_Error(DllCall(vt(this._p,20),"ptr",this._p,"uint*",pdwRole),"CachedRole")
+	return pdwRole
+  }
+
+  LegacyIAccessible_CachedState(){
+	_Error(DllCall(vt(this._p,21),"ptr",this._p,"uint*",pdwState),"CachedState")
+	return pdwState
+  }
+
+  LegacyIAccessible_CachedHelp(){
+	_Error(DllCall(vt(this._p,22),"ptr",this._p,"ptr*",pszHelp),"CachedHelp")
+	return StrGet(pszHelp,"utf-16")
+  }
+
+  LegacyIAccessible_CachedKeyboardShortcut(){
+	_Error(DllCall(vt(this._p,23),"ptr",this._p,"ptr*",pszKeyboardShortcut),"CachedKeyboardShortcut")
+	return StrGet(pszKeyboardShortcut,"utf-16")
+  }
+
+  LegacyIAccessible_GetCachedSelection(){
+	_Error(DllCall(vt(this._p,24),"ptr",this._p,"ptr*",pvarSelectedChildren),"GetCachedSelection")
+	return pvarSelectedChildren
+  }
+
+  LegacyIAccessible_CachedDefaultAction(){
+	_Error(DllCall(vt(this._p,25),"ptr",this._p,"ptr*",pszDefaultAction),"CachedDefaultAction")
+	return StrGet(pszDefaultAction,"utf-16")
+  }
+
+  LegacyIAccessible_GetIAccessible(){
+	_Error(DllCall(vt(this._p,26),"ptr",this._p,"ptr*",ppAccessible),"GetIAccessible")
+	return ppAccessible
+  }
+
+; IUIAutomationItemContainerPattern
+
+  ItemContainer_FindItemByProperty(pStartAfter,propertyId,value){
+	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr",pStartAfter,"int",propertyId,"ptr",value,"ptr*",pFound),"FindItemByProperty")
+	return pFound
+  }
+
+; IUIAutomationVirtualizedItemPattern
+
+  VirtualizedItem_Realize(){
+	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Realize")
+  }
 }
 ;;
 ;;IUIAutomationEvent
