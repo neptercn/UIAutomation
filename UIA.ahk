@@ -551,155 +551,155 @@ class IUIAutomationElement
 
 	; Retrieves the identifier of the process that hosts the element.
 	CurrentProcessId(){
-	_Error(DllCall(NumGet(this.vt+20*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CurrentProcessId")
+	_Error(DllCall(vt(this._p,20),"ptr",this._p,"int*",retVal),"get_CurrentProcessId")
 	return retVal
 	}
 	
 	; Retrieves the control type of the element.
 	; Control types describe a known interaction model for UI Automation elements without relying on a localized control type or combination of complex logic rules. This property cannot change at run time unless the control supports the IUIAutomationMultipleViewPattern interface. An example is the Win32 ListView control, which can change from a data grid to a list, depending on the current view.
 	CurrentControlType(){
-	_Error(DllCall(NumGet(this.vt+21*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CurrentControlType")
+	_Error(DllCall(vt(this._p,21),"ptr",this._p,"int*",retVal),"get_CurrentControlType")
 	return retVal
 	}
 	
 	; Retrieves a localized description of the control type of the element.
 	CurrentLocalizedControlType(){
-	_Error(DllCall(NumGet(this.vt+22*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentLocalizedControlType")
+	_Error(DllCall(vt(this._p,22),"ptr",this._p,"ptr*",retVal),"get_CurrentLocalizedControlType")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves the name of the element.
 	CurrentName(){
-	_Error(DllCall(NumGet(this.vt+23*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentName")
+	_Error(DllCall(vt(this._p,23),"ptr",this._p,"ptr*",retVal),"get_CurrentName")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves the accelerator key for the element.
 	CurrentAcceleratorKey(){
-	_Error(DllCall(NumGet(this.vt+24*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentAcceleratorKey")
+	_Error(DllCall(vt(this._p,24),"ptr",this._p,"ptr*",retVal),"get_CurrentAcceleratorKey")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves the access key character for the element.
 	; An access key is a character in the text of a menu, menu item, or label of a control such as a button that activates the attached menu function. For example, the letter "O" is often used to invoke the Open file common dialog box from a File menu. Microsoft UI Automation elements that have the access key property set always implement the Invoke control pattern.
 	CurrentAccessKey(){
-	_Error(DllCall(NumGet(this.vt+25*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentAccessKey")
+	_Error(DllCall(vt(this._p,25),"ptr",this._p,"ptr*",retVal),"get_CurrentAccessKey")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Indicates whether the element has keyboard focus.
 	CurrentHasKeyboardFocus(){
-	_Error(DllCall(NumGet(this.vt+26*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CurrentHasKeyboardFocus")
+	_Error(DllCall(vt(this._p,26),"ptr",this._p,"int*",retVal),"get_CurrentHasKeyboardFocus")
 	return retVal
 	}
 	
 	; Indicates whether the element can accept keyboard focus.
 	CurrentIsKeyboardFocusable(){
-	_Error(DllCall(NumGet(this.vt+27*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CurrentIsKeyboardFocusable")
+	_Error(DllCall(vt(this._p,27),"ptr",this._p,"int*",retVal),"get_CurrentIsKeyboardFocusable")
 	return retVal
 	}
 	
 	; Retrieves a cached value that indicates whether the element is enabled.
 	CurrentIsEnabled(){
-	_Error(DllCall(NumGet(this.vt+28*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CurrentIsEnabled")
+	_Error(DllCall(vt(this._p,28),"ptr",this._p,"int*",retVal),"get_CurrentIsEnabled")
 	return retVal
 	}
 	
 	; Retrieves the Microsoft UI Automation identifier of the element. 
 	; The identifier is unique among sibling elements in a container, and is the same in all instances of the application.
 	CurrentAutomationId(){
-	_Error(DllCall(NumGet(this.vt+29*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentAutomationId")
+	_Error(DllCall(vt(this._p,29),"ptr",this._p,"ptr*",retVal),"get_CurrentAutomationId")
 	return retVal
 	}
 	
 	; Retrieves the class name of the element.
 	; The value of this property is implementation-defined. The property is useful in testing environments.
 	CurrentClassName(){
-	_Error(DllCall(NumGet(this.vt+30*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentClassName")
+	_Error(DllCall(vt(this._p,30),"ptr",this._p,"ptr*",retVal),"get_CurrentClassName")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves the help text for the element. This information is typically obtained from tooltips.
 	; Caution  Do not retrieve the CachedHelpText property from a control that is based on the SysListview32 class. Doing so could cause the system to become unstable and data to be lost. A client application can discover whether a control is based on SysListview32 by retrieving the CachedClassName or CurrentClassName property from the control.
 	CurrentHelpText(){
-	_Error(DllCall(NumGet(this.vt+31*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentHelpText")
+	_Error(DllCall(vt(this._p,31),"ptr",this._p,"ptr*",retVal),"get_CurrentHelpText")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves the culture identifier for the element.
 	CurrentCulture(){
-	_Error(DllCall(NumGet(this.vt+32*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CurrentCulture")
+	_Error(DllCall(vt(this._p,32),"ptr",this._p,"int*",retVal),"get_CurrentCulture")
 	return retVal
 	}
 	
 	; Indicates whether the element is a control element.
 	CurrentIsControlElement(){
-	_Error(DllCall(NumGet(this.vt+33*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CurrentIsControlElement")
+	_Error(DllCall(vt(this._p,33),"ptr",this._p,"int*",retVal),"get_CurrentIsControlElement")
 	return retVal
 	}
 	
 	; Indicates whether the element is a content element.
 	; A content element contains data that is presented to the user. Examples of content elements are the items in a list box or a button in a dialog box. Non-content elements, also called peripheral elements, are typically used to manipulate the content in a composite control; for example, the button on a drop-down control.
 	CurrentIsContentElement(){
-	_Error(DllCall(NumGet(this.vt+34*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CurrentIsContentElement")
+	_Error(DllCall(vt(this._p,34),"ptr",this._p,"int*",retVal),"get_CurrentIsContentElement")
 	return retVal
 	}
 	
 	; Indicates whether the element contains a disguised password.
 	; This property enables applications such as screen-readers to determine whether the text content of a control should be read aloud.
 	CurrentIsPassword(){
-	_Error(DllCall(NumGet(this.vt+35*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CurrentIsPassword")
+	_Error(DllCall(vt(this._p,35),"ptr",this._p,"int*",retVal),"get_CurrentIsPassword")
 	return retVal
 	}
 	
 	; Retrieves the window handle of the element.
 	CurrentNativeWindowHandle(){
-	_Error(DllCall(NumGet(this.vt+36*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentNativeWindowHandle")
+	_Error(DllCall(vt(this._p,36),"ptr",this._p,"ptr*",retVal),"get_CurrentNativeWindowHandle")
 	return retVal
 	}
 	
 	; Retrieves a description of the type of UI item represented by the element.
 	; This property is used to obtain information about items in a list, tree view, or data grid. For example, an item in a file directory view might be a "Document File" or a "Folder". 
 	CurrentItemType(){
-	_Error(DllCall(NumGet(this.vt+37*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentItemType")
+	_Error(DllCall(vt(this._p,37),"ptr",this._p,"ptr*",retVal),"get_CurrentItemType")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Indicates whether the element is off-screen.
 	CurrentIsOffscreen(){
-	_Error(DllCall(NumGet(this.vt+38*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CurrentIsOffscreen")
+	_Error(DllCall(vt(this._p,38),"ptr",this._p,"int*",retVal),"get_CurrentIsOffscreen")
 	return retVal
 	}
 	
 	; Retrieves a value that indicates the orientation of the element.
 	; This property is supported by controls such as scroll bars and sliders that can have either a vertical or a horizontal orientation.
 	CurrentOrientation(){
-	_Error(DllCall(NumGet(this.vt+39*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CurrentOrientation")
+	_Error(DllCall(vt(this._p,39),"ptr",this._p,"int*",retVal),"get_CurrentOrientation")
 	return retVal ; OrientationType
 	}
 	
 	; Retrieves the name of the underlying UI framework. The name of the UI framework, such as "Win32", "WinForm", or "DirectUI".
 	CurrentFrameworkId(){
-	_Error(DllCall(NumGet(this.vt+40*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentFrameworkId")
+	_Error(DllCall(vt(this._p,40),"ptr",this._p,"ptr*",retVal),"get_CurrentFrameworkId")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Indicates whether the element is required to be filled out on a form.
 	CurrentIsRequiredForForm(){
-	_Error(DllCall(NumGet(this.vt+41*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CurrentIsRequiredForForm")
+	_Error(DllCall(vt(this._p,41),"ptr",this._p,"int*",retVal),"get_CurrentIsRequiredForForm")
 	return retVal
 	}
 	
 	; Retrieves the description of the status of an item in an element.
 	; This property enables a client to ascertain whether an element is conveying status about an item. For example, an item associated with a contact in a messaging application might be "Busy" or "Connected".
 	CurrentItemStatus(){
-	_Error(DllCall(NumGet(this.vt+42*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentItemStatus")
+	_Error(DllCall(vt(this._p,42),"ptr",this._p,"ptr*",retVal),"get_CurrentItemStatus")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves the coordinates of the rectangle that completely encloses the element, in screen coordinates.
 	CurrentBoundingRectangle(){
-	_Error(DllCall(NumGet(this.vt+43*A_PtrSize),"ptr",this.ptr,"int64*",retVal),"get_CurrentBoundingRectangle")
+	_Error(DllCall(vt(this._p,43),"ptr",this._p,"int64*",retVal),"get_CurrentBoundingRectangle")
 	return [retVal&0xFF,(retVal>>16)&0xFF,(retVal>>32)&0xFF,retVal>>48]
 	}
 	
@@ -708,241 +708,241 @@ class IUIAutomationElement
 	; Retrieves the element that contains the text label for this element.
 	; This property could be used to retrieve, for example, the static text label for a combo box.
 	CurrentLabeledBy(){
-	_Error(DllCall(NumGet(this.vt+44*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentLabeledBy")
+	_Error(DllCall(vt(this._p,44),"ptr",this._p,"ptr*",retVal),"get_CurrentLabeledBy")
 	return retVal ; IUIAutomationElement
 	}
 	
 	; Retrieves the Accessible Rich Internet Applications (ARIA) role of the element.
 	CurrentAriaRole(){
-	_Error(DllCall(NumGet(this.vt+45*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentAriaRole")
+	_Error(DllCall(vt(this._p,45),"ptr",this._p,"ptr*",retVal),"get_CurrentAriaRole")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves the ARIA properties of the element.
 	CurrentAriaProperties(){
-	_Error(DllCall(NumGet(this.vt+46*A_PtrSize),"ptr",this.ptr,"ptr",retVal),"get_CurrentAriaProperties")
+	_Error(DllCall(vt(this._p,46),"ptr",this._p,"ptr",retVal),"get_CurrentAriaProperties")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Indicates whether the element contains valid data for a form.
 	CurrentIsDataValidForForm(){
-	_Error(DllCall(NumGet(this.vt+47*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CurrentIsDataValidForForm")
+	_Error(DllCall(vt(this._p,47),"ptr",this._p,"int*",retVal),"get_CurrentIsDataValidForForm")
 	return retVal
 	}
 	
 	; Retrieves an array of elements for which this element serves as the controller.
 	CurrentControllerFor(){
-	_Error(DllCall(NumGet(this.vt+48*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentControllerFor")
+	_Error(DllCall(vt(this._p,48),"ptr",this._p,"ptr*",retVal),"get_CurrentControllerFor")
 	return retVal ; IUIAutomationElementArray
 	}
 	
 	; Retrieves an array of elements that describe this element.
 	CurrentDescribedBy(){
-	_Error(DllCall(NumGet(this.vt+49*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentDescribedBy")
+	_Error(DllCall(vt(this._p,49),"ptr",this._p,"ptr*",retVal),"get_CurrentDescribedBy")
 	return retVal ; IUIAutomationElementArray
 	}
 	
 	; Retrieves an array of elements that indicates the reading order after the current element.
 	CurrentFlowsTo(){
-	_Error(DllCall(NumGet(this.vt+50*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentFlowsTo")
+	_Error(DllCall(vt(this._p,50),"ptr",this._p,"ptr*",retVal),"get_CurrentFlowsTo")
 	return retVal ; IUIAutomationElementArray
 	}
 	
 	; Retrieves a description of the provider for this element.
 	CurrentProviderDescription(){
-	_Error(DllCall(NumGet(this.vt+51*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CurrentProviderDescription")
+	_Error(DllCall(vt(this._p,51),"ptr",this._p,"ptr*",retVal),"get_CurrentProviderDescription")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves the cached ID of the process that hosts the element.
 	CachedProcessId(){
-	_Error(DllCall(NumGet(this.vt+52*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CachedProcessId")
+	_Error(DllCall(vt(this._p,52),"ptr",this._p,"int*",retVal),"get_CachedProcessId")
 	return retVal
 	}
 	
 	; Retrieves a cached value that indicates the control type of the element.
 	CachedControlType(){
-	_Error(DllCall(NumGet(this.vt+53*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CachedControlType")
+	_Error(DllCall(vt(this._p,53),"ptr",this._p,"int*",retVal),"get_CachedControlType")
 	return retVal
 	}
 	
 	; Retrieves the cached localized description of the control type of the element.
 	CachedLocalizedControlType(){
-	_Error(DllCall(NumGet(this.vt+54*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedLocalizedControlType")
+	_Error(DllCall(vt(this._p,54),"ptr",this._p,"ptr*",retVal),"get_CachedLocalizedControlType")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves the cached name of the element.
 	CachedName(){
-	_Error(DllCall(NumGet(this.vt+55*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedName")
+	_Error(DllCall(vt(this._p,55),"ptr",this._p,"ptr*",retVal),"get_CachedName")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves the cached accelerator key for the element.
 	CachedAcceleratorKey(){
-	_Error(DllCall(NumGet(this.vt+56*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedAcceleratorKey")
+	_Error(DllCall(vt(this._p,56),"ptr",this._p,"ptr*",retVal),"get_CachedAcceleratorKey")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves the cached access key character for the element.
 	CachedAccessKey(){
-	_Error(DllCall(NumGet(this.vt+57*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedAccessKey")
+	_Error(DllCall(vt(this._p,57),"ptr",this._p,"ptr*",retVal),"get_CachedAccessKey")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; A cached value that indicates whether the element has keyboard focus.
 	CachedHasKeyboardFocus(){
-	_Error(DllCall(NumGet(this.vt+58*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CachedHasKeyboardFocus")
+	_Error(DllCall(vt(this._p,58),"ptr",this._p,"int*",retVal),"get_CachedHasKeyboardFocus")
 	return retVal
 	}
 	
 	; Retrieves a cached value that indicates whether the element can accept keyboard focus.
 	CachedIsKeyboardFocusable(){
-	_Error(DllCall(NumGet(this.vt+59*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CachedIsKeyboardFocusable")
+	_Error(DllCall(vt(this._p,59),"ptr",this._p,"int*",retVal),"get_CachedIsKeyboardFocusable")
 	return retVal
 	}
 	
 	; Retrieves a cached value that indicates whether the element is enabled.
 	CachedIsEnabled(){
-	_Error(DllCall(NumGet(this.vt+60*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CachedIsEnabled")
+	_Error(DllCall(vt(this._p,60),"ptr",this._p,"int*",retVal),"get_CachedIsEnabled")
 	return retVal
 	}
 	
 	; Retrieves the cached UI Automation identifier of the element.
 	CachedAutomationId(){
-	_Error(DllCall(NumGet(this.vt+61*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedAutomationId")
+	_Error(DllCall(vt(this._p,61),"ptr",this._p,"ptr*",retVal),"get_CachedAutomationId")
 	return retVal
 	}
 	
 	; Retrieves the cached class name of the element.
 	CachedClassName(){
-	_Error(DllCall(NumGet(this.vt+62*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedClassName")
+	_Error(DllCall(vt(this._p,62),"ptr",this._p,"ptr*",retVal),"get_CachedClassName")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; 
 	CachedHelpText(){
-	_Error(DllCall(NumGet(this.vt+63*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedHelpText")
+	_Error(DllCall(vt(this._p,63),"ptr",this._p,"ptr*",retVal),"get_CachedHelpText")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves the cached help text for the element.
 	CachedCulture(){
-	_Error(DllCall(NumGet(this.vt+64*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CachedCulture")
+	_Error(DllCall(vt(this._p,64),"ptr",this._p,"int*",retVal),"get_CachedCulture")
 	return retVal
 	}
 	
 	; Retrieves a cached value that indicates whether the element is a control element.
 	CachedIsControlElement(){
-	_Error(DllCall(NumGet(this.vt+65*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CachedIsControlElement")
+	_Error(DllCall(vt(this._p,65),"ptr",this._p,"int*",retVal),"get_CachedIsControlElement")
 	return retVal
 	}
 	
 	; A cached value that indicates whether the element is a content element.
 	CachedIsContentElement(){
-	_Error(DllCall(NumGet(this.vt+66*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CachedIsContentElement")
+	_Error(DllCall(vt(this._p,66),"ptr",this._p,"int*",retVal),"get_CachedIsContentElement")
 	return retVal
 	}
 	
 	; Retrieves a cached value that indicates whether the element contains a disguised password.
 	CachedIsPassword(){
-	_Error(DllCall(NumGet(this.vt+67*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CachedIsPassword")
+	_Error(DllCall(vt(this._p,67),"ptr",this._p,"int*",retVal),"get_CachedIsPassword")
 	return retVal
 	}
 	
 	; Retrieves the cached window handle of the element.
 	CachedNativeWindowHandle(){
-	_Error(DllCall(NumGet(this.vt+68*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedNativeWindowHandle")
+	_Error(DllCall(vt(this._p,68),"ptr",this._p,"ptr*",retVal),"get_CachedNativeWindowHandle")
 	return retVal
 	}
 	
 	; Retrieves a cached string that describes the type of item represented by the element.
 	CachedItemType(){
-	_Error(DllCall(NumGet(this.vt+69*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedItemType")
+	_Error(DllCall(vt(this._p,69),"ptr",this._p,"ptr*",retVal),"get_CachedItemType")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves a cached value that indicates whether the element is off-screen.
 	CachedIsOffscreen(){
-	_Error(DllCall(NumGet(this.vt+70*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CachedIsOffscreen")
+	_Error(DllCall(vt(this._p,70),"ptr",this._p,"int*",retVal),"get_CachedIsOffscreen")
 	return retVal
 	}
 	
 	; Retrieves a cached value that indicates the orientation of the element.
 	CachedOrientation(){
-	_Error(DllCall(NumGet(this.vt+71*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedOrientation")
+	_Error(DllCall(vt(this._p,71),"ptr",this._p,"ptr*",retVal),"get_CachedOrientation")
 	return retVal ; OrientationType
 	}
 	
 	; Retrieves the cached name of the underlying UI framework associated with the element.
 	CachedFrameworkId(){
-	_Error(DllCall(NumGet(this.vt+72*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedFrameworkId")
+	_Error(DllCall(vt(this._p,72),"ptr",this._p,"ptr*",retVal),"get_CachedFrameworkId")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves a cached value that indicates whether the element is required to be filled out on a form. 
 	CachedIsRequiredForForm(){
-	_Error(DllCall(NumGet(this.vt+73*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CachedIsRequiredForForm")
+	_Error(DllCall(vt(this._p,73),"ptr",this._p,"int*",retVal),"get_CachedIsRequiredForForm")
 	return retVal
 	}
 	
 	; Retrieves a cached description of the status of an item within an element.
 	CachedItemStatus(){
-	_Error(DllCall(NumGet(this.vt+74*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedItemStatus")
+	_Error(DllCall(vt(this._p,74),"ptr",this._p,"ptr*",retVal),"get_CachedItemStatus")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves the cached coordinates of the rectangle that completely encloses the element.
 	CachedBoundingRectangle(){
-	_Error(DllCall(NumGet(this.vt+75*A_PtrSize),"ptr",this.ptr,"int64*",retVal),"get_CachedBoundingRectangle")
+	_Error(DllCall(vt(this._p,75),"ptr",this._p,"int64*",retVal),"get_CachedBoundingRectangle")
 	return [retVal&0xFF,(retVal>>16)&0xFF,(retVal>>32)&0xFF,retVal>>48]
 	}
 	
 	; Retrieves the cached element that contains the text label for this element.
 	CachedLabeledBy(){
-	_Error(DllCall(NumGet(this.vt+76*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedLabeledBy")
+	_Error(DllCall(vt(this._p,76),"ptr",this._p,"ptr*",retVal),"get_CachedLabeledBy")
 	return retVal ; IUIAutomationElement
 	}
 	
 	; Retrieves the cached ARIA role of the element.
 	CachedAriaRole(){
-	_Error(DllCall(NumGet(this.vt+77*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedAriaRole")
+	_Error(DllCall(vt(this._p,77),"ptr",this._p,"ptr*",retVal),"get_CachedAriaRole")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves the cached ARIA properties of the element.
 	CachedAriaProperties(){
-	_Error(DllCall(NumGet(this.vt+78*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedAriaProperties")
+	_Error(DllCall(vt(this._p,78),"ptr",this._p,"ptr*",retVal),"get_CachedAriaProperties")
 	return StrGet(retVal,"utf-16")
 	}
 	
 	; Retrieves a cached value that indicates whether the element contains valid data for the form.
 	CachedIsDataValidForForm(){
-	_Error(DllCall(NumGet(this.vt+79*A_PtrSize),"ptr",this.ptr,"int*",retVal),"get_CachedIsDataValidForForm")
+	_Error(DllCall(vt(this._p,79),"ptr",this._p,"int*",retVal),"get_CachedIsDataValidForForm")
 	return retVal
 	}
 	
 	; Retrieves a cached array of UI Automation elements for which this element serves as the controller.
 	CachedControllerFor(){
-	_Error(DllCall(NumGet(this.vt+80*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedControllerFor")
+	_Error(DllCall(vt(this._p,80),"ptr",this._p,"ptr*",retVal),"get_CachedControllerFor")
 	return retVal ; IUIAutomationElementArray
 	}
 	
 	; Retrieves a cached array of elements that describe this element.
 	CachedDescribedBy(){
-	_Error(DllCall(NumGet(this.vt+81*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedDescribedBy")
+	_Error(DllCall(vt(this._p,81),"ptr",this._p,"ptr*",retVal),"get_CachedDescribedBy")
 	return retVal ; IUIAutomationElementArray
 	}
 	
 	; Retrieves a cached array of elements that indicate the reading order after the current element.
 	CachedFlowsTo(){
-	_Error(DllCall(NumGet(this.vt+82*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedFlowsTo")
+	_Error(DllCall(vt(this._p,82),"ptr",this._p,"ptr*",retVal),"get_CachedFlowsTo")
 	return retVal ; IUIAutomationElementArray
 	}
 	
 	; Retrieves a cached description of the provider for this element.
 	CachedProviderDescription(){
-	_Error(DllCall(NumGet(this.vt+83*A_PtrSize),"ptr",this.ptr,"ptr*",retVal),"get_CachedProviderDescription")
+	_Error(DllCall(vt(this._p,83),"ptr",this._p,"ptr*",retVal),"get_CachedProviderDescription")
 	return StrGet(retVal,"utf-16")
 	}
 	
