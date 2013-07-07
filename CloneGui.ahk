@@ -2,19 +2,23 @@
 #Persistent
 #Include uia.ahk
 CoordMode,mouse,screen
-global $t:={} ; store tree node
+global $n:={} ; store tree node
 ,$u:=new IUIAutomation
 ,$e:=new IUIAutomationElement
 ,$c:=new IUIAutomationCondition
 ,$r:=new IUIAutomationCacheRequest
-,$x:=ComObjCreate("MSXML2.DOMDocument")
+,$t:=new IUIAutomationTreeWalker
+
+global $x:=ComObjCreate("MSXML2.DOMDocument")
 $x.setProperty("SelectionLanguage","XPath")
 gui,1:add,TreeView,w300 h600 gtvevent
-gui,1:add,edit,w500 h600 X+5 yp vedit1 ReadOnly -wrap HScroll
+gui,1:add,tab2,X+5 yp w500 +0x100,% "  Info  |  Pool  |  Tree2Xml  |  Xml2AHK  |  Settings  |  Help  "
+gui,1:tab,1
+gui,1:add,edit,w500 h580 X+0 Y+0 vedit1 ReadOnly -wrap HScroll
 return
 
 F8::
-  MouseGetPos,x,y,hwnd
+	MouseGetPos,x,y,hwnd
 	BuildElementTree(hwnd)
 	gui,1:show
 	return
@@ -32,38 +36,70 @@ BuildElementTree(hwnd){
 			t.Insert(29999+A_Index)
 		$r.3(t)
 	}
-	for k,v in $t
+	for k,v in $n
 		ObjRelease(v)
-	$t:={},	TV_Delete()
+	$n:={},	TV_Delete()
 	if $u.3(_e:=$u.10(hwnd,_r),root)
 		return
-	$t[id:=TV_Add($e.(_e).55)]:=_e
-	AddChildren(_e,id)
+	$n[id:=TV_Add($e.(_e).55)]:=_e
+	,((type:=$e.12(30003))=50009)||(type=50021)?AddNode(_e,id,1):AddNode(_e,id)	
+	; AddChildren(_e,id)
 }
-AddChildren(element,id){
-	/*	test
-	static init:=1,_r,condition
+AddNode(element,id,mode=0){
+	static init:=1,_r,_t
 	if init{
-		init:=0,$r.(_r:=$u.20).TreeScope:=1,t:={}
+		init:=0,$t.(_t:=$u.16),$r.(_r:=$u.20).TreeScope:=1, t:={}
 		loop 111
 			t.Insert(29999+A_Index)
 		$r.3(t)
-		condition:=$u.23(30016,variant(p,0xB,0))
 	}
-	if array:=$e.(element).8(2,condition,_r)
-	msgbox % $e.(array).length()
-	ObjRelease(array)
-	*/
+	if mode{
+		if (newElement:=$t.10(element,_r)){
+			$n[newId:=TV_Add("""" $e.(newElement).55 """ " $e.54,id)]:=newElement
+			,((type:=$e.12(30003))=50009)||(type=50021)?AddNode(newElement,newId,1):AddNode(newElement,newId)
+			loop
+				if (newElement:=$t.12(newElement,_r))
+					$n[newId:=TV_Add("""" $e.(newElement).55 """ " $e.54,id)]:=newElement
+					,((type:=$e.12(30003))=50009)||(type=50021)?AddNode(newElement,newId,1):AddNode(newElement,newId)	
+				else break
+		}
+	}else{
+		if !array:=$e.(element).19
+			return
+		loop % $e.(array).length()
+			$n[newId:=TV_Add("""" $e.(newElement:=$e.(array).element(A_Index-1)).55 """ " $e.54,id)]:=newElement
+			,((type:=$e.12(30003))=50009)||(type=50021)?AddNode(newElement,newId,1):AddNode(newElement,newId)	
+		ObjRelease(array)
+	}
+}
+AddChildren(element,id){
 	if !array:=$e.(element).19
 		return
 	loop % $e.(array).length()
-		$t[newId:=TV_Add("""" $e.(newElement:=$e.(array).element(A_Index-1)).55 """ " $e.54,id)]:=newElement
+		$n[newId:=TV_Add("""" $e.(newElement:=$e.(array).element(A_Index-1)).55 """ " $e.54,id)]:=newElement
 		,AddChildren(newElement,newId)
 	ObjRelease(array)
 }
+AddRawNode(e,id,pid){ ; RawTreeWalker, slow speed
+	static init:=1,_r,_t
+	if init{
+		init:=0,$t.(_t:=$u.16),$r.(_r:=$u.20).TreeScope:=1, t:={}
+		loop 111
+			t.Insert(29999+A_Index)
+		$r.3(t)
+	}
+	if ne:=$t.10(e,_r){
+		$n[nid:=TV_Add("""" $e.(ne).55 """ " $e.54,id)]:=ne
+		AddRawNode(ne,nid,id)
+	}
+	if (pid!=0) && (ne:=$t.12(e,_r)){
+		$n[nid:=TV_Add("""" $e.(ne).55 """ " $e.54,pid)]:=ne
+		AddRawNode(ne,nid,pid)
+	}
+}
 ShowSelection(id){
 	global edit1
-	$e.($t[id])
+	$e.($n[id])
 	cont:="Name:                               " $e.12(30005) "`n" 
 		. "ControlType:                        " UIA_ControlType($e.12(30003)) "`n" ;
 		. "LocalizedControlType:               " $e.12(30004) "`n" ;
@@ -79,12 +115,12 @@ ShowSelection(id){
 		. "FrameworkId:                        " $e.12(30024) "`n" ;
 		. "ClassName:                          " $e.12(30012) "`n" ;
 		. "NativeWindowHandle:                 " $e.12(30020) "`n" ;
-		. "IsContentElement:                   " $e.12(30017) "`n" ;
+		. "IsContentElement:                   " Bool($e.12(30017)) "`n" ;
 		. "ProviderDescription:                " $e.12(30107) "`n" ;
-		. "IsPassword:                         " $e.12(30019) "`n" ;
+		. "IsPassword:                         " Bool($e.12(30019)) "`n" ;
 		. "HelpText:                           " $e.12(30013) "`n" ;
-		. "IsDockPatternAvailable:             " $e.12(30027) "`n" ;
-	cont.="IsExpandCollapsePatternAvailable:   " $e.12(30028) "`n" ;
+	cont.="IsDockPatternAvailable:             " $e.12(30027) "`n" ;
+		. "IsExpandCollapsePatternAvailable:   " $e.12(30028) "`n" ;
 		. "IsGridItemPatternAvailable:         " $e.12(30029) "`n" ;
 		. "IsGridPatternAvailable:             " $e.12(30030) "`n" ;
 		. "IsInvokePatternAvailable:           " $e.12(30031) "`n" ;
@@ -121,7 +157,7 @@ RuntimeId(p){
 	return s
 }
 BoundingRectangle(t){
-	return (IsObject(t)?"l:" SubStr(t.1,1,InStr(t.1,".")-1) " t:" SubStr(t.2,1,InStr(t.2,".")-1) " r:" SubStr(t.3,1,InStr(t.3,".")-1) " b:" SubStr(t.4,1,InStr(t.4,".")-1):)
+	return (IsObject(t)?"l:" SubStr(t.1,1,InStr(t.1,".")-1) " t:" SubStr(t.2,1,InStr(t.2,".")-1) " w:" SubStr(t.3,1,InStr(t.3,".")-1) " h:" SubStr(t.4,1,InStr(t.4,".")-1):)
 }
 Bool(b){
 	return b?"True":"False"
@@ -138,7 +174,7 @@ AnalysisNode(id){
 	if !newId:=TV_GetChild(id)
 		return
 	loop {
-		ct:=$e.($t[newId]).12(30003)
+		ct:=$e.($n[newId]).12(30003)
 		if (ct=50000){ ;Button
 			
 		}else if (ct=50001){ ;Calendar
@@ -199,7 +235,7 @@ AnalysisNode(id){
 }
 
 Winget(id){
-	if !hwnd:=$e.($t[id]).12(30020)
+	if !hwnd:=$e.($n[id]).12(30020)
 		return 
 	SetFormat,integer,hex
 	WinGet,style,style,ahk_id %hwnd%
