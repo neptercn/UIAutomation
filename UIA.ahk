@@ -1,5 +1,3 @@
-;; win 8 or vs2012 will be involved in future
-
 ;;;;;;;;;;;;;;;;;;
 ;;Base Interface;;not completed
 ;;;;;;;;;;;;;;;;;;
@@ -1252,26 +1250,32 @@ class IUIAutomationTreeWalker
 ;;IUIAutomationPattern;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
-class IUIAutomationPattern{
+class IUIAutomationPattern
+{
 	__new(){
-		this._p:=0,this._i:="",this._t:={Invoke:"Invoke_",Dock:"Dock_",ExpandCollapse:"ExpandCollapse_",Grid:"Grid_",GridItem:"GridItem_",MultipleView:"MultipleView_",RangeValue:"RangeValue_",Scroll:"Scroll_",ScrollItem:"ScrollItem_",Selection:"Selection_",SelectionItem:"SelectionItem_",SynchronizedInput:"SynchronizedInput_",Table:"Table_",TableItem:"TableItem_",Toggle:"Toggle_",Transform:"Transform_",Value:"Value_",Window:"Window_",TextRange:"TextRange_",TextRangeArray:"TextRangeArray_",Text:"Text_",LegacyIAccessible:"LegacyIAccessible_",ItemContainer:"ItemContainer_",VirtualizedItem:"VirtualizedItem_"}
+		this._p:=0,this._i:="",this._t["Invoke"]:={3:"Invoke"},this._t["Dock"]:={3:"SetDockPosition",4:"CurrentDockPosition",5:"CachedDockPosition"},this._t["ExpandCollapse"]:={3:"Expand",4:"Collapse",5:"CurrentExpandCollapseState",6:"CachedExpandCollapseState"},this._t["Grid"]:={3:"GetItem",4:"CurrentRowCount",5:"CurrentColumnCount",6:"CachedRowCount",7:"CachedColumnCount"},this._t["GridItem"]:={3:"CurrentContainingGrid",4:"CurrentRow",5:"CurrentColumn",6:"CurrentRowSpan",7:"CurrentColumnSpan",8:"CachedContainingGrid",9:"CachedRow",10:"CachedColumn",11:"CachedRowSpan",12:"CachedColumnSpan"},this._t["MultipleView"]:={3:"GetViewName",4:"SetCurrentView",5:"CurrentCurrentView",6:"GetCurrentSupportedViews",7:"CachedCurrentView",8:"GetCachedSupportedViews"},this._t["RangeValue"]:={3:"SetValue",4:"CurrentValue",5:"CurrentIsReadOnly",6:"CurrentMaximum",7:"CurrentMinimum",8:"CurrentLargeChange",9:"CurrentSmallChange",10:"CachedValue",11:"CachedIsReadOnly",12:"CachedMaximum",13:"CachedMinimum",14:"CachedLargeChange",15:"CachedSmallChange"},this._t["Scroll"]:={3:"Scroll",4:"SetScrollPercent",5:"CurrentHorizontalScrollPercent",6:"CurrentVerticalScrollPercent",7:"CurrentHorizontalViewSize",8:"CurrentVerticalViewSize",9:"CurrentHorizontallyScrollable",10:"CurrentVerticallyScrollable",11:"CachedHorizontalScrollPercent",12:"CachedVerticalScrollPercent",13:"CachedHorizontalViewSize",14:"CachedVerticalViewSize",15:"CachedHorizontallyScrollable",16:"CachedVerticallyScrollable"},this._t["ScrollItem"]:={3:"ScrollIntoView"},this._t["Selection"]:={3:"GetCurrentSelection",4:"CurrentCanSelectMultiple",5:"CurrentIsSelectionRequired",6:"GetCachedSelection",7:"CachedCanSelectMultiple",8:"CachedIsSelectionRequired"},this._t["SelectionItem"]:={3:"Select",4:"AddToSelection",5:"RemoveFromSelection",6:"CurrentIsSelected",7:"CurrentSelectionContainer",8:"CachedIsSelected",9:"CachedSelectionContainer"}
+		this._t["SynchronizedInput"]:={3:"StartListening",4:"Cancel"},this._t["Table"]:={3:"GetCurrentRowHeaders",4:"GetCurrentColumnHeaders",5:"CurrentRowOrColumnMajor",6:"GetCachedRowHeaders",7:"GetCachedColumnHeaders",8:"CachedRowOrColumnMajor"},this._t["TableItem"]:={3:"GetCurrentRowHeaderItems",4:"GetCurrentColumnHeaderItems",5:"GetCachedRowHeaderItems",6:"GetCachedColumnHeaderItems"},this._t["Toggle"]:={3:"Toggle",4:"CurrentToggleState",5:"CachedToggleState"},this._t["Transform"]:={3:"Move",4:"Resize",5:"Rotate",6:"CurrentCanMove",7:"CurrentCanResize",8:"CurrentCanRotate",9:"CachedCanMove",10:"CachedCanResize",11:"CachedCanRotate"},this._t["Value"]:={3:"SetValue",4:"CurrentValue",5:"CurrentIsReadOnly",6:"CachedValue",7:"CachedIsReadOnly"},this._t["Window"]:={3:"Close",4:"WaitForInputIdle",5:"SetWindowVisualState",6:"CurrentCanMaximize",7:"CurrentCanMinimize",8:"CurrentIsModal",9:"CurrentIsTopmost",10:"CurrentWindowVisualState",11:"CurrentWindowInteractionState",12:"CachedCanMaximize",13:"CachedCanMinimize",14:"CachedIsModal",15:"CachedIsTopmost",16:"CachedWindowVisualState",17:"CachedWindowInteractionState"},this._t["TextRange"]:={3:"Clone",4:"Compare",5:"CompareEndpoints",6:"ExpandToEnclosingUnit",7:"FindAttribute",8:"FindText",9:"GetAttributeValue",10:"GetBoundingRectangles",11:"GetEnclosingElement",12:"GetText",13:"Move",14:"MoveEndpointByUnit",15:"MoveEndpointByRange",16:"Select",17:"AddToSelection",18:"RemoveFromSelection",19:"ScrollIntoView",20:"GetChildren"},this._t["TextRangeArray"]:={3:"Length",4:"GetElement"},this._t["Text"]:={3:"RangeFromPoint",4:"RangeFromChild",5:"GetSelection",6:"GetVisibleRanges",7:"DocumentRange",8:"SupportedTextSelection"},this._t["LegacyIAccessible"]:={3:"Select",4:"DoDefaultAction",5:"SetValue",6:"CurrentChildId",7:"CurrentName",8:"CurrentValue",9:"CurrentDescription",10:"CurrentRole",11:"CurrentState",12:"CurrentHelp",13:"CurrentKeyboardShortcut",14:"GetCurrentSelection",15:"CurrentDefaultAction",16:"CachedChildId",17:"CachedName",18:"CachedValue",19:"CachedDescription",20:"CachedRole",21:"CachedState",22:"CachedHelp",23:"CachedKeyboardShortcut",24:"GetCachedSelection",25:"CachedDefaultAction",26:"GetIAccessible"},this._t["ItemContainer"]:={3:"FindItemByProperty"},this._t["VirtualizedItem"]:={3:"Realize"}
 	}
 	__get(aName){
-		if !instr(aName,"_")
-			return this[this._i aName]()
+		if aName is Integer
+			return this._i?this[this._i "_" this._t[this._i][aName]]():
+		else if !instr(aName,"_")
+			return this[this._i "_" aName]()
 		else return this[aName]()
 	}
 	__call(aName,aParam*){
-		if (aName=""){
+		if aName is Integer
+			return this._i?this[this._i "_" this._t[this._i][aName]](aParam*):
+		else if (aName=""){
 			loop % aParam.maxindex(){
 				v:=aParam[A_Index]
 				if v is Integer
 					this._p:=v
-				else this._i:=this._t[v]
+				else this._i:=v
 			}
 			return this
 		}else if !instr(aName,"_")
-			return this[this._i aName](aParam*)
+			return this[this._i "_" aName](aParam*)
 		else return this[aName](aParam*)
 	}
 
@@ -2585,9 +2589,7 @@ UIA_Enum(t){
 ; enum AutomationElementMode Contains values that specify the type of reference to use when returning UI Automation elements.
 	,AutomationElementMode_None:0
 	,AutomationElementMode_Full:1
-	
 ;; pattern
-
 ; enum NavigateDirection Contains values used to specify the direction of navigation within the Microsoft UI Automation tree.
 	,NavigateDirection_Parent:0
 	,NavigateDirection_NextSibling:1
@@ -2664,7 +2666,6 @@ UIA_Enum(t){
 	,SupportedTextSelection_Single:1}
 /*
 ;; IAccessible
-
 ; enum SELFLAG specify how an accessible object becomes selected or takes the focus. http://msdn.microsoft.com/en-us/library/dd373634(v=vs.85).aspx
 	,SELFLAG_NONE:0
 	,SELFLAG_TAKEFOCUS:0x1
