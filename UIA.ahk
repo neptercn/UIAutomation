@@ -1,6 +1,9 @@
-;;
+;; win 8 or vs2012 will be involved in future
+
+;;;;;;;;;;;;;;;;;;
 ;;Base Interface;;not completed
-;;
+;;;;;;;;;;;;;;;;;;
+
 class IBase
 {
 	__new(){
@@ -19,9 +22,11 @@ class IBase
 			return this[this._i[aName]]()
 	}
 }
+
 ;;;;;;;;;;;;;;;;;
 ;;IUIAutomation;;
 ;;;;;;;;;;;;;;;;;
+
 class IUIAutomation ;extends IUnknown
 {
 	__new(){
@@ -180,13 +185,13 @@ class IUIAutomation ;extends IUnknown
 	
 	; Creates a condition that selects elements that have a property with the specified value.
 	CreatePropertyCondition(propertyId,value){ ; not test
-		_Error(DllCall(vt(this.__,23),"ptr",this.__,"int",propertyId,"ptr",variant(ptr,UIA_PropertyType(propertyId),value),"ptr*",newCondition),"CreatePropertyCondition")
+		_Error(DllCall(vt(this.__,23),"ptr",this.__,"int",propertyId,"ptr",variant(ptr,UIA_PropertyVariantType(propertyId),value),"ptr*",newCondition),"CreatePropertyCondition")
 		return newCondition
 	}
 	
 	; Creates a condition that selects elements that have a property with the specified value, using optional flags.
 	CreatePropertyConditionEx(propertyId,value,flags){
-		_Error(DllCall(vt(this.__,24),"ptr",this.__,"int",propertyId,"ptr",variant(ptr,UIA_PropertyType(propertyId),value),"int",flags,"ptr*",newCondition),"CreatePropertyConditionEx")
+		_Error(DllCall(vt(this.__,24),"ptr",this.__,"int",propertyId,"ptr",variant(ptr,UIA_PropertyVariantType(propertyId),value),"int",flags,"ptr*",newCondition),"CreatePropertyConditionEx")
 		return newCondition
 	}
 	
@@ -403,9 +408,11 @@ class IUIAutomation ;extends IUnknown
 		return element
 	}
 }
+
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;;IUIAutomationElement;;will be modified
 ;;;;;;;;;;;;;;;;;;;;;;;;
+
 class IUIAutomationElement
 {
 	__new(){ 
@@ -481,7 +488,7 @@ class IUIAutomationElement
 	GetCurrentPropertyValue(propertyId){ ; not test
 	static _,_v:=variant(_)
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"int",propertyId,"ptr",_v),"GetCurrentPropertyValue")
-	return UIA_PropertyValue(_v)
+	return GetVariantValue(_v)
 	}
 	
 	; Retrieves a property value for this UI Automation element, optionally ignoring any default value.
@@ -491,21 +498,21 @@ class IUIAutomationElement
 	GetCurrentPropertyValueEx(propertyId,ignoreDefaultValue){
 	static _,_v:=variant(_)
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"int",propertyId,"int",ignoreDefaultValue,"ptr",_v),"GetCurrentPropertyValueEx")
-	return UIA_PropertyValue(_v)
+	return GetVariantValue(_v)
 	}
 	
 	; Retrieves a property value from the cache for this UI Automation element.
 	GetCachedPropertyValue(propertyId){
 	static _,_v:=variant(_)
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"int",propertyId,"ptr",_v),"GetCachedPropertyValue")
-	return UIA_PropertyValue(_v)
+	return GetVariantValue(_v)
 	}
 	
 	; Retrieves a property value from the cache for this UI Automation element, optionally ignoring any default value.
 	GetCachedPropertyValueEx(propertyId,ignoreDefaultValue,retVal){
 	static _,_v:=variant(_)
 	_Error(DllCall(vt(this._p,13),"ptr",this._p,"int",propertyId,"int",ignoreDefaultValue,"ptr",_v),"GetCachedPropertyValueEx")
-	return UIA_PropertyValue(_v)
+	return GetVariantValue(_v)
 	}
 	
 	; Retrieves the control pattern interface of the specified pattern on this UI Automation element.
@@ -982,22 +989,15 @@ class IUIAutomationCacheRequest
 		this._p:=0,this._i:={3:"AddProperty",4:"AddPattern",5:"Clone"}
 	}
 	__get(aName){
-	; Specifies the scope of caching.
-	; When an element is retrieved, caching can be performed for only the element itself (the default behavior), or for the element and its children or descendants. This property describes the scope of the request.
 		if (aName="TreeScope"){
 			_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",scope),"get_TreeScope")
-			return scope
-	; Specifies the view of the UI Automation element tree that is used when caching.
+			return scope ; TreeScope
 		}else if (aName="TreeFilter"){
 			_Error(DllCall(vt(this._p,8),"ptr",this._p,"ptr*",filter),"get_TreeFilter")
-			return filter
-	; Indicates whether returned elements contain full references to the underlying UI, or only cached information. 
-	; AutomationElementMode_Full is the default value, and specifies that returned elements contain a full reference to the underlying UI. AutomationElementMode_None specifies that the returned elements have no reference to the underlying UI, and contain only cached information.
-	; Certain operations on elements, including GetCurrentPropertyValue, and SetFocus, require a full reference; attempting to perform these on an element that has none results in an error.
-	; Using AutomationElementMode_None can be more efficient when only properties are needed, as it avoids the overhead involved in setting up full references.
+			return filter ; IUIAutomationCondition
 		}else if (aName="AutomationElementMode"){
 			_Error(DllCall(vt(this._p,10),"ptr",this._p,"int*",mode),"get_AutomationElementMode")
-			return mode
+			return mode ; AutomationElementMode
 		}
 	}
 	__call(aName,aParam*){
@@ -1012,10 +1012,11 @@ class IUIAutomationCacheRequest
 		if (aName="TreeScope")
 			return _Error(DllCall(vt(this._p,7),"ptr",this._p,"int",aValue),"put_TreeScope")
 		else if (aName="TreeFilter")
-			return _Error(DllCall(vt(this._p,9),"ptr",this._p,"ptr",aValue),"put_TreeFilter")
+			return _Error(DllCall(vt(this._p,9),"ptr",this._p,"ptr",aValue),"put_TreeFilter") 
 		else if (aName="AutomationElementMode")
 			return _Error(DllCall(vt(this._p,11),"ptr",this._p,"int",aValue),"put_AutomationElementMode")
 	}
+	
 	; Adds a property to the cache request.
 	AddProperty(propertyId){
 	if IsObject(propertyId)
@@ -1023,21 +1024,36 @@ class IUIAutomationCacheRequest
 			_Error(DllCall(vt(this._p,3),"ptr",this._p,"int",propertyId[A_Index]),"AddProperty")
 	else return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",propertyId),"AddProperty")
 	}
+	
 	; Adds a control pattern to the cache request. Adding a control pattern that is already in the cache request has no effect.
 	AddPattern(patternId){
 	if IsObject(patternId)
 		loop % patternId.maxindex()
-			_Error(DllCall(vt(this._p,3),"ptr",this._p,"int",patternId[A_Index]),"AddProperty")
+			_Error(DllCall(vt(this._p,4),"ptr",this._p,"int",patternId[A_Index]),"AddPattern")
 	else return _Error(DllCall(vt(this._p,4),"ptr",this._p,"int",patternId),"AddPattern")
 	}
+	
+	; Creates a copy of the cache request.
 	Clone(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"ptr*",clonedRequest),"Clone")
-	return clonedRequest
+	return clonedRequest ; IUIAutomationCacheRequest
 	}
+	
+	; TreeScope Specifies the scope of caching.
+	; When an element is retrieved, caching can be performed for only the element itself (the default behavior), or for the element and its children or descendants. This property describes the scope of the request.
+	
+	; TreeFilter Specifies the view of the UI Automation element tree that is used when caching.
+
+	; AutomationElementMode Indicates whether returned elements contain full references to the underlying UI, or only cached information. 
+	; AutomationElementMode_Full is the default value, and specifies that returned elements contain a full reference to the underlying UI. AutomationElementMode_None specifies that the returned elements have no reference to the underlying UI, and contain only cached information.
+	; Certain operations on elements, including GetCurrentPropertyValue, and SetFocus, require a full reference; attempting to perform these on an element that has none results in an error.
+	; Using AutomationElementMode_None can be more efficient when only properties are needed, as it avoids the overhead involved in setting up full references.
 }
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;IUIAutomationCondition;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 class IUIAutomationCondition
 {
 	__new(){
@@ -1054,66 +1070,79 @@ class IUIAutomationCondition
 		else if !instr(aName,"_")
 			return this[this._i aName](aParam*)
 	}
+	
 	; Retrieves the identifier of the property on which this condition is based.
 	property_id(){
 		_Error(DllCall(vt(this._p,3),"ptr",this._p,"int*",propertyId),"get_PropertyId")
 		return propertyId
 	}
+	
 	; Retrieves the property value that must be matched for the condition to be true.
 	property_value(){
 		static _,propertyValue:=variant(_)
 		_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr",propertyValue),"get_PropertyValue")
-		return UIA_PropertyValue(propertyValue) ;
+		return GetVariantValue(propertyValue) ;
 	}
+	
 	; Retrieves a set of flags that specify how the condition is applied.
 	property_flags(){
 		_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",flags),"get_PropertyConditionFlags")
-		return flags
+		return flags ; PropertyConditionFlags
 	}
+	
 	; Retrieves the value of the condition: either TRUE or FALSE.
 	bool_value(){
 		_Error(DllCall(vt(this._p,3),"ptr",this._p,"int*",boolVal),"get_BooleanValue")
 		return boolVal
 	}
+	
 	; Retrieves the number of conditions that make up this condition.
 	and_count(){
 		_Error(DllCall(vt(this._p,3),"ptr",this._p,"int*",childCount),"get_ChildCount")
-		return childCoun
+		return childCount
 	}
+	
 	; Retrieves the conditions that make up this condition, as an ordinary array.
 	and_ChildrenAsNativeArray(){
 		_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr*",childArray,"int*",childArrayCount),"GetChildrenAsNativeArray")
 		return [childArray,childArrayCount]
 	}
+	
 	; Retrieves the conditions that make up this condition.
 	and_Children(){
 		_Error(DllCall(vt(this._p,5),"ptr",this._p,"ptr*",childArray),"GetChildren")
-		return childArray ;SafeArray(iunknown)
+		return childArray ; SafeArray , iunknown
 	}
+	
 	; Retrieves the number of conditions that make up this condition.
 	or_count(){
 		_Error(DllCall(vt(this._p,3),"ptr",this._p,"int*",childCount),"get_ChildCount")
 		return childCoun
 	}
+	
 	; Retrieves the conditions that make up this condition, as an ordinary array.
 	or_ChildrenAsNativeArray(){
 		_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr*",childArray,"int*",childArrayCount),"GetChildrenAsNativeArray")
 		return [childArray,childArrayCount]
 	}
+	
 	; Retrieves the conditions that make up this condition.
 	or_Children(){
 		_Error(DllCall(vt(this._p,5),"ptr",this._p,"ptr*",childArray),"GetChildren")
-		return childArray
+		return childArray ; SafeArray , iunknown
 	}
+	
 	; Retrieves the condition of which this condition is the negative. The returned condition is the one that was used in creating this condition. 
 	not_Child(){
 		_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",condition),"GetChild")
 		return condition
 	}
 }
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;IUIAutomationTreeWalker;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 class IUIAutomationTreeWalker
 {
 	__new(){
@@ -1142,26 +1171,31 @@ class IUIAutomationTreeWalker
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr",element,"ptr*",parent),"ParentElement")
 	return parent
 	}
+	
 	; Retrieves the first child element of the specified UI Automation element.
 	GetFirstChildElement(element){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr",element,"ptr*",first),"FirstChildElement")
 	return first
 	}
+	
 	; Retrieves the last child element of the specified UI Automation element.
 	GetLastChildElement(element){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"ptr",element,"ptr*",last),"LastChildElement")
 	return last
 	}
+	
 	; Retrieves the next sibling element of the specified UI Automation element, and caches properties and control patterns.
 	GetNextSiblingElement(element){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr",element,"ptr*",next),"NextSiblingElement")
 	return next
 	}
+	
 	; Retrieves the previous sibling element of the specified UI Automation element, and caches properties and control patterns.
 	GetPreviousSiblingElement(element){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"ptr",element,"ptr*",previous),"PreviousSiblingElement")
 	return previous
 	}
+	
 	; Retrieves the ancestor element nearest to the specified Microsoft UI Automation element in the tree view. 
 	; The element is normalized by navigating up the ancestor chain in the tree until an element that satisfies the view condition (specified by a previous call to IUIAutomationTreeWalker::Condition) is reached. If the root element is reached, the root element is returned, even if it does not satisfy the view condition. 
 	; This method is useful for applications that obtain references to UI Automation elements by hit-testing. The application might want to work only with specific types of elements, and can use IUIAutomationTreeWalker::Normalize to make sure that no matter what element is initially retrieved (for example, when a scroll bar gets the input focus), only the element of interest (such as a content element) is ultimately retrieved. 
@@ -1169,36 +1203,43 @@ class IUIAutomationTreeWalker
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"ptr",element,"ptr*",normalized),"NormalizeElement")
 	return normalized
 	}
+	
 	; Retrieves the parent element of the specified UI Automation element, and caches properties and control patterns.
 	GetParentElementBuildCache(element,cacheRequest){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"ptr",element,"ptr",cacheRequest,"ptr*",parent),"ParentElementBuildCache")
 	return parent
 	}
+	
 	; Retrieves the first child element of the specified UI Automation element, and caches properties and control patterns.
 	GetFirstChildElementBuildCache(element,cacheRequest){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"ptr",element,"ptr",cacheRequest,"ptr*",first),"FirstChildElementBuildCache")
 	return first
 	}
+	
 	; Retrieves the last child element of the specified UI Automation element, and caches properties and control patterns.
 	GetLastChildElementBuildCache(element,cacheRequest){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"ptr",element,"ptr",cacheRequest,"ptr*",last),"LastChildElementBuildCache")
 	return last
 	}
+	
 	; Retrieves the next sibling element of the specified UI Automation element, and caches properties and control patterns.
 	GetNextSiblingElementBuildCache(element,cacheRequest){
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"ptr",element,"ptr",cacheRequest,"ptr*",next),"NextSiblingElementBuildCache")
 	return next
 	}
+	
 	; Retrieves the previous sibling element of the specified UI Automation element, and caches properties and control patterns.
 	GetPreviousSiblingElementBuildCache(element,cacheRequest){
 	_Error(DllCall(vt(this._p,13),"ptr",this._p,"ptr",element,"ptr",cacheRequest,"ptr*",previous),"PreviousSiblingElementBuildCache")
 	return previous
 	}
+	
 	; Retrieves the ancestor element nearest to the specified Microsoft UI Automation element in the tree view, prefetches the requested properties and control patterns, and stores the prefetched items in the cache.
 	NormalizeElementBuildCache(element,cacheRequest){
 	_Error(DllCall(vt(this._p,14),"ptr",this._p,"ptr",element,"ptr",cacheRequest,"ptr*",normalized),"NormalizeElementBuildCache")
 	return normalized
 	}
+	
 	; Retrieves the condition that defines the view of the UI Automation tree. This property is read-only.
 	; The condition that defines the view. This is the interface that was passed to CreateTreeWalker.
 	Condition(){
@@ -1206,9 +1247,11 @@ class IUIAutomationTreeWalker
 	return condition
 	}
 }
+
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;;IUIAutomationPattern;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
+
 class IUIAutomationPattern{
 	__new(){
 		this._p:=0,this._i:="",this._t:={Invoke:"Invoke_",Dock:"Dock_",ExpandCollapse:"ExpandCollapse_",Grid:"Grid_",GridItem:"GridItem_",MultipleView:"MultipleView_",RangeValue:"RangeValue_",Scroll:"Scroll_",ScrollItem:"ScrollItem_",Selection:"Selection_",SelectionItem:"SelectionItem_",SynchronizedInput:"SynchronizedInput_",Table:"Table_",TableItem:"TableItem_",Toggle:"Toggle_",Transform:"Transform_",Value:"Value_",Window:"Window_",TextRange:"TextRange_",TextRangeArray:"TextRangeArray_",Text:"Text_",LegacyIAccessible:"LegacyIAccessible_",ItemContainer:"ItemContainer_",VirtualizedItem:"VirtualizedItem_"}
@@ -1233,6 +1276,7 @@ class IUIAutomationPattern{
 	}
 
 ; IUIAutomationInvokePattern
+
 	; Invokes the action of a control, such as a button click. 
 	; Calls to this method should return immediately without blocking. However, this behavior depends on the implementation.
 	Invoke_Invoke(){
@@ -1240,19 +1284,22 @@ class IUIAutomationPattern{
 	}
 
 ; IUIAutomationDockPattern
+
 	; Sets the dock position of this element.
-	Dock_SetDockPosition(dockPos){
+	Dock_SetDockPosition(dockPos){ ; DockPosition
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",dockPos),"SetDockPosition")
 	}
+	
 	; Retrieves the dock position of this element within its docking container.
 	Dock_CurrentDockPosition(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int*",retVal),"CurrentDockPosition")
-	return retVal
+	return retVal ; DockPosition
 	}
+	
 	; Retrieves the cached dock position of this element within its docking container.
 	Dock_CachedDockPosition(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CachedDockPosition")
-	return retVal
+	return retVal ; DockPosition
 	}
 
 ; IUIAutomationExpandCollapsePattern
@@ -1264,22 +1311,26 @@ class IUIAutomationPattern{
 	ExpandCollapse_Expand(){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Expand")
 	}
+	
 	; Hides all child nodes, controls, or content of the element.
 	ExpandCollapse_Collapse(){
 	return _Error(DllCall(vt(this._p,4),"ptr",this._p),"Collapse")
 	}
+	
 	; Retrieves a value that indicates the state, expanded or collapsed, of the element.
 	ExpandCollapse_CurrentExpandCollapseState(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentExpandCollapseState")
-	return retVal
+	return retVal ; ExpandCollapseState
 	}
+	
 	; Retrieves a cached value that indicates the state, expanded or collapsed, of the element.
 	ExpandCollapse_CachedExpandCollapseState(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CachedExpandCollapseState")
-	return retVal
+	return retVal ; ExpandCollapseState
 	}
 
 ; IUIAutomationGridPattern
+
 	; Retrieves a UI Automation element representing an item in the grid.
 	Grid_GetItem(row,column){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"int",row,"int",column,"ptr*",element),"GetItem")
@@ -1293,16 +1344,19 @@ class IUIAutomationPattern{
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int*",retVal),"CurrentRowCount")
 	return retVal
 	}
+	
 	; The number of columns in the grid.
 	Grid_CurrentColumnCount(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentColumnCount")
 	return retVal
 	}
+	
 	; Retrieves the cached number of rows in the grid.
 	Grid_CachedRowCount(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CachedRowCount")
 	return retVal
 	}
+	
 	; Retrieves the cached number of columns in the grid.
 	Grid_CachedColumnCount(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CachedColumnCount")
@@ -1310,21 +1364,25 @@ class IUIAutomationPattern{
 	}
 
 ; IUIAutomationGridItemPattern
+
 	; Retrieves the element that contains the grid item. 
 	GridItem_CurrentContainingGrid(){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",retVal),"CurrentContainingGrid")
 	return retVal
 	}
+	
 	; Retrieves the zero-based index of the row that contains the grid item.
 	GridItem_CurrentRow(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int*",retVal),"CurrentRow")
 	return retVal
 	}
+	
 	; Retrieves the zero-based index of the column that contains the item.
 	GridItem_CurrentColumn(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentColumn")
 	return retVal
 	}
+	
 	; Retrieves the number of rows spanned by the grid item. 
 	GridItem_CurrentRowSpan(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CurrentRowSpan")
@@ -1336,26 +1394,31 @@ class IUIAutomationPattern{
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CurrentColumnSpan")
 	return retVal
 	}
+	
 	; Retrieves the cached element that contains the grid item. 
 	GridItem_CachedContainingGrid(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"ptr*",retVal),"CachedContainingGrid")
 	return retVal
 	}
+	
 	; Retrieves the cached zero-based index of the row that contains the item. 
 	GridItem_CachedRow(){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int*",retVal),"CachedRow")
 	return retVal
 	}
+	
 	; Retrieves the cached zero-based index of the column that contains the grid item.
 	GridItem_CachedColumn(){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"int*",retVal),"CachedColumn")
 	return retVal
 	}
+	
 	; Retrieves the cached number of rows spanned by a grid item. 
 	GridItem_CachedRowSpan(){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"int*",retVal),"CachedRowSpan")
 	return retVal
 	}
+	
 	; Retrieves the cached number of columns spanned by the grid item.
 	GridItem_CachedColumnSpan(){
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"int*",retVal),"CachedColumnSpan")
@@ -1363,61 +1426,73 @@ class IUIAutomationPattern{
 	}
 
 ; IUIAutomationMultipleViewPattern
+
 	; Retrieves the name of a control-specific view.
 	MultipleView_GetViewName(view){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"int",view,"ptr*",name),"GetViewName")
 	return StrGet(name,"utf-16")
 	}
+	
 	; Sets the view of the control.
 	MultipleView_SetCurrentView(view){
 	return _Error(DllCall(vt(this._p,4),"ptr",this._p,"int",view),"SetCurrentView")
 	}
+	
 	; Retrieves the control-specific identifier of the current view of the control.
 	MultipleView_CurrentCurrentView(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentCurrentView")
 	return retVal
 	}
+	
 	; Retrieves a collection of control-specific view identifiers.
 	MultipleView_GetCurrentSupportedViews(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",retVal),"GetCurrentSupportedViews")
-	return SAFEARRAY(retVal,3)
+	return GetSafeArrayValue(retVal,3)
 	}
+	
 	; Retrieves the cached control-specific identifier of the current view of the control.
 	MultipleView_CachedCurrentView(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CachedCurrentView")
 	return retVal
 	}
+	
 	; Retrieves a collection of control-specific view identifiers from the cache.
 	MultipleView_GetCachedSupportedViews(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"ptr*",retVal),"GetCachedSupportedViews")
-	return SAFEARRAY(retVal,3)
+	return GetSafeArrayValue(retVal,3)
 	}
 
 ; IUIAutomationRangeValuePattern
+
 	; Sets the value of the control.
 	RangeValue_SetValue(val){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"double",val),"SetValue")
 	}
+	
 	; Retrieves the value of the control.
 	RangeValue_CurrentValue(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"double*",retVal),"CurrentValue")
 	return retVal
 	}
+	
 	; Indicates whether the value of the element can be changed.
 	RangeValue_CurrentIsReadOnly(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentIsReadOnly")
 	return retVal
 	}
+	
 	; Retrieves the maximum value of the control.
 	RangeValue_CurrentMaximum(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"double*",retVal),"CurrentMaximum")
 	return retVal
 	}
+	
 	; Retrieves the minimum value of the control.
 	RangeValue_CurrentMinimum(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"double*",retVal),"CurrentMinimum")
 	return retVal
 	}
+	
 	
 	; The LargeChange and SmallChange property can support a Not a Number (NaN) value. When retrieving this property, a client can use the _isnan function to determine whether the property is a NaN value. 
 
@@ -1426,36 +1501,43 @@ class IUIAutomationPattern{
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"double*",retVal),"CurrentLargeChange")
 	return retVal
 	}
+	
 	; Retrieves the value that is added to or subtracted from the value of the control when a small change is made, such as when an arrow key is pressed.
 	RangeValue_CurrentSmallChange(){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"double*",retVal),"CurrentSmallChange")
 	return retVal
 	}
+	
 	; Retrieves the cached value of the control.
 	RangeValue_CachedValue(){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"double*",retVal),"CachedValue")
 	return retVal
 	}
+	
 	; Retrieves a cached value that indicates whether the value of the element can be changed.
 	RangeValue_CachedIsReadOnly(){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"int*",retVal),"CachedIsReadOnly")
 	return retVal
 	}
+	
 	; Retrieves the cached maximum value of the control.
 	RangeValue_CachedMaximum(){
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"double*",retVal),"CachedMaximum")
 	return retVal
 	}
+	
 	; Retrieves the cached minimum value of the control.
 	RangeValue_CachedMinimum(){
 	_Error(DllCall(vt(this._p,13),"ptr",this._p,"double*",retVal),"CachedMinimum")
 	return retVal
 	}
+	
 	; Retrieves, from the cache, the value that is added to or subtracted from the value of the control when a large change is made, such as when the PAGE DOWN key is pressed.
 	RangeValue_CachedLargeChange(){
 	_Error(DllCall(vt(this._p,14),"ptr",this._p,"double*",retVal),"CachedLargeChange")
 	return retVal
 	}
+	
 	; Retrieves, from the cache, the value that is added to or subtracted from the value of the control when a small change is made, such as when an arrow key is pressed.
 	RangeValue_CachedSmallChange(){
 	_Error(DllCall(vt(this._p,15),"ptr",this._p,"double*",retVal),"CachedSmallChange")
@@ -1463,71 +1545,85 @@ class IUIAutomationPattern{
 	}
 
 ; IUIAutomationScrollPattern
+
 	; Scrolls the visible region of the content area horizontally and vertically.
 	Scroll_Scroll(horizontalAmount,verticalAmount){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",horizontalAmount,"int",verticalAmount),"Scroll")
 	}
+	
 	; Sets the horizontal and vertical scroll positions as a percentage of the total content area within the UI Automation element.
 	; This method is useful only when the content area of the control is larger than the visible region.
 	Scroll_SetScrollPercent(horizontalPercent,verticalPercent){
 	return _Error(DllCall(vt(this._p,4),"ptr",this._p,"double",horizontalPercent,"double",verticalPercent),"SetScrollPercent")
 	}
+	
 	; Retrieves the horizontal scroll position.
 	Scroll_CurrentHorizontalScrollPercent(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"double*",retVal),"CurrentHorizontalScrollPercent")
 	return retVal
 	}
+	
 	; Retrieves the vertical scroll position.
 	Scroll_CurrentVerticalScrollPercent(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"double*",retVal),"CurrentVerticalScrollPercent")
 	return retVal
 	}
+	
 	; Retrieves the horizontal size of the viewable region of a scrollable element.
 	Scroll_CurrentHorizontalViewSize(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"double*",retVal),"CurrentHorizontalViewSize")
 	return retVal
 	}
+	
 	; Retrieves the vertical size of the viewable region of a scrollable element.
 	Scroll_CurrentVerticalViewSize(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"double*",retVal),"CurrentVerticalViewSize")
 	return retVal
 	}
+	
 	; Indicates whether the element can scroll horizontally.
 	; This property can be dynamic. For example, the content area of the element might not be larger than the current viewable area, meaning that the property is FALSE. However, resizing the element or adding child items can increase the bounds of the content area beyond the viewable area, making the property TRUE.
 	Scroll_CurrentHorizontallyScrollable(){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int*",retVal),"CurrentHorizontallyScrollable")
 	return retVal
 	}
+	
 	; Indicates whether the element can scroll vertically.
 	Scroll_CurrentVerticallyScrollable(){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"int*",retVal),"CurrentVerticallyScrollable")
 	return retVal
 	}
+	
 	; Retrieves the cached horizontal scroll position.
 	Scroll_CachedHorizontalScrollPercent(){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"double*",retVal),"CachedHorizontalScrollPercent")
 	return retVal
 	}
+	
 	; Retrieves the cached vertical scroll position.
 	Scroll_CachedVerticalScrollPercent(){
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"double*",retVal),"CachedVerticalScrollPercent")
 	return retVal
 	}
+	
 	; Retrieves the cached horizontal size of the viewable region of a scrollable element.
 	Scroll_CachedHorizontalViewSize(){
 	_Error(DllCall(vt(this._p,13),"ptr",this._p,"double*",retVal),"CachedHorizontalViewSize")
 	return retVal
 	}
+	
 	; Retrieves the cached vertical size of the viewable region of a scrollable element.
 	Scroll_CachedVerticalViewSize(){
 	_Error(DllCall(vt(this._p,14),"ptr",this._p,"double*",retVal),"CachedVerticalViewSize")
 	return retVal
 	}
+	
 	; Retrieves a cached value that indicates whether the element can scroll horizontally.
 	Scroll_CachedHorizontallyScrollable(){
 	_Error(DllCall(vt(this._p,15),"ptr",this._p,"int*",retVal),"CachedHorizontallyScrollable")
 	return retVal
 	}
+	
 	; Retrieves a cached value that indicates whether the element can scroll vertically.
 	Scroll_CachedVerticallyScrollable(){
 	_Error(DllCall(vt(this._p,16),"ptr",this._p,"int*",retVal),"CachedVerticallyScrollable")
@@ -1535,6 +1631,7 @@ class IUIAutomationPattern{
 	}
 
 ; IUIAutomationScrollItemPattern
+
 	; Scrolls the content area of a container object to display the UI Automation element within the visible region (viewport) of the container.
 	; This method does not provide the ability to specify the position of the element within the viewport.
 	ScrollItem_ScrollIntoView(){
@@ -1542,31 +1639,37 @@ class IUIAutomationPattern{
 	}
 
 ; IUIAutomationSelectionPattern
+
 	; Retrieves the selected elements in the container.
 	Selection_GetCurrentSelection(){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",retVal),"GetCurrentSelection")
 	return retVal
 	}
+	
 	; Indicates whether more than one item in the container can be selected at one time.
 	Selection_CurrentCanSelectMultiple(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int*",retVal),"CurrentCanSelectMultiple")
 	return retVal
 	}
+	
 	; Indicates whether at least one item must be selected at all times.
 	Selection_CurrentIsSelectionRequired(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentIsSelectionRequired")
 	return retVal
 	}
+	
 	; Retrieves the cached selected elements in the container.
 	Selection_GetCachedSelection(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",retVal),"GetCachedSelection")
 	return retVal
 	}
+	
 	; Retrieves a cached value that indicates whether more than one item in the container can be selected at one time.
 	Selection_CachedCanSelectMultiple(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CachedCanSelectMultiple")
 	return retVal
 	}
+	
 	; Retrieves a cached value that indicates whether at least one item must be selected at all times.
 	Selection_CachedIsSelectionRequired(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",retVal),"CachedIsSelectionRequired")
@@ -1574,34 +1677,41 @@ class IUIAutomationPattern{
 	}
 
 ; IUIAutomationSelectionItemPattern
+
 	; Clears any selected items and then selects the current element.
 	SelectionItem_Select(){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Select")
 	}
+	
 	; Adds the current element to the collection of selected items.
 	SelectionItem_AddToSelection(){
 	return _Error(DllCall(vt(this._p,4),"ptr",this._p),"AddToSelection")
 	}
+	
 	; Removes this element from the selection. 
 	; An error code is returned if this element is the only one in the selection and the selection container requires at least one element to be selected. 
 	SelectionItem_RemoveFromSelection(){
 	return _Error(DllCall(vt(this._p,5),"ptr",this._p),"RemoveFromSelection")
 	}
+	
 	; Indicates whether this item is selected.
 	SelectionItem_CurrentIsSelected(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CurrentIsSelected")
 	return retVal
 	}
+	
 	; Retrieves the element that supports IUIAutomationSelectionPattern and acts as the container for this item. 
 	SelectionItem_CurrentSelectionContainer(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"ptr*",retVal),"CurrentSelectionContainer")
 	return retVal
 	}
+	
 	; A cached value that indicates whether this item is selected.
 	SelectionItem_CachedIsSelected(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",retVal),"CachedIsSelected")
 	return retVal
 	}
+	
 	; Retrieves the cached element that supports IUIAutomationSelectionPattern and acts as the container for this item.
 	SelectionItem_CachedSelectionContainer(){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"ptr*",retVal),"CachedSelectionContainer")
@@ -1609,87 +1719,102 @@ class IUIAutomationPattern{
 	}
 
 ; IUIAutomationSynchronizedInputPattern
+
 	; Causes the Microsoft UI Automation provider to start listening for mouse or keyboard input.
 	; When matching input is found, the provider checks whether the target element matches the current element. If they match, the provider raises the UIA_InputReachedTargetEventId event; otherwise it raises the UIA_InputReachedOtherElementEventId or UIA_InputDiscardedEventId event.
 	; After receiving input of the specified type, the provider stops checking for input and continues as normal.
 	; If the provider is already listening for input, this method returns E_INVALIDOPERATION.
-	SynchronizedInput_StartListening(inputType){
+	SynchronizedInput_StartListening(inputType){ ; SynchronizedInputType
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",inputType),"StartListening")
 	}
+	
 	; Causes the Microsoft UI Automation provider to stop listening for mouse or keyboard input.
 	SynchronizedInput_Cancel(){
 	return _Error(DllCall(vt(this._p,4),"ptr",this._p),"Cancel")
 	}
 
 ; IUIAutomationTablePattern
+
 	; Retrieves a collection of UI Automation elements representing all the row headers in a table.
 	Table_GetCurrentRowHeaders(){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",retVal),"GetCurrentRowHeaders")
-	return retVal
+	return retVal ; IUIAutomationElementArray
 	}
+	
 	; Retrieves a collection of UI Automation elements representing all the column headers in a table.
 	Table_GetCurrentColumnHeaders(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr*",retVal),"GetCurrentColumnHeaders")
-	return retVal
+	return retVal ; IUIAutomationElementArray
 	}
+	
 	; Retrieves the primary direction of traversal for the table.
 	Table_CurrentRowOrColumnMajor(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentRowOrColumnMajor")
-	return retVal
+	return retVal ;RowOrColumnMajor
 	}
+	
 	; Retrieves a cached collection of UI Automation elements representing all the row headers in a table.
 	Table_GetCachedRowHeaders(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",retVal),"GetCachedRowHeaders")
-	return retVal
+	return retVal ; IUIAutomationElementArray
 	}
+	
 	; Retrieves a cached collection of UI Automation elements representing all the column headers in a table.
 	Table_GetCachedColumnHeaders(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"ptr*",retVal),"GetCachedColumnHeaders")
-	return retVal
+	return retVal ; IUIAutomationElementArray
 	}
+	
 	; Retrieves the cached primary direction of traversal for the table.
 	Table_CachedRowOrColumnMajor(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",retVal),"CachedRowOrColumnMajor")
-	return retVal
+	return retVal ; RowOrColumnMajor
 	}
 
 ; IUIAutomationTableItemPattern
+
 	; Retrieves the row headers associated with a table item or cell.
 	TableItem_GetCurrentRowHeaderItems(){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",retVal),"GetCurrentRowHeaderItems")
-	return retVal
+	return retVal ; IUIAutomationElementArray
 	}
+	
 	; Retrieves the column headers associated with a table item or cell.
 	TableItem_GetCurrentColumnHeaderItems(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr*",retVal),"GetCurrentColumnHeaderItems")
-	return retVal
+	return retVal ; IUIAutomationElementArray
 	}
+	
 	; Retrieves the cached row headers associated with a table item or cell.
 	TableItem_GetCachedRowHeaderItems(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"ptr*",retVal),"GetCachedRowHeaderItems")
-	return retVal
+	return retVal ; IUIAutomationElementArray
 	}
+	
 	; Retrieves the cached column headers associated with a table item or cell.
 	TableItem_GetCachedColumnHeaderItems(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",retVal),"GetCachedColumnHeaderItems")
-	return retVal
+	return retVal ; IUIAutomationElementArray
 	}
 
 ; IUIAutomationTogglePattern
+
 	; Cycles through the toggle states of the control.
 	; A control cycles through its states in this order: ToggleState_On, ToggleState_Off and, if supported, ToggleState_Indeterminate.
 	Toggle_Toggle(){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Toggle")
 	}
+	
 	; Retrieves the state of the control.
 	Toggle_CurrentToggleState(){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int*",retVal),"CurrentToggleState")
-	return retVal
+	return retVal ; ToggleState
 	}
+	
 	; Retrieves the cached state of the control.
 	Toggle_CachedToggleState(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CachedToggleState")
-	return retVal
+	return retVal ; ToggleState
 	}
 
 ; IUIAutomationTransformPattern
@@ -1700,40 +1825,48 @@ class IUIAutomationPattern{
 	Transform_Move(x,y){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"double",x,"double",y),"Move")
 	}
+	
 	; Resizes the UI Automation element.
 	; When called on a control that supports split panes, this method can have the side effect of resizing other contiguous panes. 
 	Transform_Resize(width,height){
 	return _Error(DllCall(vt(this._p,4),"ptr",this._p,"double",width,"double",height),"Resize")
 	}
+	
 	; Rotates the UI Automation element.
 	Transform_Rotate(degrees){
 	return _Error(DllCall(vt(this._p,5),"ptr",this._p,"double",degrees),"Rotate")
 	}
+	
 	; Indicates whether the element can be moved.
 	Transform_CurrentCanMove(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CurrentCanMove")
 	return retVal
 	}
+	
 	; Indicates whether the element can be resized.
 	Transform_CurrentCanResize(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CurrentCanResize")
 	return retVal
 	}
+	
 	; Indicates whether the element can be rotated.
 	Transform_CurrentCanRotate(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",retVal),"CurrentCanRotate")
 	return retVal
 	}
+	
 	; Retrieves a cached value that indicates whether the element can be moved.
 	Transform_CachedCanMove(){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int*",retVal),"CachedCanMove")
 	return retVal
 	}
+	
 	; Retrieves a cached value that indicates whether the element can be resized.
 	Transform_CachedCanResize(){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"int*",retVal),"CachedCanResize")
 	return retVal
 	}
+	
 	; Retrieves a cached value that indicates whether the element can be rotated.
 	Transform_CachedCanRotate(){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"int*",retVal),"CachedCanRotate")
@@ -1741,12 +1874,14 @@ class IUIAutomationPattern{
 	}
 
 ; IUIAutomationValuePattern
+
 	; Sets the value of the element.
 	; The CurrentIsEnabled property must be TRUE, and the IUIAutomationValuePattern::CurrentIsReadOnly property must be FALSE. 
 	Value_SetValue(val){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"str",val),"SetValue")
 	return 
 	}
+	
 	; Retrieves the value of the element.
 	; Single-line edit controls support programmatic access to their contents through IUIAutomationValuePattern. However, multiline edit controls do not support this control pattern, and their contents must be retrieved by using IUIAutomationTextPattern.
 	; This property does not support the retrieval of formatting information or substring values. IUIAutomationTextPattern must be used in these scenarios as well.
@@ -1754,16 +1889,19 @@ class IUIAutomationPattern{
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr*",retVal),"CurrentValue")
 	return StrGet(retVal,"utf-16")
 	}
+	
 	; Indicates whether the value of the element is read-only.
 	Value_CurrentIsReadOnly(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int*",retVal),"CurrentIsReadOnly")
 	return retVal
 	}
+	
 	; Retrieves the cached value of the element.
 	Value_CachedValue(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",retVal),"CachedValue")
 	return StrGet(retVal,"utf-16")
 	}
+	
 	; Retrieves a cached value that indicates whether the value of the element is read-only.
 	; This property must be TRUE for IUIAutomationValuePattern::SetValue to succeed.
 	Value_CachedIsReadOnly(){
@@ -1772,76 +1910,91 @@ class IUIAutomationPattern{
 	}
 
 ; IUIAutomationWindowPattern
+
 	; Closes the window.
 	; When called on a split pane control, this method closes the pane and removes the associated split. This method may also close all other panes, depending on implementation.
 	Window_Close(){
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p),"Close")
 	}
+	
 	; Causes the calling code to block for the specified time or until the associated process enters an idle state, whichever completes first. 
 	Window_WaitForInputIdle(milliseconds){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int",milliseconds,"int*",success),"WaitForInputIdle")
 	return success
 	}
+	
 	; Minimizes, maximizes, or restores the window.
 	Window_SetWindowVisualState(state){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int",state),"SetWindowVisualState")
 	return 
 	}
+	
 	; Indicates whether the window can be maximized.
 	Window_CurrentCanMaximize(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",retVal),"CurrentCanMaximize")
 	return retVal
 	}
+	
 	; Indicates whether the window can be minimized.
 	Window_CurrentCanMinimize(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int*",retVal),"CurrentCanMinimize")
 	return retVal
 	}
+	
 	; Indicates whether the window is modal.
 	Window_CurrentIsModal(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",retVal),"CurrentIsModal")
 	return retVal
 	}
+	
 	; Indicates whether the window is the topmost element in the z-order.
 	Window_CurrentIsTopmost(){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int*",retVal),"CurrentIsTopmost")
 	return retVal
 	}
+	
 	; Retrieves the visual state of the window; that is, whether it is in the normal, maximized, or minimized state.
 	Window_CurrentWindowVisualState(){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"int*",retVal),"CurrentWindowVisualState")
-	return retVal
+	return retVal ; WindowVisualState
 	}
+	
 	; Retrieves the current state of the window for the purposes of user interaction.
 	Window_CurrentWindowInteractionState(){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"int*",retVal),"CurrentWindowInteractionState")
 	return retVal ; WindowInteractionState
 	}
+	
 	; Retrieves a cached value that indicates whether the window can be maximized.
 	Window_CachedCanMaximize(){
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"int*",retVal),"CachedCanMaximize")
 	return retVal
 	}
+	
 	; Retrieves a cached value that indicates whether the window can be minimized.
 	Window_CachedCanMinimize(){
 	_Error(DllCall(vt(this._p,13),"ptr",this._p,"int*",retVal),"CachedCanMinimize")
 	return retVal
 	}
+	
 	; Retrieves a cached value that indicates whether the window is modal.
 	Window_CachedIsModal(){
 	_Error(DllCall(vt(this._p,14),"ptr",this._p,"int*",retVal),"CachedIsModal")
 	return retVal
 	}
+	
 	; Retrieves a cached value that indicates whether the window is the topmost element in the z-order.
 	Window_CachedIsTopmost(){
 	_Error(DllCall(vt(this._p,15),"ptr",this._p,"int*",retVal),"CachedIsTopmost")
 	return retVal
 	}
+	
 	; Retrieves a cached value that indicates the visual state of the window; that is, whether it is in the normal, maximized, or minimized state.
 	Window_CachedWindowVisualState(){
 	_Error(DllCall(vt(this._p,16),"ptr",this._p,"int*",retVal),"CachedWindowVisualState")
-	return retVal
+	return retVal ; WindowVisualState
 	}
+	
 	; Retrieves a cached value that indicates the current state of the window for the purposes of user interaction.
 	Window_CachedWindowInteractionState(){
 	_Error(DllCall(vt(this._p,17),"ptr",this._p,"int*",retVal),"CachedWindowInteractionState")
@@ -1849,42 +2002,49 @@ class IUIAutomationPattern{
 	}
 
 ; IUIAutomationTextRange
+
 	; Retrieves a new IUIAutomationTextRange identical to the original and inheriting all properties of the original.
 	; The new range can be manipulated independently of the original.
 	TextRange_Clone(){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr*",clonedRange),"Clone")
-	return clonedRange
+	return clonedRange ; IUIAutomationTextRange
 	}
+	
 	; Retrieves a value that specifies whether this text range has the same endpoints as another text range.
 	; This method compares the endpoints of the two text ranges, not the text in the ranges. The ranges are identical if they share the same endpoints. If two text ranges have different endpoints, they are not identical even if the text in both ranges is exactly the same. 
 	TextRange_Compare(range){
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr",range,"int*",areSame),"Compare")
 	return areSame
 	}
+	
 	; Retrieves a value that specifies whether the start or end endpoint of this text range is the same as the start or end endpoint of another text range.
 	TextRange_CompareEndpoints(srcEndPoint,range,targetEndPoint){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"int",srcEndPoint,"ptr",range,"int",targetEndPoint,"int*",compValue),"CompareEndpoints") ; TextPatternRangeEndpoint
 	return compValue
 	}
+	
 	; Normalizes the text range by the specified text unit. The range is expanded if it is smaller than the specified unit, or shortened if it is longer than the specified unit.
 	; Client applications such as screen readers use this method to retrieve the full word, sentence, or paragraph that exists at the insertion point or caret position.
 	; Despite its name, the ExpandToEnclosingUnit method does not necessarily expand a text range. Instead, it "normalizes" a text range by moving the endpoints so that the range encompasses the specified text unit. The range is expanded if it is smaller than the specified unit, or shortened if it is longer than the specified unit. If the range is already an exact quantity of the specified units, it remains unchanged. The following diagram shows how ExpandToEnclosingUnit normalizes a text range by moving the endpoints of the range. 
 	; ExpandToEnclosingUnit defaults to the next largest text unit supported if the specified text unit is not supported by the control. The order, from smallest unit to largest, is as follows: Character Format Word Line Paragraph Page Document
 	; ExpandToEnclosingUnit respects both visible and hidden text. 
-	TextRange_ExpandToEnclosingUnit(textUnit){
+	TextRange_ExpandToEnclosingUnit(textUnit){ ; textUnit
 	return _Error(DllCall(vt(this._p,6),"ptr",this._p,"int",textUnit),"ExpandToEnclosingUnit") ; textUnit
 	}
+	
 	; Retrieves a text range subset that has the specified text attribute value.
 	; The FindAttribute method retrieves matching text regardless of whether the text is hidden or visible. Use UIA_IsHiddenAttributeId to check text visibility.
 	TextRange_FindAttribute(attr,val,backward){
-	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int",attr,"ptr",variant(v,UIA_AttributeType(attr),val),"int",backward,"ptr*",found),"FindAttribute")
-	return found
+	_Error(DllCall(vt(this._p,7),"ptr",this._p,"int",attr,"ptr",variant(v,UIA_AttributeVariantType(attr),val),"int",backward,"ptr*",found),"FindAttribute")
+	return found ; IUIAutomationTextRange
 	}
+	
 	; Retrieves a text range subset that contains the specified text. There is no differentiation between hidden and visible text. 
 	TextRange_FindText(text,backward,ignoreCase){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"str",text,"int",backward,"int",ignoreCase,"ptr*",found),"FindText")
-	return StrGet(found,"utf-16")
+	return found ; IUIAutomationTextRange
 	}
+	
 	; Retrieves the value of the specified text attribute across the entire text range.
 	; The type of value retrieved by this method depends on the attr parameter. For example, calling GetAttributeValue with the attr parameter set to UIA_FontNameAttributeId returns a string that represents the font name of the text range, while calling GetAttributeValue with attr set to UIA_IsItalicAttributeId would return a boolean. 
 	; If the attribute specified by attr is not supported, the value parameter receives a value that is equivalent to the IUIAutomation::ReservedNotSupportedValue property. 
@@ -1892,81 +2052,112 @@ class IUIAutomationPattern{
 	; The GetAttributeValue method retrieves the attribute value regardless of whether the text is hidden or visible. Use UIA_ IsHiddenAttributeId to check text visibility.
 	TextRange_GetAttributeValue(attr,value){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"int",attr,"ptr",variant(value)),"GetAttributeValue") ; Text Attribute
-	return UIA_GetAttributeValue(value,attr)
+	return GetVariantValue(value)
 	}
+	
 	; Retrieves a collection of bounding rectangles for each fully or partially visible line of text in a text range.
 	TextRange_GetBoundingRectangles(){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"ptr*",boundingRects),"GetBoundingRectangles")
-	return SAFEARRAY(boundingRects,5)
+	return GetSafeArrayValue(boundingRects,5)
 	}
+	
 	; Returns the innermost UI Automation element that encloses the text range.
 	TextRange_GetEnclosingElement(){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"ptr*",enclosingElement),"GetEnclosingElement")
-	return 
+	return enclosingElement
 	}
+	
 	; Returns the plain text of the text range.
-	TextRange_GetText(maxLength){
+	TextRange_GetText(maxLength=-1){
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"int",maxLength,"ptr*",text),"GetText")
 	return StrGet(text,"utf-16")
 	}
+	
 	; Moves the text range forward or backward by the specified number of text units .
-	; IUIAutomationTextRange::Move moves the text range to span a different part of the text; it does not alter the text in any way. 
-	; more info
-	; http://msdn.microsoft.com/en-us/library/ee671450%28v=vs.85%29.aspx
-	TextRange_Move(unit,count){
+	/*
+	IUIAutomationTextRange::Move moves the text range to span a different part of the text; it does not alter the text in any way.
+	For a non-degenerate (non-empty) text range, IUIAutomationTextRange::Move normalizes and moves the range by performing the following steps.
+		The text range is collapsed to a degenerate (empty) range at the starting endpoint.
+		If necessary, the resulting text range is moved backward in the document to the beginning of the requested text unit boundary.
+		The text range is moved forward or backward in the document by the requested number of text unit boundaries.
+		The text range is expanded from the degenerate state by moving the ending endpoint forward by one requested text unit boundary.
+	If any of the preceding steps fail, the text range is left unchanged. If the text range cannot be moved as far as the requested number of text units, but can be moved by a smaller number of text units, the text range is moved by the smaller number of text units and moved is set to the number of text units moved.
+	For a degenerate text range, IUIAutomationTextRange::Move simply moves the text insertion point by the specified number of text units.
+	When moving a text range, IUIAutomationTextRange::Move ignores the boundaries of any embedded objects in the text.
+	IUIAutomationTextRange::Move respects both hidden and visible text.
+	If a text-based control does not support the text unit specified by the unit parameter, IUIAutomationTextRange::Move substitutes the next larger supported text unit. The size of the text units, from smallest unit to largest, is as follows.
+		Character
+		Format
+		Word
+		Line
+		Paragraph
+		Page
+		Document
+	*/
+	TextRange_Move(unit,count){ ; TextUnit
 	_Error(DllCall(vt(this._p,13),"ptr",this._p,"int",unit,"int",count,"int*",moved),"Move") ; TextUnit
 	return moved
 	}
+	
 	; Moves one endpoint of the text range the specified number of text units within the document range.
-	TextRange_MoveEndpointByUnit(endpoint,unit,count){
+	TextRange_MoveEndpointByUnit(endpoint,unit,count){ ; TextPatternRangeEndpoint , TextUnit
 	_Error(DllCall(vt(this._p,14),"ptr",this._p,"int",endpoint,"int",unit,"int",count,"int*",moved),"MoveEndpointByUnit") ; TextPatternRangeEndpoint,TextUnit
 	return moved
 	}
+	
 	; Moves one endpoint of the current text range to the specified endpoint of a second text range.
 	; If the endpoint being moved crosses the other endpoint of the same text range, that other endpoint is moved also, resulting in a degenerate (empty) range and ensuring the correct ordering of the endpoints (that is, the start is always less than or equal to the end).
-	TextRange_MoveEndpointByRange(srcEndPoint,range,targetEndPoint){
+	TextRange_MoveEndpointByRange(srcEndPoint,range,targetEndPoint){ ; TextPatternRangeEndpoint , IUIAutomationTextRange , TextPatternRangeEndpoint
 	return _Error(DllCall(vt(this._p,15),"ptr",this._p,"int",srcEndPoint,"ptr",range,"int",targetEndPoint),"MoveEndpointByRange")
 	}
+	
 	; Selects the span of text that corresponds to this text range, and removes any previous selection.
 	; If the Select method is called on a text range object that represents a degenerate (empty) text range, the text insertion point moves to the starting endpoint of the text range.
 	TextRange_Select(){
 	return _Error(DllCall(vt(this._p,16),"ptr",this._p),"Select")
 	}
+	
 	; Adds the text range to the collection of selected text ranges in a control that supports multiple, disjoint spans of selected text.
 	; The text insertion point moves to the newly selected text. If AddToSelection is called on a text range object that represents a degenerate (empty) text range, the text insertion point moves to the starting endpoint of the text range.
 	TextRange_AddToSelection(){
 	return _Error(DllCall(vt(this._p,17),"ptr",this._p),"AddToSelection")
 	}
+	
 	; Removes the text range from an existing collection of selected text in a text container that supports multiple, disjoint selections.
 	; The text insertion point moves to the area of the removed highlight. Providing a degenerate text range also moves the insertion point.
 	TextRange_RemoveFromSelection(){
 	return _Error(DllCall(vt(this._p,18),"ptr",this._p),"RemoveFromSelection")
 	}
+	
 	; Causes the text control to scroll until the text range is visible in the viewport.
 	; The method respects both hidden and visible text. If the text range is hidden, the text control will scroll only if the hidden text has an anchor in the viewport. 
 	; A Microsoft UI Automation client can check text visibility by calling IUIAutomationTextRange::GetAttributeValue with the attr parameter set to UIA_IsHiddenAttributeId. 
 	TextRange_ScrollIntoView(alignToTop){
 	return _Error(DllCall(vt(this._p,19),"ptr",this._p,"int",alignToTop),"ScrollIntoView")
 	}
+	
 	; Retrieves a collection of all embedded objects that fall within the text range.
 	TextRange_GetChildren(){
 	_Error(DllCall(vt(this._p,20),"ptr",this._p,"ptr*",children),"GetChildren")
-	return children
+	return children ; IUIAutomationElementArray
 	}
 
 ; IUIAutomationTextRangeArray
+
 	; Retrieves the number of text ranges in the collection.
 	TextRangeArray_Length(){
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"int*",length),"Length")
 	return length
 	}
-	; Retrieves a text range from the collection.
-	TextRangeArray_GetElement(index){
+	
+	; Retrieves a text range from the collection. 
+	TextRangeArray_GetElement(index){ ; zero-based.
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"int",index,"ptr*",element),"GetElement")
-	return element
+	return element ; IUIAutomationTextRange
 	}
 
 ; IUIAutomationTextPattern
+
 	; Retrieves the degenerate (empty) text range nearest to the specified screen coordinates.
 	/*
 	A text range that wraps a child object is returned if the screen coordinates are within the coordinates of an image, hyperlink, Microsoft Excel spreadsheet, or other embedded object.
@@ -1976,17 +2167,19 @@ class IUIAutomationPattern{
 		2. Call the GetVisibleRanges method to retrieve an array of visible text ranges.For each text range in the array, call IUIAutomationTextRange::GetBoundingRectangles to retrieve the bounding rectangles.
 		3. Call the GetVisibleRanges method to retrieve an array of visible text ranges.Check the bounding rectangles to find the text range that occupies the particular screen coordinates.
 	*/
-	Text_RangeFromPoint(pt){
+	Text_RangeFromPoint(pt){ ; x|y<<32
 	_Error(DllCall(vt(this._p,3),"ptr",this._p,"int64",pt,"ptr*",range),"RangeFromPoint")
 	return range
 	}
+	
 	; Retrieves a text range enclosing a child element such as an image, hyperlink, Microsoft Excel spreadsheet, or other embedded object.
 	; If there is no text in the range that encloses the child element, a degenerate (empty) range is returned.
 	; The child parameter is either a child of the element associated with a IUIAutomationTextPattern or from the array of children of a IUIAutomationTextRange.
-	Text_RangeFromChild(child){
+	Text_RangeFromChild(child){ ; IUIAutomationElement
 	_Error(DllCall(vt(this._p,4),"ptr",this._p,"ptr",child,"ptr*",range),"RangeFromChild")
-	return range
+	return range ; IUIAutomationTextRange
 	}
+	
 	; Retrieves a collection of text ranges that represents the currently selected text in a text-based control. 
 	; If the control supports the selection of multiple, non-contiguous spans of text, the ranges collection receives one text range for each selected span. 
 	; If the control contains only a single span of selected text, the ranges collection receives a single text range. 
@@ -1995,160 +2188,189 @@ class IUIAutomationPattern{
 	; Use the IUIAutomationTextPattern::SupportedTextSelection property to test whether a control supports text selection.
 	Text_GetSelection(){
 	_Error(DllCall(vt(this._p,5),"ptr",this._p,"ptr*",ranges),"GetSelection")
-	return ranges
+	return ranges ; IUIAutomationTextRangeArray
 	}
+	
 	; Retrieves an array of disjoint text ranges from a text-based control where each text range represents a contiguous span of visible text.
 	; If the visible text consists of one contiguous span of text, the ranges array will contain a single text range that represents all of the visible text. 
 	; If the visible text consists of multiple, disjoint spans of text, the ranges array will contain one text range for each visible span, beginning with the first visible span, and ending with the last visible span. Disjoint spans of visible text can occur when the content of a text-based control is partially obscured by an overlapping window or other object, or when a text-based control with multiple pages or columns has content that is partially scrolled out of view. 
 	; IUIAutomationTextPattern::GetVisibleRanges retrieves a degenerate (empty) text range if no text is visible, if all text is scrolled out of view, or if the text-based control contains no text.
 	Text_GetVisibleRanges(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"ptr*",ranges),"GetVisibleRanges")
-	return ranges
+	return ranges ; IUIAutomationTextRangeArray
 	}
+	
 	; Retrieves a text range that encloses the main text of a document.
 	; Some auxiliary text such as headers, footnotes, or annotations might not be included. 
 	Text_DocumentRange(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"ptr*",range),"DocumentRange")
-	return range
+	return range ; IUIAutomationTextRange
 	}
+	
 	; Retrieves a value that specifies the type of text selection that is supported by the control. 
 	Text_SupportedTextSelection(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"int*",supportedTextSelection),"SupportedTextSelection")
-	return supportedTextSelection
+	return supportedTextSelection ; SupportedTextSelection
 	}
 
 ; IUIAutomationLegacyIAccessiblePattern
+
 	; Performs a Microsoft Active Accessibility selection.
-	LegacyIAccessible_Select(flagsSelect){
+	LegacyIAccessible_Select(flagsSelect){ ; SELFLAG
 	return _Error(DllCall(vt(this._p,3),"ptr",this._p,"int",flagsSelect),"Select") ; SELFLAG
 	}
+	
 	; Performs the Microsoft Active Accessibility default action for the element.
 	LegacyIAccessible_DoDefaultAction(){
 	return _Error(DllCall(vt(this._p,4),"ptr",this._p),"DoDefaultAction")
 	}
+	
 	; Sets the Microsoft Active Accessibility value property for the element. This method is supported only for some elements (usually edit controls). 
 	LegacyIAccessible_SetValue(szValue){
 	return _Error(DllCall(vt(this._p,5),"ptr",this._p,"str",szValue),"SetValue")
 	}
+	
 	; Retrieves the Microsoft Active Accessibility child identifier for the element. If the element is not a child element, CHILDID_SELF (0) is returned.
 	LegacyIAccessible_CurrentChildId(){
 	_Error(DllCall(vt(this._p,6),"ptr",this._p,"int*",pRetVal),"CurrentChildId")
 	return pRetVal
 	}
+	
 	; Retrieves the Microsoft Active Accessibility name property of the element. The name of an element can be used to find the element in the element tree when the automation ID property is not supported on the element.
 	LegacyIAccessible_CurrentName(){
 	_Error(DllCall(vt(this._p,7),"ptr",this._p,"ptr*",pszName),"CurrentName")
 	return StrGet(pszName,"utf-16")
 	}
+	
 	; Retrieves the Microsoft Active Accessibility value property.
 	LegacyIAccessible_CurrentValue(){
 	_Error(DllCall(vt(this._p,8),"ptr",this._p,"ptr*",pszValue),"CurrentValue")
 	return StrGet(pszValue,"utf-16")
 	}
+	
 	; Retrieves the Microsoft Active Accessibility description of the element.
 	LegacyIAccessible_CurrentDescription(){
 	_Error(DllCall(vt(this._p,9),"ptr",this._p,"ptr*",pszDescription),"CurrentDescription")
 	return StrGet(pszDescription,"utf-16")
 	}
+	
 	; Retrieves the Microsoft Active Accessibility role identifier of the element.
 	LegacyIAccessible_CurrentRole(){
 	_Error(DllCall(vt(this._p,10),"ptr",this._p,"uint*",pdwRole),"CurrentRole") ; role
-	return pdwRole
+	return pdwRole ; Roles
 	}
+	
 	; Retrieves the Microsoft Active Accessibility state identifier for the element.
 	LegacyIAccessible_CurrentState(){
 	_Error(DllCall(vt(this._p,11),"ptr",this._p,"uint*",pdwState),"CurrentState") ; state id
-	return pdwState
+	return pdwState ; State
 	}
+	
 	; Retrieves the Microsoft Active Accessibility help string for the element.
 	LegacyIAccessible_CurrentHelp(){
 	_Error(DllCall(vt(this._p,12),"ptr",this._p,"ptr*",pszHelp),"CurrentHelp")
 	return StrGet(pszHelp,"utf-16")
 	}
+	
 	; Retrieves the Microsoft Active Accessibility keyboard shortcut property for the element.
 	LegacyIAccessible_CurrentKeyboardShortcut(){
 	_Error(DllCall(vt(this._p,13),"ptr",this._p,"ptr*",pszKeyboardShortcut),"CurrentKeyboardShortcut")
 	return StrGet(pszKeyboardShortcut,"utf-16")
 	}
+	
 	; Retrieves the Microsoft Active Accessibility property that identifies the selected children of this element.
 	LegacyIAccessible_GetCurrentSelection(){
 	_Error(DllCall(vt(this._p,14),"ptr",this._p,"ptr*",pvarSelectedChildren),"GetCurrentSelection")
-	return pvarSelectedChildren
+	return pvarSelectedChildren ; IUIAutomationElementArray
 	}
+	
 	; Retrieves the Microsoft Active Accessibility default action for the element.
 	LegacyIAccessible_CurrentDefaultAction(){
 	_Error(DllCall(vt(this._p,15),"ptr",this._p,"ptr*",pszDefaultAction),"CurrentDefaultAction")
 	return StrGet(pszDefaultAction,"utf-16")
 	}
+	
 	; Retrieves the cached Microsoft Active Accessibility child identifier for the element.
 	LegacyIAccessible_CachedChildId(){
 	_Error(DllCall(vt(this._p,16),"ptr",this._p,"int*",pRetVal),"CachedChildId")
 	return pRetVal
 	}
+	
 	; Retrieves the cached Microsoft Active Accessibility name property of the element.
 	LegacyIAccessible_CachedName(){
 	_Error(DllCall(vt(this._p,17),"ptr",this._p,"ptr*",pszName),"CachedName")
 	return StrGet(pszName,"utf-16")
 	}
+	
 	; Retrieves the cached Microsoft Active Accessibility value property.
 	LegacyIAccessible_CachedValue(){
 	_Error(DllCall(vt(this._p,18),"ptr",this._p,"ptr*",pszValue),"CachedValue")
 	return StrGet(pszValue,"utf-16")
 	}
+	
 	; Retrieves the cached Microsoft Active Accessibility description of the element.
 	LegacyIAccessible_CachedDescription(){
 	_Error(DllCall(vt(this._p,19),"ptr",this._p,"ptr*",pszDescription),"CachedDescription")
 	return StrGet(pszDescription,"utf-16")
 	}
+	
 	; Retrieves the cached Microsoft Active Accessibility role of the element.
 	LegacyIAccessible_CachedRole(){
 	_Error(DllCall(vt(this._p,20),"ptr",this._p,"uint*",pdwRole),"CachedRole")
-	return pdwRole
+	return pdwRole ; Roles
 	}
+	
 	; Retrieves the cached Microsoft Active Accessibility state identifier for the element.
 	LegacyIAccessible_CachedState(){
 	_Error(DllCall(vt(this._p,21),"ptr",this._p,"uint*",pdwState),"CachedState")
-	return pdwState
+	return pdwState ; State
 	}
+	
 	; Retrieves the cached Microsoft Active Accessibility help string for the element.
 	LegacyIAccessible_CachedHelp(){
 	_Error(DllCall(vt(this._p,22),"ptr",this._p,"ptr*",pszHelp),"CachedHelp")
 	return StrGet(pszHelp,"utf-16")
 	}
+	
 	; Retrieves the cached Microsoft Active Accessibility keyboard shortcut property for the element.
 	LegacyIAccessible_CachedKeyboardShortcut(){
 	_Error(DllCall(vt(this._p,23),"ptr",this._p,"ptr*",pszKeyboardShortcut),"CachedKeyboardShortcut")
 	return StrGet(pszKeyboardShortcut,"utf-16")
 	}
+	
 	; Retrieves the cached Microsoft Active Accessibility property that identifies the selected children of this element.
 	LegacyIAccessible_GetCachedSelection(){
 	_Error(DllCall(vt(this._p,24),"ptr",this._p,"ptr*",pvarSelectedChildren),"GetCachedSelection")
-	return pvarSelectedChildren
+	return pvarSelectedChildren ; IUIAutomationElementArray
 	}
+	
 	; Retrieves the Microsoft Active Accessibility default action for the element.
 	LegacyIAccessible_CachedDefaultAction(){
 	_Error(DllCall(vt(this._p,25),"ptr",this._p,"ptr*",pszDefaultAction),"CachedDefaultAction")
 	return StrGet(pszDefaultAction,"utf-16")
 	}
+	
 	; Retrieves an IAccessible object that corresponds to the Microsoft UI Automation element.
 	; This method returns NULL if the underlying implementation of the UI Automation element is not a native Microsoft Active Accessibility server; that is, if a client attempts to retrieve the IAccessible interface for an element originally supported by a proxy object from OLEACC.dll, or by the UIA-to-MSAA Bridge.
 	LegacyIAccessible_GetIAccessible(){
 	_Error(DllCall(vt(this._p,26),"ptr",this._p,"ptr*",ppAccessible),"GetIAccessible")
-	return ppAccessible
+	return ppAccessible ; IAccessible
 	}
 
 ; IUIAutomationItemContainerPattern
+
 	; Retrieves an element within a containing element, based on a specified property value.
 	; The provider may return an actual IUIAutomationElement interface or a placeholder if the matching element is virtualized. 
 	; This method returns E_INVALIDARG if the property requested is not one that the container supports searching over. It is expected that most containers will support Name property, and if appropriate for the container, AutomationId and IsSelected. 
 	; This method can be slow, because it may need to traverse multiple objects to find a matching one. When used in a loop to return multiple items, no specific order is defined so long as each item is returned only once (that is, the loop should terminate). This method is also item-centric, not UI-centric, so items with multiple UI representations need to be hit only once. 
 	; When the propertyId parameter is specified as 0 (zero), the provider is expected to return the next item after pStartAfter. If pStartAfter is specified as NULL with a propertyId of 0, the provider should return the first item in the container. When propertyId is specified as 0, the value parameter should be VT_EMPTY. 
-	ItemContainer_FindItemByProperty(pStartAfter,propertyId,value){
-	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr",pStartAfter,"int",propertyId,"ptr",variant(_,UIA_PropertyType(propertyId),value),"ptr*",pFound),"FindItemByProperty")
-	return pFound
+	ItemContainer_FindItemByProperty(pStartAfter,propertyId,value){ ; IUIAutomationElement
+	_Error(DllCall(vt(this._p,3),"ptr",this._p,"ptr",pStartAfter,"int",propertyId,"ptr",variant(_,UIA_PropertyVariantType(propertyId),value),"ptr*",pFound),"FindItemByProperty")
+	return pFound ; IUIAutomationElement
 	}
 
 ; IUIAutomationVirtualizedItemPattern
+
 	; Creates a full UI Automation element for a virtualized item.
 	; A virtualized item is represented by a placeholder automation element in the UI Automation tree. The Realize method causes the provider to make full information available for the item so that a full UI Automation element can be created for the item. 
 	VirtualizedItem_Realize(){
@@ -2156,99 +2378,10 @@ class IUIAutomationPattern{
 	}
 }
 
-;;;;;;;;;;;;;;;;;;;;;
-;;Wrapped Functions;;
-;;;;;;;;;;;;;;;;;;;;;
-; create safearray
-CreateSafeArray(){ ; not completed
-	
-}
-; create nativearray
-CreateNativeArrary(ptr,type,p*){ ; not completed
-	count:=0
-	VarSetCapacity(ptr,p.maxindex())
-	loop{
-		
-	}
-}
-; retrieves property value
-UIA_PropertyValue(v){
-	if (type:=NumGet(v+0,"ushort"))&0x2000{
-		return SafeArray(NumGet(v+8),type&0xFF)
-	}else {
-		out:=type=2?NumGet(v+8,"short")	; 16 位有符号整数
-		:type=3?NumGet(v+8,"int")	; 32 位有符号整数
-		:type=4?NumGet(v+8,"float")	; 32 位浮点数
-		:type=5?NumGet(v+8,"double")	; 64 位浮点数
-		:type=8?StrGet(NumGet(v+8),"utf-16")	; COM 字符串 (带长度前缀的 Unicode 字符串)
-		:type=0xA?NumGet(v+8,"uint")	; Error 码 (32 位整数)
-		:type=0xB?NumGet(v+8,"short")	; 布尔值 True (-1) 或 False (0)
-		:type=0x10?NumGet(v+8,"char")	; 8 位有符号整数
-		:type=0x11?NumGet(v+8,"uchar")	; 8 位无符号整数
-		:type=0x12?NumGet(v+8,"ushort")	; 16 位无符号整数
-		:type=0x13?NumGet(v+8,"uint")	; 32 位无符号整数
-		:type=0x14?NumGet(v+8,"int64")	; 64 位有符号整数
-		:type=0x15?NumGet(v+8,"uint64")	; 64 位无符号整数
-		:NumGet(v+8)
-		return out
-	}
-}
-; Property
-UIA_Property(n){
-	static id:={RuntimeId:30000,BoundingRectangle:30001,ProcessId:30002,ControlType:30003,LocalizedControlType:30004,Name:30005,AcceleratorKey:30006,AccessKey:30007,HasKeyboardFocus:30008,IsKeyboardFocusable:30009,IsEnabled:30010,AutomationId:30011,ClassName:30012,HelpText:30013,ClickablePoint:30014,Culture:30015,IsControlElement:30016,IsContentElement:30017,LabeledBy:30018,IsPassword:30019,NativeWindowHandle:30020,ItemType:30021,IsOffscreen:30022,Orientation:30023,FrameworkId:30024,IsRequiredForForm:30025,ItemStatus:30026,IsDockPatternAvailable:30027,IsExpandCollapsePatternAvailable:30028,IsGridItemPatternAvailable:30029,IsGridPatternAvailable:30030,IsInvokePatternAvailable:30031,IsMultipleViewPatternAvailable:30032,IsRangeValuePatternAvailable:30033,IsScrollPatternAvailable:30034,IsScrollItemPatternAvailable:30035,IsSelectionItemPatternAvailable:30036,IsSelectionPatternAvailable:30037,IsTablePatternAvailable:30038,IsTableItemPatternAvailable:30039,IsTextPatternAvailable:30040,IsTogglePatternAvailable:30041,IsTransformPatternAvailable:30042,IsValuePatternAvailable:30043,IsWindowPatternAvailable:30044,ValueValue:30045,ValueIsReadOnly:30046,RangeValueValue:30047,RangeValueIsReadOnly:30048,RangeValueMinimum:30049,RangeValueMaximum:30050,RangeValueLargeChange:30051,RangeValueSmallChange:30052,ScrollHorizontalScrollPercent:30053,ScrollHorizontalViewSize:30054,ScrollVerticalScrollPercent:30055,ScrollVerticalViewSize:30056,ScrollHorizontallyScrollable:30057,ScrollVerticallyScrollable:30058,SelectionSelection:30059,SelectionCanSelectMultiple:30060,SelectionIsSelectionRequired:30061,GridRowCount:30062,GridColumnCount:30063,GridItemRow:30064,GridItemColumn:30065,GridItemRowSpan:30066,GridItemColumnSpan:30067,GridItemContainingGrid:30068,DockDockPosition:30069,ExpandCollapseExpandCollapseState:30070,MultipleViewCurrentView:30071,MultipleViewSupportedViews:30072,WindowCanMaximize:30073,WindowCanMinimize:30074,WindowWindowVisualState:30075,WindowWindowInteractionState:30076,WindowIsModal:30077,WindowIsTopmost:30078,SelectionItemIsSelected:30079,SelectionItemSelectionContainer:30080,TableRowHeaders:30081,TableColumnHeaders:30082,TableRowOrColumnMajor:30083,TableItemRowHeaderItems:30084,TableItemColumnHeaderItems:30085,ToggleToggleState:30086,TransformCanMove:30087,TransformCanResize:30088,TransformCanRotate:30089,IsLegacyIAccessiblePatternAvailable:30090,LegacyIAccessibleChildId:30091,LegacyIAccessibleName:30092,LegacyIAccessibleValue:30093,LegacyIAccessibleDescription:30094,LegacyIAccessibleRole:30095,LegacyIAccessibleState:30096,LegacyIAccessibleHelp:30097,LegacyIAccessibleKeyboardShortcut:30098,LegacyIAccessibleSelection:30099,LegacyIAccessibleDefaultAction:30100,AriaRole:30101,AriaProperties:30102,IsDataValidForForm:30103,ControllerFor:30104,DescribedBy:30105,FlowsTo:30106,ProviderDescription:30107,IsItemContainerPatternAvailable:30108,IsVirtualizedItemPatternAvailable:30109,IsSynchronizedInputPatternAvailable:30110}
-	, type:={30000:"UIA_RuntimeIdPropertyId",30001:"UIA_BoundingRectanglePropertyId",30002:"UIA_ProcessIdPropertyId",30003:"UIA_ControlTypePropertyId",30004:"UIA_LocalizedControlTypePropertyId",30005:"UIA_NamePropertyId",30006:"UIA_AcceleratorKeyPropertyId",30007:"UIA_AccessKeyPropertyId",30008:"UIA_HasKeyboardFocusPropertyId",30009:"UIA_IsKeyboardFocusablePropertyId",30010:"UIA_IsEnabledPropertyId",30011:"UIA_AutomationIdPropertyId",30012:"UIA_ClassNamePropertyId",30013:"UIA_HelpTextPropertyId",30014:"UIA_ClickablePointPropertyId",30015:"UIA_CulturePropertyId",30016:"UIA_IsControlElementPropertyId",30017:"UIA_IsContentElementPropertyId",30018:"UIA_LabeledByPropertyId",30019:"UIA_IsPasswordPropertyId",30020:"UIA_NativeWindowHandlePropertyId",30021:"UIA_ItemTypePropertyId",30022:"UIA_IsOffscreenPropertyId",30023:"UIA_OrientationPropertyId",30024:"UIA_FrameworkIdPropertyId",30025:"UIA_IsRequiredForFormPropertyId",30026:"UIA_ItemStatusPropertyId",30027:"UIA_IsDockPatternAvailablePropertyId",30028:"UIA_IsExpandCollapsePatternAvailablePropertyId",30029:"UIA_IsGridItemPatternAvailablePropertyId",30030:"UIA_IsGridPatternAvailablePropertyId",30031:"UIA_IsInvokePatternAvailablePropertyId",30032:"UIA_IsMultipleViewPatternAvailablePropertyId",30033:"UIA_IsRangeValuePatternAvailablePropertyId",30034:"UIA_IsScrollPatternAvailablePropertyId",30035:"UIA_IsScrollItemPatternAvailablePropertyId",30036:"UIA_IsSelectionItemPatternAvailablePropertyId",30037:"UIA_IsSelectionPatternAvailablePropertyId",30038:"UIA_IsTablePatternAvailablePropertyId",30039:"UIA_IsTableItemPatternAvailablePropertyId",30040:"UIA_IsTextPatternAvailablePropertyId",30041:"UIA_IsTogglePatternAvailablePropertyId",30042:"UIA_IsTransformPatternAvailablePropertyId",30043:"UIA_IsValuePatternAvailablePropertyId",30044:"UIA_IsWindowPatternAvailablePropertyId",30045:"UIA_ValueValuePropertyId",30046:"UIA_ValueIsReadOnlyPropertyId",30047:"UIA_RangeValueValuePropertyId",30048:"UIA_RangeValueIsReadOnlyPropertyId",30049:"UIA_RangeValueMinimumPropertyId",30050:"UIA_RangeValueMaximumPropertyId",30051:"UIA_RangeValueLargeChangePropertyId",30052:"UIA_RangeValueSmallChangePropertyId",30053:"UIA_ScrollHorizontalScrollPercentPropertyId",30054:"UIA_ScrollHorizontalViewSizePropertyId",30055:"UIA_ScrollVerticalScrollPercentPropertyId",30056:"UIA_ScrollVerticalViewSizePropertyId",30057:"UIA_ScrollHorizontallyScrollablePropertyId",30058:"UIA_ScrollVerticallyScrollablePropertyId",30059:"UIA_SelectionSelectionPropertyId",30060:"UIA_SelectionCanSelectMultiplePropertyId",30061:"UIA_SelectionIsSelectionRequiredPropertyId",30062:"UIA_GridRowCountPropertyId",30063:"UIA_GridColumnCountPropertyId",30064:"UIA_GridItemRowPropertyId",30065:"UIA_GridItemColumnPropertyId",30066:"UIA_GridItemRowSpanPropertyId",30067:"UIA_GridItemColumnSpanPropertyId",30068:"UIA_GridItemContainingGridPropertyId",30069:"UIA_DockDockPositionPropertyId",30070:"UIA_ExpandCollapseExpandCollapseStatePropertyId",30071:"UIA_MultipleViewCurrentViewPropertyId",30072:"UIA_MultipleViewSupportedViewsPropertyId",30073:"UIA_WindowCanMaximizePropertyId",30074:"UIA_WindowCanMinimizePropertyId",30075:"UIA_WindowWindowVisualStatePropertyId",30076:"UIA_WindowWindowInteractionStatePropertyId",30077:"UIA_WindowIsModalPropertyId",30078:"UIA_WindowIsTopmostPropertyId",30079:"UIA_SelectionItemIsSelectedPropertyId",30080:"UIA_SelectionItemSelectionContainerPropertyId",30081:"UIA_TableRowHeadersPropertyId",30082:"UIA_TableColumnHeadersPropertyId",30083:"UIA_TableRowOrColumnMajorPropertyId",30084:"UIA_TableItemRowHeaderItemsPropertyId",30085:"UIA_TableItemColumnHeaderItemsPropertyId",30086:"UIA_ToggleToggleStatePropertyId",30087:"UIA_TransformCanMovePropertyId",30088:"UIA_TransformCanResizePropertyId",30089:"UIA_TransformCanRotatePropertyId",30090:"UIA_IsLegacyIAccessiblePatternAvailablePropertyId",30091:"UIA_LegacyIAccessibleChildIdPropertyId",30092:"UIA_LegacyIAccessibleNamePropertyId",30093:"UIA_LegacyIAccessibleValuePropertyId",30094:"UIA_LegacyIAccessibleDescriptionPropertyId",30095:"UIA_LegacyIAccessibleRolePropertyId",30096:"UIA_LegacyIAccessibleStatePropertyId",30097:"UIA_LegacyIAccessibleHelpPropertyId",30098:"UIA_LegacyIAccessibleKeyboardShortcutPropertyId",30099:"UIA_LegacyIAccessibleSelectionPropertyId",30100:"UIA_LegacyIAccessibleDefaultActionPropertyId",30101:"UIA_AriaRolePropertyId",30102:"UIA_AriaPropertiesPropertyId",30103:"UIA_IsDataValidForFormPropertyId",30104:"UIA_ControllerForPropertyId",30105:"UIA_DescribedByPropertyId",30106:"UIA_FlowsToPropertyId",30107:"UIA_ProviderDescriptionPropertyId",30108:"UIA_IsItemContainerPatternAvailablePropertyId",30109:"UIA_IsVirtualizedItemPatternAvailablePropertyId",30110:"UIA_IsSynchronizedInputPatternAvailablePropertyId"}
-	if n is integer
-		return type[n]
-	else return id[n]
-}
-; Property Type
-UIA_PropertyType(id){ ; not completed
-	static type:={30000:0x2003,30001:0x2005,30002:3,30003:3,30004:8,30005:8,30006:8,30007:8,30008:0xB,30009:0xB,30010:0xB,30011:8,30012:8,30013:8,30014:0x2005,30015:3,30016:0xB,30017:0xB,30018:0xD,30019:0xB,30020:3,30021:8,30022:0xB,30023:3,30024:8,30025:0xB,30026:8,30027:0xB,30028:0xB,30029:0xB,30030:0xB,30031:0xB,30032:0xB,30033:0xB,30034:0xB,30035:0xB,30036:0xB,30037:0xB,30038:0xB,30039:0xB,30040:0xB,30041:0xB,30042:0xB,30043:0xB,30044:0xB,30045:8,30046:0xB,30047:5,30048:0xB,30049:5,30050:5,30051:5,30052:5,30053:5,30054:5,30055:5,30056:5,30057:0xB,30058:0xB,30059:0x200D,30060:0xB,30061:0xB,30062:3,30063:3,30064:3,30065:3,30066:3,30067:3,30068:0xD,30069:3,30070:3,30071:3,30072:0x2003,30073:0xB,30074:0xB,30075:3,30076:3,30077:0xB,30078:0xB,30079:0xB,30080:0xD,30081:0x200D,30082:0x200D,30083:0x2003,30084:0x200D,30085:0x200D,30086:3,30087:0xB,30088:0xB,30089:0xB,30090:0xB,30091:3,30092:8,30093:8,30094:8,30095:3,30096:3,30097:8,30098:8,30099:0x200D,30100:8,30101:8,30102:8,30103:0xB,30104:0xD,30105:0xD,30106:0xD,30107:8,30108:0xB,30109:0xB,30110:0xB}
-	return type[id]
-}
-; Pattern
-UIA_Pattern(n){
-	static id:={Invoke:10000,Selection:10001,Value:10002,RangeValue:10003,Scroll:10004,ExpandCollapse:10005,Grid:10006,GridItem:10007,MultipleView:10008,Window:10009,SelectionItem:10010,Dock:10011,Table:10012,TableItem:10013,Text:10014,Toggle:10015,Transform:10016,ScrollItem:10017,LegacyIAccessible:10018,ItemContainer:10019,VirtualizedItem:10020,SynchronizedInput:10021}
-	, type:={10000:"UIA_InvokePatternId",10001:"UIA_SelectionPatternId",10002:"UIA_ValuePatternId",10003:"UIA_RangeValuePatternId",10004:"UIA_ScrollPatternId",10005:"UIA_ExpandCollapsePatternId",10006:"UIA_GridPatternId",10007:"UIA_GridItemPatternId",10008:"UIA_MultipleViewPatternId",10009:"UIA_WindowPatternId",10010:"UIA_SelectionItemPatternId",10011:"UIA_DockPatternId",10012:"UIA_TablePatternId",10013:"UIA_TableItemPatternId",10014:"UIA_TextPatternId",10015:"UIA_TogglePatternId",10016:"UIA_TransformPatternId",10017:"UIA_ScrollItemPatternId",10018:"UIA_LegacyIAccessiblePatternId",10019:"UIA_ItemContainerPatternId",10020:"UIA_VirtualizedItemPatternId",10021:"UIA_SynchronizedInputPatternId"}
-	if n is integer
-		return type[n]
-	else return id[n]
-}
-; Attribute
-UIA_Attribute(n){
-	static id:={AnimationStyle:40000,BackgroundColor:40001,BulletStyle:40002,CapStyle:40003,Culture:40004,FontName:40005,FontSize:40006,FontWeight:40007,ForegroundColor:40008,HorizontalTextAlignment:40009,IndentationFirstLine:40010,IndentationLeading:40011,IndentationTrailing:40012,IsHidden:40013,IsItalic:40014,IsReadOnly:40015,IsSubscript:40016,IsSuperscript:40017,MarginBottom:40018,MarginLeading:40019,MarginTop:40020,MarginTrailing:40021,OutlineStyles:40022,OverlineColor:40023,OverlineStyle:40024,StrikethroughColor:40025,StrikethroughStyle:40026,Tabs:40027,TextFlowDirections:40028,UnderlineColor:40029,UnderlineStyle:40030}
-	, type:={40000:"UIA_AnimationStyleAttributeId",40001:"UIA_BackgroundColorAttributeId",40002:"UIA_BulletStyleAttributeId",40003:"UIA_CapStyleAttributeId",40004:"UIA_CultureAttributeId",40005:"UIA_FontNameAttributeId",40006:"UIA_FontSizeAttributeId",40007:"UIA_FontWeightAttributeId",40008:"UIA_ForegroundColorAttributeId",40009:"UIA_HorizontalTextAlignmentAttributeId",40010:"UIA_IndentationFirstLineAttributeId",40011:"UIA_IndentationLeadingAttributeId",40012:"UIA_IndentationTrailingAttributeId",40013:"UIA_IsHiddenAttributeId",40014:"UIA_IsItalicAttributeId",40015:"UIA_IsReadOnlyAttributeId",40016:"UIA_IsSubscriptAttributeId",40017:"UIA_IsSuperscriptAttributeId",40018:"UIA_MarginBottomAttributeId",40019:"UIA_MarginLeadingAttributeId",40020:"UIA_MarginTopAttributeId",40021:"UIA_MarginTrailingAttributeId",40022:"UIA_OutlineStylesAttributeId",40023:"UIA_OverlineColorAttributeId",40024:"UIA_OverlineStyleAttributeId",40025:"UIA_StrikethroughColorAttributeId",40026:"UIA_StrikethroughStyleAttributeId",40027:"UIA_TabsAttributeId",40028:"UIA_TextFlowDirectionsAttributeId",40029:"UIA_UnderlineColorAttributeId",40030:"UIA_UnderlineStyleAttributeId"}
-	if n is integer
-		return type[n]
-	else return id[n]
-}
-; Attribute Type
-UIA_AttributeType(id){
-	Static type:={40000:3,40001:3,40002:3,40003:3,40004:3,40005:8,40006:5,40007:3,40008:3,40009:3,40010:5,40011:5,40012:5,40013:0xB,40014:0xB,40015:0xB,40016:0xB,40017:0xB,40018:5,40019:5,40020:5,40021:5,40022:3,40023:3,40024:3,40025:3,40026:3,40027:0x2005,40028:3,40029:3,40030:3}
-	return type[id]
-}
-UIA_GetAttributeValue(ByRef val,attr){ ; not completed
-	return NumGet(val,8,vtype(UIA_AttributeType(attr)).2)
-}
-; ControlType
-UIA_ControlType(n){
-	static id:={Button:50000,Calendar:50001,CheckBox:50002,ComboBox:50003,Edit:50004,Hyperlink:50005,Image:50006,ListItem:50007,List:50008,Menu:50009,MenuBar:50010,MenuItem:50011,ProgressBar:50012,RadioButton:50013,ScrollBar:50014,Slider:50015,Spinner:50016,StatusBar:50017,Tab:50018,TabItem:50019,Text:50020,ToolBar:50021,ToolTip:50022,Tree:50023,TreeItem:50024,Custom:50025,Group:50026,Thumb:50027,DataGrid:50028,DataItem:50029,Document:50030,SplitButton:50031,Window:50032,Pane:50033,Header:50034,HeaderItem:50035,Table:50036,TitleBar:50037,Separator:50038}
-	, type:={50000:"UIA_ButtonControlTypeId",50001:"UIA_CalendarControlTypeId",50002:"UIA_CheckBoxControlTypeId",50003:"UIA_ComboBoxControlTypeId",50004:"UIA_EditControlTypeId",50005:"UIA_HyperlinkControlTypeId",50006:"UIA_ImageControlTypeId",50007:"UIA_ListItemControlTypeId",50008:"UIA_ListControlTypeId",50009:"UIA_MenuControlTypeId",50010:"UIA_MenuBarControlTypeId",50011:"UIA_MenuItemControlTypeId",50012:"UIA_ProgressBarControlTypeId",50013:"UIA_RadioButtonControlTypeId",50014:"UIA_ScrollBarControlTypeId",50015:"UIA_SliderControlTypeId",50016:"UIA_SpinnerControlTypeId",50017:"UIA_StatusBarControlTypeId",50018:"UIA_TabControlTypeId",50019:"UIA_TabItemControlTypeId",50020:"UIA_TextControlTypeId",50021:"UIA_ToolBarControlTypeId",50022:"UIA_ToolTipControlTypeId",50023:"UIA_TreeControlTypeId",50024:"UIA_TreeItemControlTypeId",50025:"UIA_CustomControlTypeId",50026:"UIA_GroupControlTypeId",50027:"UIA_ThumbControlTypeId",50028:"UIA_DataGridControlTypeId",50029:"UIA_DataItemControlTypeId",50030:"UIA_DocumentControlTypeId",50031:"UIA_SplitButtonControlTypeId",50032:"UIA_WindowControlTypeId",50033:"UIA_PaneControlTypeId",50034:"UIA_HeaderControlTypeId",50035:"UIA_HeaderItemControlTypeId",50036:"UIA_TableControlTypeId",50037:"UIA_TitleBarControlTypeId",50038:"UIA_SeparatorControlTypeId"}
-	if n is integer
-		return type[n]
-	else return id[n]
-}
-; Event
-UIA_Event(n){
-	static id:={ToolTipOpened:20000,ToolTipClosed:20001,StructureChanged:20002,MenuOpened:20003,AutomationPropertyChanged:20004,AutomationFocusChanged:20005,AsyncContentLoaded:20006,MenuClosed:20007,LayoutInvalidated:20008,Invoke_Invoked:20009,SelectionItem_ElementAddedToSelection:20010,SelectionItem_ElementRemovedFromSelection:20011,SelectionItem_ElementSelected:20012,Selection_Invalidated:20013,Text_TextSelectionChanged:20014,Text_TextChanged:20015,Window_WindowOpened:20016,Window_WindowClosed:20017,MenuModeStart:20018,MenuModeEnd:20019,InputReachedTarget:20020,InputReachedOtherElement:20021,InputDiscarded:20022}
-	, type:={20000:"UIA_ToolTipOpenedEventId",20001:"UIA_ToolTipClosedEventId",20002:"UIA_StructureChangedEventId",20003:"UIA_MenuOpenedEventId",20004:"UIA_AutomationPropertyChangedEventId",20005:"UIA_AutomationFocusChangedEventId",20006:"UIA_AsyncContentLoadedEventId",20007:"UIA_MenuClosedEventId",20008:"UIA_LayoutInvalidatedEventId",20009:"UIA_Invoke_InvokedEventId",20010:"UIA_SelectionItem_ElementAddedToSelectionEventId",20011:"UIA_SelectionItem_ElementRemovedFromSelectionEventId",20012:"UIA_SelectionItem_ElementSelectedEventId",20013:"UIA_Selection_InvalidatedEventId",20014:"UIA_Text_TextSelectionChangedEventId",20015:"UIA_Text_TextChangedEventId",20016:"UIA_Window_WindowOpenedEventId",20017:"UIA_Window_WindowClosedEventId",20018:"UIA_MenuModeStartEventId",20019:"UIA_MenuModeEndEventId",20020:"UIA_InputReachedTargetEventId",20021:"UIA_InputReachedOtherElementEventId",20022:"UIA_InputDiscardedEventId"}
-	if n is integer
-		return type[n]
-	else return id[n]
-}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;IUIAutomationEventHandle;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 UIA_OnEvent(ByRef ptr,name){
 	if !IsFunc(name){
 		msgbox %name% ia not a function.
@@ -2270,17 +2403,66 @@ _UIA_AddRef(pSelf){
 }
 _UIA_Release(pSelf){
 }
-;;;;;;;;;;;;;;;;;;
-;;Base Functions;;
-;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;IUIAutomationProxyFactory;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;
+;;Wrapped Functions;;
+;;;;;;;;;;;;;;;;;;;;;
+
+; create nativearray
+CreateNativeArrary(ptr,type,p*){ ; not completed
+	count:=0
+	VarSetCapacity(ptr,p.maxindex())
+	loop{
+		
+	}
+}
+
+; transform to
+
+; create variant
 variant(ByRef var,type=0,val=0){ ; //not completed, type not defined
-	static t:={2:"short",3:"int",4:"float",5:"double",0xA:"int",0xB:"short",0x10:"uchar",0x11:"char",0x12:"ushort",0x13:"uint",0x14:"int64",0x15:"uint64",0x17:"uptr"}
-	return (VarSetCapacity(var,8+2*A_PtrSize)+NumPut(type,var,0,"short")+NumPut(val,var,8,t[type]?t[type]:"uptr"))*0+&var
+	static _:={2:"short",3:"int",4:"float",5:"double",0xA:"int",0xB:"short",0x10:"uchar",0x11:"char",0x12:"ushort",0x13:"uint",0x14:"int64",0x15:"uint64"}
+	return (VarSetCapacity(var,8+2*A_PtrSize)+NumPut(type,var,0,"short")+NumPut(val,var,8,_.haskey(type)?t[type]:"ptr"))*0+&var
 }
-vt(p,n){
-	return NumGet(NumGet(p+0,"ptr")+n*A_PtrSize,"ptr")
+
+; variant type
+VariantType(type){
+	static _:={2:[2,"short"]	; 16 位有符号整数
+	,3:[4,"int"]	; 32 位有符号整数
+	,4:[4,"float"]	; 32 位浮点数
+	,5:[8,"double"]	; 64 位浮点数
+	,0xA:[4,"uint"]	; Error 码 (32 位整数)
+	,0xB:[2,"short"]	; 布尔值 True (-1) 或 False (0)
+	,0x10:[1,"char"]	; 8 位有符号整数
+	,0x11:[1,"uchar"]	; 8 位无符号整数
+	,0x12:[2,"ushort"]	; 16 位无符号整数
+	,0x13:[4,"uint"]	; 32 位无符号整数
+	,0x14:[8,"int64"]	; 64 位有符号整数
+	,0x15:[8,"uint64"]}	; 64 位无符号整数
+	return _.haskey(type)?_[type]:[A_PtrSize,"ptr"]
 }
-SafeArray(p,type){ ; //not completed, only 1 dim, type not defined
+
+; Get Value in variant
+GetVariantValue(v){
+	if (type:=NumGet(v+0,"ushort"))&0x2000
+		return GetSafeArrayValue(NumGet(v+8),type&0xFF)
+	else return NumGet(v+8,varianttype(type).2)
+}
+
+; create safearray
+SafeArray(ByRef array,type,count,p*){
+	array:=ComObjArray(type,count)
+	loop % p.maxindex()
+		array[A_Index-1]:=p[A_Index]
+	return ComObjValue(array)
+}
+
+; Get Value in SafeArray
+GetSafeArrayValue(p,type){ ; //not completed, only 1 dim
 	/*
 	cDims:=NumGet(p+0,"ushort")
 	fFeatures:=NumGet(p+2,"ushort")
@@ -2296,30 +2478,28 @@ SafeArray(p,type){ ; //not completed, only 1 dim, type not defined
 	
 	r1:=NumGet(pvData+0)
 	*/
-	t:=vtype(type),item:={},pv:=NumGet(p+8+A_PtrSize,"ptr")
+	t:=varianttype(type),item:={},pv:=NumGet(p+8+A_PtrSize,"ptr")
 	loop % NumGet(p+8+2*A_PtrSize,"uint")
-		item.Insert((type=8)?StrGet(NumGet(pv+(A_Index-1)*t.1,t.2),"utf-16"):NumGet(pv+(A_Index-1)*t.1,t.2)) ; COM 字符串 (带长度前缀的 Unicode 字符串)
+		item.Insert((type=8)?StrGet(NumGet(pv+(A_Index-1)*t.1,t.2),"utf-16"):NumGet(pv+(A_Index-1)*t.1,t.2))
 	return item
 }
-vtype(type){
-	return (type=2)?[2,"short"]	; 16 位有符号整数
-	:type=3?[4,"int"]	; 32 位有符号整数
-	:type=4?[4,"float"]	; 32 位浮点数
-	:type=5?[8,"double"]	; 64 位浮点数
-	:type=0xA?[4,"uint"]	; Error 码 (32 位整数)
-	:type=0xB?[2,"short"]	; 布尔值 True (-1) 或 False (0)
-	:type=0x10?[1,"char"]	; 8 位有符号整数
-	:type=0x11?[1,"uchar"]	; 8 位无符号整数
-	:type=0x12?[2,"ushort"]	; 16 位无符号整数
-	:type=0x13?[4,"uint"]	; 32 位无符号整数
-	:type=0x14?[8,"int64"]	; 64 位有符号整数
-	:type=0x15?[8,"uint64"]	; 64 位无符号整数
-	:[A_PtrSize,"uptr"]
+
+;;;;;;;;;;;;;;;;;;
+;;Base Functions;;
+;;;;;;;;;;;;;;;;;;
+
+; vtable
+vt(p,n){
+	return NumGet(NumGet(p+0,"ptr")+n*A_PtrSize,"ptr")
 }
+
+; riid
 GUID(ByRef GUID, sGUID){
 	  VarSetCapacity(GUID, 16, 0)
 	  return DllCall("ole32\CLSIDFromString", "wstr", sGUID, "ptr", &GUID) >= 0 ? &GUID : ""
 }
+
+; uia error code
 _error(a,b){
 	static err:={0x8000FFFF:"Catastrophic failure error.",0x80004001:"Not implemented error.",0x8007000E:"Out of memory error.",0x80070057:"One or more arguments are not valid error.",0x80004002:"Interface not supported error.",0x80004003:"Pointer not valid error.",0x80070006:"Handle not valid error.",0x80004004:"Operation aborted error.",0x80004005:"Unspecified error.",0x80070005:"General access denied error.",0x800401E5:"The object identified by this moniker could not be found."
 		,0x80040201:"UIA_E_ELEMENTNOTAVAILABLE",0x80040200:"UIA_E_ELEMENTNOTENABLED",0x80131509:"UIA_E_INVALIDOPERATION",0x80040202:"UIA_E_NOCLICKABLEPOINT",0x80040204:"UIA_E_NOTSUPPORTED",0x80040203:"UIA_E_PROXYASSEMBLYNOTLOADED"} ; //not completed
@@ -2327,11 +2507,70 @@ _error(a,b){
 		msgbox, % b " : " (err.haskey(a)?err[a]:a)
 	return a
 }
+
 ;;;;;;;;;;;;;;;;;
-;;UIA_Constants;;not completed
+;;UIA Constants;;
 ;;;;;;;;;;;;;;;;;
-;/*
-UIA_Constant(t){
+
+; Property Identifiers
+UIA_Property(n){
+	static id:={RuntimeId:30000,BoundingRectangle:30001,ProcessId:30002,ControlType:30003,LocalizedControlType:30004,Name:30005,AcceleratorKey:30006,AccessKey:30007,HasKeyboardFocus:30008,IsKeyboardFocusable:30009,IsEnabled:30010,AutomationId:30011,ClassName:30012,HelpText:30013,ClickablePoint:30014,Culture:30015,IsControlElement:30016,IsContentElement:30017,LabeledBy:30018,IsPassword:30019,NativeWindowHandle:30020,ItemType:30021,IsOffscreen:30022,Orientation:30023,FrameworkId:30024,IsRequiredForForm:30025,ItemStatus:30026,IsDockPatternAvailable:30027,IsExpandCollapsePatternAvailable:30028,IsGridItemPatternAvailable:30029,IsGridPatternAvailable:30030,IsInvokePatternAvailable:30031,IsMultipleViewPatternAvailable:30032,IsRangeValuePatternAvailable:30033,IsScrollPatternAvailable:30034,IsScrollItemPatternAvailable:30035,IsSelectionItemPatternAvailable:30036,IsSelectionPatternAvailable:30037,IsTablePatternAvailable:30038,IsTableItemPatternAvailable:30039,IsTextPatternAvailable:30040,IsTogglePatternAvailable:30041,IsTransformPatternAvailable:30042,IsValuePatternAvailable:30043,IsWindowPatternAvailable:30044,ValueValue:30045,ValueIsReadOnly:30046,RangeValueValue:30047,RangeValueIsReadOnly:30048,RangeValueMinimum:30049,RangeValueMaximum:30050,RangeValueLargeChange:30051,RangeValueSmallChange:30052,ScrollHorizontalScrollPercent:30053,ScrollHorizontalViewSize:30054,ScrollVerticalScrollPercent:30055,ScrollVerticalViewSize:30056,ScrollHorizontallyScrollable:30057,ScrollVerticallyScrollable:30058,SelectionSelection:30059,SelectionCanSelectMultiple:30060,SelectionIsSelectionRequired:30061,GridRowCount:30062,GridColumnCount:30063,GridItemRow:30064,GridItemColumn:30065,GridItemRowSpan:30066,GridItemColumnSpan:30067,GridItemContainingGrid:30068,DockDockPosition:30069,ExpandCollapseExpandCollapseState:30070,MultipleViewCurrentView:30071,MultipleViewSupportedViews:30072,WindowCanMaximize:30073,WindowCanMinimize:30074,WindowWindowVisualState:30075,WindowWindowInteractionState:30076,WindowIsModal:30077,WindowIsTopmost:30078,SelectionItemIsSelected:30079,SelectionItemSelectionContainer:30080,TableRowHeaders:30081,TableColumnHeaders:30082,TableRowOrColumnMajor:30083,TableItemRowHeaderItems:30084,TableItemColumnHeaderItems:30085,ToggleToggleState:30086,TransformCanMove:30087,TransformCanResize:30088,TransformCanRotate:30089,IsLegacyIAccessiblePatternAvailable:30090,LegacyIAccessibleChildId:30091,LegacyIAccessibleName:30092,LegacyIAccessibleValue:30093,LegacyIAccessibleDescription:30094,LegacyIAccessibleRole:30095,LegacyIAccessibleState:30096,LegacyIAccessibleHelp:30097,LegacyIAccessibleKeyboardShortcut:30098,LegacyIAccessibleSelection:30099,LegacyIAccessibleDefaultAction:30100,AriaRole:30101,AriaProperties:30102,IsDataValidForForm:30103,ControllerFor:30104,DescribedBy:30105,FlowsTo:30106,ProviderDescription:30107,IsItemContainerPatternAvailable:30108,IsVirtualizedItemPatternAvailable:30109,IsSynchronizedInputPatternAvailable:30110}
+	, name:={30000:"UIA_RuntimeIdPropertyId",30001:"UIA_BoundingRectanglePropertyId",30002:"UIA_ProcessIdPropertyId",30003:"UIA_ControlTypePropertyId",30004:"UIA_LocalizedControlTypePropertyId",30005:"UIA_NamePropertyId",30006:"UIA_AcceleratorKeyPropertyId",30007:"UIA_AccessKeyPropertyId",30008:"UIA_HasKeyboardFocusPropertyId",30009:"UIA_IsKeyboardFocusablePropertyId",30010:"UIA_IsEnabledPropertyId",30011:"UIA_AutomationIdPropertyId",30012:"UIA_ClassNamePropertyId",30013:"UIA_HelpTextPropertyId",30014:"UIA_ClickablePointPropertyId",30015:"UIA_CulturePropertyId",30016:"UIA_IsControlElementPropertyId",30017:"UIA_IsContentElementPropertyId",30018:"UIA_LabeledByPropertyId",30019:"UIA_IsPasswordPropertyId",30020:"UIA_NativeWindowHandlePropertyId",30021:"UIA_ItemTypePropertyId",30022:"UIA_IsOffscreenPropertyId",30023:"UIA_OrientationPropertyId",30024:"UIA_FrameworkIdPropertyId",30025:"UIA_IsRequiredForFormPropertyId",30026:"UIA_ItemStatusPropertyId",30027:"UIA_IsDockPatternAvailablePropertyId",30028:"UIA_IsExpandCollapsePatternAvailablePropertyId",30029:"UIA_IsGridItemPatternAvailablePropertyId",30030:"UIA_IsGridPatternAvailablePropertyId",30031:"UIA_IsInvokePatternAvailablePropertyId",30032:"UIA_IsMultipleViewPatternAvailablePropertyId",30033:"UIA_IsRangeValuePatternAvailablePropertyId",30034:"UIA_IsScrollPatternAvailablePropertyId",30035:"UIA_IsScrollItemPatternAvailablePropertyId",30036:"UIA_IsSelectionItemPatternAvailablePropertyId",30037:"UIA_IsSelectionPatternAvailablePropertyId",30038:"UIA_IsTablePatternAvailablePropertyId",30039:"UIA_IsTableItemPatternAvailablePropertyId",30040:"UIA_IsTextPatternAvailablePropertyId",30041:"UIA_IsTogglePatternAvailablePropertyId",30042:"UIA_IsTransformPatternAvailablePropertyId",30043:"UIA_IsValuePatternAvailablePropertyId",30044:"UIA_IsWindowPatternAvailablePropertyId",30045:"UIA_ValueValuePropertyId",30046:"UIA_ValueIsReadOnlyPropertyId",30047:"UIA_RangeValueValuePropertyId",30048:"UIA_RangeValueIsReadOnlyPropertyId",30049:"UIA_RangeValueMinimumPropertyId",30050:"UIA_RangeValueMaximumPropertyId",30051:"UIA_RangeValueLargeChangePropertyId",30052:"UIA_RangeValueSmallChangePropertyId",30053:"UIA_ScrollHorizontalScrollPercentPropertyId",30054:"UIA_ScrollHorizontalViewSizePropertyId",30055:"UIA_ScrollVerticalScrollPercentPropertyId",30056:"UIA_ScrollVerticalViewSizePropertyId",30057:"UIA_ScrollHorizontallyScrollablePropertyId",30058:"UIA_ScrollVerticallyScrollablePropertyId",30059:"UIA_SelectionSelectionPropertyId",30060:"UIA_SelectionCanSelectMultiplePropertyId",30061:"UIA_SelectionIsSelectionRequiredPropertyId",30062:"UIA_GridRowCountPropertyId",30063:"UIA_GridColumnCountPropertyId",30064:"UIA_GridItemRowPropertyId",30065:"UIA_GridItemColumnPropertyId",30066:"UIA_GridItemRowSpanPropertyId",30067:"UIA_GridItemColumnSpanPropertyId",30068:"UIA_GridItemContainingGridPropertyId",30069:"UIA_DockDockPositionPropertyId",30070:"UIA_ExpandCollapseExpandCollapseStatePropertyId",30071:"UIA_MultipleViewCurrentViewPropertyId",30072:"UIA_MultipleViewSupportedViewsPropertyId",30073:"UIA_WindowCanMaximizePropertyId",30074:"UIA_WindowCanMinimizePropertyId",30075:"UIA_WindowWindowVisualStatePropertyId",30076:"UIA_WindowWindowInteractionStatePropertyId",30077:"UIA_WindowIsModalPropertyId",30078:"UIA_WindowIsTopmostPropertyId",30079:"UIA_SelectionItemIsSelectedPropertyId",30080:"UIA_SelectionItemSelectionContainerPropertyId",30081:"UIA_TableRowHeadersPropertyId",30082:"UIA_TableColumnHeadersPropertyId",30083:"UIA_TableRowOrColumnMajorPropertyId",30084:"UIA_TableItemRowHeaderItemsPropertyId",30085:"UIA_TableItemColumnHeaderItemsPropertyId",30086:"UIA_ToggleToggleStatePropertyId",30087:"UIA_TransformCanMovePropertyId",30088:"UIA_TransformCanResizePropertyId",30089:"UIA_TransformCanRotatePropertyId",30090:"UIA_IsLegacyIAccessiblePatternAvailablePropertyId",30091:"UIA_LegacyIAccessibleChildIdPropertyId",30092:"UIA_LegacyIAccessibleNamePropertyId",30093:"UIA_LegacyIAccessibleValuePropertyId",30094:"UIA_LegacyIAccessibleDescriptionPropertyId",30095:"UIA_LegacyIAccessibleRolePropertyId",30096:"UIA_LegacyIAccessibleStatePropertyId",30097:"UIA_LegacyIAccessibleHelpPropertyId",30098:"UIA_LegacyIAccessibleKeyboardShortcutPropertyId",30099:"UIA_LegacyIAccessibleSelectionPropertyId",30100:"UIA_LegacyIAccessibleDefaultActionPropertyId",30101:"UIA_AriaRolePropertyId",30102:"UIA_AriaPropertiesPropertyId",30103:"UIA_IsDataValidForFormPropertyId",30104:"UIA_ControllerForPropertyId",30105:"UIA_DescribedByPropertyId",30106:"UIA_FlowsToPropertyId",30107:"UIA_ProviderDescriptionPropertyId",30108:"UIA_IsItemContainerPatternAvailablePropertyId",30109:"UIA_IsVirtualizedItemPatternAvailablePropertyId",30110:"UIA_IsSynchronizedInputPatternAvailablePropertyId"}
+	if n is integer
+		return name[n]
+	else return id[n]
+}
+
+; Property Variant Type
+UIA_PropertyVariantType(id){
+	static type:={30000:0x2003,30001:0x2005,30002:3,30003:3,30004:8,30005:8,30006:8,30007:8,30008:0xB,30009:0xB,30010:0xB,30011:8,30012:8,30013:8,30014:0x2005,30015:3,30016:0xB,30017:0xB,30018:0xD,30019:0xB,30020:3,30021:8,30022:0xB,30023:3,30024:8,30025:0xB,30026:8,30027:0xB,30028:0xB,30029:0xB,30030:0xB,30031:0xB,30032:0xB,30033:0xB,30034:0xB,30035:0xB,30036:0xB,30037:0xB,30038:0xB,30039:0xB,30040:0xB,30041:0xB,30042:0xB,30043:0xB,30044:0xB,30045:8,30046:0xB,30047:5,30048:0xB,30049:5,30050:5,30051:5,30052:5,30053:5,30054:5,30055:5,30056:5,30057:0xB,30058:0xB,30059:0x200D,30060:0xB,30061:0xB,30062:3,30063:3,30064:3,30065:3,30066:3,30067:3,30068:0xD,30069:3,30070:3,30071:3,30072:0x2003,30073:0xB,30074:0xB,30075:3,30076:3,30077:0xB,30078:0xB,30079:0xB,30080:0xD,30081:0x200D,30082:0x200D,30083:0x2003,30084:0x200D,30085:0x200D,30086:3,30087:0xB,30088:0xB,30089:0xB,30090:0xB,30091:3,30092:8,30093:8,30094:8,30095:3,30096:3,30097:8,30098:8,30099:0x200D,30100:8,30101:8,30102:8,30103:0xB,30104:0xD,30105:0xD,30106:0xD,30107:8,30108:0xB,30109:0xB,30110:0xB}
+	return type[id]
+}
+
+; Control Pattern Identifiers
+UIA_Pattern(n){
+	static id:={Invoke:10000,Selection:10001,Value:10002,RangeValue:10003,Scroll:10004,ExpandCollapse:10005,Grid:10006,GridItem:10007,MultipleView:10008,Window:10009,SelectionItem:10010,Dock:10011,Table:10012,TableItem:10013,Text:10014,Toggle:10015,Transform:10016,ScrollItem:10017,LegacyIAccessible:10018,ItemContainer:10019,VirtualizedItem:10020,SynchronizedInput:10021}
+	, name:={10000:"UIA_InvokePatternId",10001:"UIA_SelectionPatternId",10002:"UIA_ValuePatternId",10003:"UIA_RangeValuePatternId",10004:"UIA_ScrollPatternId",10005:"UIA_ExpandCollapsePatternId",10006:"UIA_GridPatternId",10007:"UIA_GridItemPatternId",10008:"UIA_MultipleViewPatternId",10009:"UIA_WindowPatternId",10010:"UIA_SelectionItemPatternId",10011:"UIA_DockPatternId",10012:"UIA_TablePatternId",10013:"UIA_TableItemPatternId",10014:"UIA_TextPatternId",10015:"UIA_TogglePatternId",10016:"UIA_TransformPatternId",10017:"UIA_ScrollItemPatternId",10018:"UIA_LegacyIAccessiblePatternId",10019:"UIA_ItemContainerPatternId",10020:"UIA_VirtualizedItemPatternId",10021:"UIA_SynchronizedInputPatternId"}
+	if n is integer
+		return name[n]
+	else return id[n]
+}
+
+; Text Attribute Identifiers
+UIA_Attribute(n){
+	static id:={AnimationStyle:40000,BackgroundColor:40001,BulletStyle:40002,CapStyle:40003,Culture:40004,FontName:40005,FontSize:40006,FontWeight:40007,ForegroundColor:40008,HorizontalTextAlignment:40009,IndentationFirstLine:40010,IndentationLeading:40011,IndentationTrailing:40012,IsHidden:40013,IsItalic:40014,IsReadOnly:40015,IsSubscript:40016,IsSuperscript:40017,MarginBottom:40018,MarginLeading:40019,MarginTop:40020,MarginTrailing:40021,OutlineStyles:40022,OverlineColor:40023,OverlineStyle:40024,StrikethroughColor:40025,StrikethroughStyle:40026,Tabs:40027,TextFlowDirections:40028,UnderlineColor:40029,UnderlineStyle:40030}
+	, name:={40000:"UIA_AnimationStyleAttributeId",40001:"UIA_BackgroundColorAttributeId",40002:"UIA_BulletStyleAttributeId",40003:"UIA_CapStyleAttributeId",40004:"UIA_CultureAttributeId",40005:"UIA_FontNameAttributeId",40006:"UIA_FontSizeAttributeId",40007:"UIA_FontWeightAttributeId",40008:"UIA_ForegroundColorAttributeId",40009:"UIA_HorizontalTextAlignmentAttributeId",40010:"UIA_IndentationFirstLineAttributeId",40011:"UIA_IndentationLeadingAttributeId",40012:"UIA_IndentationTrailingAttributeId",40013:"UIA_IsHiddenAttributeId",40014:"UIA_IsItalicAttributeId",40015:"UIA_IsReadOnlyAttributeId",40016:"UIA_IsSubscriptAttributeId",40017:"UIA_IsSuperscriptAttributeId",40018:"UIA_MarginBottomAttributeId",40019:"UIA_MarginLeadingAttributeId",40020:"UIA_MarginTopAttributeId",40021:"UIA_MarginTrailingAttributeId",40022:"UIA_OutlineStylesAttributeId",40023:"UIA_OverlineColorAttributeId",40024:"UIA_OverlineStyleAttributeId",40025:"UIA_StrikethroughColorAttributeId",40026:"UIA_StrikethroughStyleAttributeId",40027:"UIA_TabsAttributeId",40028:"UIA_TextFlowDirectionsAttributeId",40029:"UIA_UnderlineColorAttributeId",40030:"UIA_UnderlineStyleAttributeId"}
+	if n is integer
+		return name[n]
+	else return id[n]
+}
+
+; Text Attribute Variant type
+UIA_AttributeVariantType(id){
+	Static type:={40000:3,40001:3,40002:3,40003:3,40004:3,40005:8,40006:5,40007:3,40008:3,40009:3,40010:5,40011:5,40012:5,40013:0xB,40014:0xB,40015:0xB,40016:0xB,40017:0xB,40018:5,40019:5,40020:5,40021:5,40022:3,40023:3,40024:3,40025:3,40026:3,40027:0x2005,40028:3,40029:3,40030:3}
+	return type[id]
+}
+
+; Control Type Identifiers
+UIA_ControlType(n){
+	static id:={Button:50000,Calendar:50001,CheckBox:50002,ComboBox:50003,Edit:50004,Hyperlink:50005,Image:50006,ListItem:50007,List:50008,Menu:50009,MenuBar:50010,MenuItem:50011,ProgressBar:50012,RadioButton:50013,ScrollBar:50014,Slider:50015,Spinner:50016,StatusBar:50017,Tab:50018,TabItem:50019,Text:50020,ToolBar:50021,ToolTip:50022,Tree:50023,TreeItem:50024,Custom:50025,Group:50026,Thumb:50027,DataGrid:50028,DataItem:50029,Document:50030,SplitButton:50031,Window:50032,Pane:50033,Header:50034,HeaderItem:50035,Table:50036,TitleBar:50037,Separator:50038}
+	, name:={50000:"UIA_ButtonControlTypeId",50001:"UIA_CalendarControlTypeId",50002:"UIA_CheckBoxControlTypeId",50003:"UIA_ComboBoxControlTypeId",50004:"UIA_EditControlTypeId",50005:"UIA_HyperlinkControlTypeId",50006:"UIA_ImageControlTypeId",50007:"UIA_ListItemControlTypeId",50008:"UIA_ListControlTypeId",50009:"UIA_MenuControlTypeId",50010:"UIA_MenuBarControlTypeId",50011:"UIA_MenuItemControlTypeId",50012:"UIA_ProgressBarControlTypeId",50013:"UIA_RadioButtonControlTypeId",50014:"UIA_ScrollBarControlTypeId",50015:"UIA_SliderControlTypeId",50016:"UIA_SpinnerControlTypeId",50017:"UIA_StatusBarControlTypeId",50018:"UIA_TabControlTypeId",50019:"UIA_TabItemControlTypeId",50020:"UIA_TextControlTypeId",50021:"UIA_ToolBarControlTypeId",50022:"UIA_ToolTipControlTypeId",50023:"UIA_TreeControlTypeId",50024:"UIA_TreeItemControlTypeId",50025:"UIA_CustomControlTypeId",50026:"UIA_GroupControlTypeId",50027:"UIA_ThumbControlTypeId",50028:"UIA_DataGridControlTypeId",50029:"UIA_DataItemControlTypeId",50030:"UIA_DocumentControlTypeId",50031:"UIA_SplitButtonControlTypeId",50032:"UIA_WindowControlTypeId",50033:"UIA_PaneControlTypeId",50034:"UIA_HeaderControlTypeId",50035:"UIA_HeaderItemControlTypeId",50036:"UIA_TableControlTypeId",50037:"UIA_TitleBarControlTypeId",50038:"UIA_SeparatorControlTypeId"}
+	if n is integer
+		return name[n]
+	else return id[n]
+}
+
+; Event Identifiers
+UIA_Event(n){
+	static id:={ToolTipOpened:20000,ToolTipClosed:20001,StructureChanged:20002,MenuOpened:20003,AutomationPropertyChanged:20004,AutomationFocusChanged:20005,AsyncContentLoaded:20006,MenuClosed:20007,LayoutInvalidated:20008,Invoke_Invoked:20009,SelectionItem_ElementAddedToSelection:20010,SelectionItem_ElementRemovedFromSelection:20011,SelectionItem_ElementSelected:20012,Selection_Invalidated:20013,Text_TextSelectionChanged:20014,Text_TextChanged:20015,Window_WindowOpened:20016,Window_WindowClosed:20017,MenuModeStart:20018,MenuModeEnd:20019,InputReachedTarget:20020,InputReachedOtherElement:20021,InputDiscarded:20022}
+	, name:={20000:"UIA_ToolTipOpenedEventId",20001:"UIA_ToolTipClosedEventId",20002:"UIA_StructureChangedEventId",20003:"UIA_MenuOpenedEventId",20004:"UIA_AutomationPropertyChangedEventId",20005:"UIA_AutomationFocusChangedEventId",20006:"UIA_AsyncContentLoadedEventId",20007:"UIA_MenuClosedEventId",20008:"UIA_LayoutInvalidatedEventId",20009:"UIA_Invoke_InvokedEventId",20010:"UIA_SelectionItem_ElementAddedToSelectionEventId",20011:"UIA_SelectionItem_ElementRemovedFromSelectionEventId",20012:"UIA_SelectionItem_ElementSelectedEventId",20013:"UIA_Selection_InvalidatedEventId",20014:"UIA_Text_TextSelectionChangedEventId",20015:"UIA_Text_TextChangedEventId",20016:"UIA_Window_WindowOpenedEventId",20017:"UIA_Window_WindowClosedEventId",20018:"UIA_MenuModeStartEventId",20019:"UIA_MenuModeEndEventId",20020:"UIA_InputReachedTargetEventId",20021:"UIA_InputReachedOtherElementEventId",20022:"UIA_InputDiscardedEventId"}
+	if n is integer
+		return name[n]
+	else return id[n]
+}
+
+; UI Automation Enumerations
+UIA_Enum(t){
 	static _:={0:0
 ; enum TreeScope Contains values that specify the scope of various operations in the Microsoft UI Automation tree.
 	,TreeScope_Element:0x1
@@ -2346,21 +2585,69 @@ UIA_Constant(t){
 ; enum AutomationElementMode Contains values that specify the type of reference to use when returning UI Automation elements.
 	,AutomationElementMode_None:0
 	,AutomationElementMode_Full:1
+	
 ;; pattern
+
+; enum NavigateDirection Contains values used to specify the direction of navigation within the Microsoft UI Automation tree.
+	,NavigateDirection_Parent:0
+	,NavigateDirection_NextSibling:1
+	,NavigateDirection_PreviousSibling:2
+	,NavigateDirection_FirstChild:3
+	,NavigateDirection_LastChild:4
+; enum StructureChangeType Contains values that specify the type of change in the Microsoft UI Automation tree structure.
+	,StructureChangeType_ChildAdded:0
+	,StructureChangeType_ChildRemoved:1
+	,StructureChangeType_ChildrenInvalidated:2
+	,StructureChangeType_ChildrenBulkAdded:3
+	,StructureChangeType_ChildrenBulkRemoved:4
+	,StructureChangeType_ChildrenReordered:5   
+; enum OrientationType Contains values that specify the orientation of a control.
+    ,OrientationType_None:0
+	,OrientationType_Horizontal:1
+	,OrientationType_Vertical:2
+; enum DockPosition Contains values that specify the location of a docking window represented by the Dock control pattern.
+	,DockPosition_Top:0
+	,DockPosition_Left:1
+	,DockPosition_Bottom:2
+	,DockPosition_Right:3
+	,DockPosition_Fill:4
+	,DockPosition_None:5
+; enum ExpandCollapseState Contains values that specify the state of a UI element that can be expanded and collapsed.
+	,ExpandCollapseState_Collapsed:0
+	,ExpandCollapseState_Expanded:1
+	,ExpandCollapseState_PartiallyExpanded:2
+	,ExpandCollapseState_LeafNode:3
+; enum ScrollAmount Contains values that specify the direction and distance to scroll.
+	,ScrollAmount_LargeDecrement:0
+	,ScrollAmount_SmallDecrement:1
+	,ScrollAmount_NoAmount:2
+	,ScrollAmount_LargeIncrement:3
+	,ScrollAmount_SmallIncrement:4
+; enum RowOrColumnMajor Contains values that specify whether data in a table should be read primarily by row or by column.
+	,RowOrColumnMajor_RowMajor:0
+	,RowOrColumnMajor_ColumnMajor:1
+	,RowOrColumnMajor_Indeterminate:2   
+; enum ToggleState Contains values that specify the toggle state of a Microsoft UI Automation element that implements the Toggle control pattern.
+	,ToggleState_Off:0
+	,ToggleState_On:1
+	,ToggleState_Indeterminate:2	
+; enum WindowVisualState Contains values that specify the visual state of a window.
+	,WindowVisualState_Normal:0
+	,WindowVisualState_Maximized:1
+	,WindowVisualState_Minimized:2
+; enum SynchronizedInputType Contains values that specify the type of synchronized input.
+	,SynchronizedInputType_KeyUp:0x1
+	,SynchronizedInputType_KeyDown:0x2
+	,SynchronizedInputType_LeftMouseUp:0x4
+	,SynchronizedInputType_LeftMouseDown:0x8
+	,SynchronizedInputType_RightMouseUp:0x10
+	,SynchronizedInputType_RightMouseDown:0x20
 ; enum WindowInteractionState Contains values that specify the current state of the window for purposes of user interaction.
 	,WindowInteractionState_Running:0
 	,WindowInteractionState_Closing:1
 	,WindowInteractionState_ReadyForUserInteraction:2
 	,WindowInteractionState_BlockedByModalWindow:3
-	,WindowInteractionState_NotResponding:4
-; enum WindowVisualState Contains values that specify the visual state of a window.
-	,WindowVisualState_Normal:0
-	,WindowVisualState_Maximized:1
-	,WindowVisualState_Minimized:2
-; enum TextPatternRangeEndpoint Contains values that specify the endpoints of a text range.
-	,TextPatternRangeEndpoint_Start:0
-	,TextPatternRangeEndpoint_End:1
-; enum textUnit
+; enum textUnit Contains values that specify units of text for the purposes of navigation.
 	,TextUnit_Character:0
 	,TextUnit_Format:1
 	,TextUnit_Word:2
@@ -2368,18 +2655,218 @@ UIA_Constant(t){
 	,TextUnit_Paragraph:4
 	,TextUnit_Page:5
 	,TextUnit_Document:6
+; enum TextPatternRangeEndpoint Contains values that specify the endpoints of a text range.
+	,TextPatternRangeEndpoint_Start:0
+	,TextPatternRangeEndpoint_End:1
 ; enum SupportedTextSelection Contains values that specify the supported text selection attribute.
 	,SupportedTextSelection_Multiple:2
 	,SupportedTextSelection_None:0
-	,SupportedTextSelection_Single:1
-; enum OrientationType
-	,OrientationType_None:0
-	,OrientationType_Horizontal:1
-	,OrientationType_Vertical:2
-; enum SELFLAG http://msdn.microsoft.com/en-us/library/dd373634%28v=vs.85%29.aspx
-; enum Roles http://msdn.microsoft.com/en-us/library/dd373608%28v=vs.85%29.aspx
-; enum State http://msdn.microsoft.com/en-us/library/dd373609%28v=vs.85%29.aspx
-	,1:1}
+	,SupportedTextSelection_Single:1}
+/*
+;; IAccessible
+
+; enum SELFLAG specify how an accessible object becomes selected or takes the focus. http://msdn.microsoft.com/en-us/library/dd373634(v=vs.85).aspx
+	,SELFLAG_NONE:0
+	,SELFLAG_TAKEFOCUS:0x1
+	,SELFLAG_TAKESELECTION:0x2
+	,SELFLAG_EXTENDSELECTION:0x4
+	,SELFLAG_ADDSELECTION:0x8
+	,SELFLAG_REMOVESELECTION:0x10
+	,SELFLAG_VALID:0x1f
+; enum Roles describe the roles of various UI objects in an application. http://msdn.microsoft.com/en-us/library/dd373608%28v=vs.85%29.aspx
+	,ROLE_SYSTEM_TITLEBAR:0x1
+	,ROLE_SYSTEM_MENUBAR:0x2
+	,ROLE_SYSTEM_SCROLLBAR:0x3
+	,ROLE_SYSTEM_GRIP:0x4
+	,ROLE_SYSTEM_SOUND:0x5
+	,ROLE_SYSTEM_CURSOR:0x6
+	,ROLE_SYSTEM_CARET:0x7
+	,ROLE_SYSTEM_ALERT:0x8
+	,ROLE_SYSTEM_WINDOW:0x9
+	,ROLE_SYSTEM_CLIENT:0xa
+	,ROLE_SYSTEM_MENUPOPUP:0xb
+	,ROLE_SYSTEM_MENUITEM:0xc
+	,ROLE_SYSTEM_TOOLTIP:0xd
+	,ROLE_SYSTEM_APPLICATION:0xe
+	,ROLE_SYSTEM_DOCUMENT:0xf
+	,ROLE_SYSTEM_PANE:0x10
+	,ROLE_SYSTEM_CHART:0x11
+	,ROLE_SYSTEM_DIALOG:0x12
+	,ROLE_SYSTEM_BORDER:0x13
+	,ROLE_SYSTEM_GROUPING:0x14
+	,ROLE_SYSTEM_SEPARATOR:0x15
+	,ROLE_SYSTEM_TOOLBAR:0x16
+	,ROLE_SYSTEM_STATUSBAR:0x17
+	,ROLE_SYSTEM_TABLE:0x18
+	,ROLE_SYSTEM_COLUMNHEADER:0x19
+	,ROLE_SYSTEM_ROWHEADER:0x1a
+	,ROLE_SYSTEM_COLUMN:0x1b
+	,ROLE_SYSTEM_ROW:0x1c
+	,ROLE_SYSTEM_CELL:0x1d
+	,ROLE_SYSTEM_LINK:0x1e
+	,ROLE_SYSTEM_HELPBALLOON:0x1f
+	,ROLE_SYSTEM_CHARACTER:0x20
+	,ROLE_SYSTEM_LIST:0x21
+	,ROLE_SYSTEM_LISTITEM:0x22
+	,ROLE_SYSTEM_OUTLINE:0x23
+	,ROLE_SYSTEM_OUTLINEITEM:0x24
+	,ROLE_SYSTEM_PAGETAB:0x25
+	,ROLE_SYSTEM_PROPERTYPAGE:0x26
+	,ROLE_SYSTEM_INDICATOR:0x27
+	,ROLE_SYSTEM_GRAPHIC:0x28
+	,ROLE_SYSTEM_STATICTEXT:0x29
+	,ROLE_SYSTEM_TEXT:0x2a
+	,ROLE_SYSTEM_PUSHBUTTON:0x2b
+	,ROLE_SYSTEM_CHECKBUTTON:0x2c
+	,ROLE_SYSTEM_RADIOBUTTON:0x2d
+	,ROLE_SYSTEM_COMBOBOX:0x2e
+	,ROLE_SYSTEM_DROPLIST:0x2f
+	,ROLE_SYSTEM_PROGRESSBAR:0x30
+	,ROLE_SYSTEM_DIAL:0x31
+	,ROLE_SYSTEM_HOTKEYFIELD:0x32
+	,ROLE_SYSTEM_SLIDER:0x33
+	,ROLE_SYSTEM_SPINBUTTON:0x34
+	,ROLE_SYSTEM_DIAGRAM:0x35
+	,ROLE_SYSTEM_ANIMATION:0x36
+	,ROLE_SYSTEM_EQUATION:0x37
+	,ROLE_SYSTEM_BUTTONDROPDOWN:0x38
+	,ROLE_SYSTEM_BUTTONMENU:0x39
+	,ROLE_SYSTEM_BUTTONDROPDOWNGRID:0x3a
+	,ROLE_SYSTEM_WHITESPACE:0x3b
+	,ROLE_SYSTEM_PAGETABLIST:0x3c
+	,ROLE_SYSTEM_CLOCK:0x3d
+	,ROLE_SYSTEM_SPLITBUTTON:0x3e
+	,ROLE_SYSTEM_IPADDRESS:0x3f
+	,ROLE_SYSTEM_OUTLINEBUTTON:0x40
+; enum State describe the state of objects in an application UI. http://msdn.microsoft.com/en-us/library/dd373609%28v=vs.85%29.aspx
+	,STATE_SYSTEM_NORMAL:0
+	,STATE_SYSTEM_UNAVAILABLE:0x1
+	,STATE_SYSTEM_SELECTED:0x2
+	,STATE_SYSTEM_FOCUSED:0x4
+	,STATE_SYSTEM_PRESSED:0x8
+	,STATE_SYSTEM_CHECKED:0x10
+	,STATE_SYSTEM_MIXED:0x20
+	,STATE_SYSTEM_INDETERMINATE:0x20
+	,STATE_SYSTEM_READONLY:0x40
+	,STATE_SYSTEM_HOTTRACKED:0x80
+	,STATE_SYSTEM_DEFAULT:0x100
+	,STATE_SYSTEM_EXPANDED:0x200
+	,STATE_SYSTEM_COLLAPSED:0x400
+	,STATE_SYSTEM_BUSY:0x800
+	,STATE_SYSTEM_FLOATING:0x1000
+	,STATE_SYSTEM_MARQUEED:0x2000
+	,STATE_SYSTEM_ANIMATED:0x4000
+	,STATE_SYSTEM_INVISIBLE:0x8000
+	,STATE_SYSTEM_OFFSCREEN:0x10000
+	,STATE_SYSTEM_SIZEABLE:0x20000
+	,STATE_SYSTEM_MOVEABLE:0x40000
+	,STATE_SYSTEM_SELFVOICING:0x80000
+	,STATE_SYSTEM_FOCUSABLE:0x100000
+	,STATE_SYSTEM_SELECTABLE:0x200000
+	,STATE_SYSTEM_LINKED:0x400000
+	,STATE_SYSTEM_TRAVERSED:0x800000
+	,STATE_SYSTEM_MULTISELECTABLE:0x1000000
+	,STATE_SYSTEM_EXTSELECTABLE:0x2000000
+	,STATE_SYSTEM_ALERT_LOW:0x4000000
+	,STATE_SYSTEM_ALERT_MEDIUM:0x8000000
+	,STATE_SYSTEM_ALERT_HIGH:0x10000000
+	,STATE_SYSTEM_PROTECTED:0x20000000
+	,STATE_SYSTEM_VALID:0x7fffffff
+	,STATE_SYSTEM_HASPOPUP:0x40000000
+; enum Event describes the events that are generated by the operating system and by server applications. http://msdn.microsoft.com/en-us/library/dd318066%28v=vs.85%29.aspx
+	,EVENT_MIN:0x00000001
+	,EVENT_MAX:0x7FFFFFFF
+	,EVENT_SYSTEM_SOUND:0x0001
+	,EVENT_SYSTEM_ALERT:0x0002
+	,EVENT_SYSTEM_FOREGROUND:0x0003
+	,EVENT_SYSTEM_MENUSTART:0x0004
+	,EVENT_SYSTEM_MENUEND:0x0005
+	,EVENT_SYSTEM_MENUPOPUPSTART:0x0006
+	,EVENT_SYSTEM_MENUPOPUPEND:0x0007
+	,EVENT_SYSTEM_CAPTURESTART:0x0008
+	,EVENT_SYSTEM_CAPTUREEND:0x0009
+	,EVENT_SYSTEM_MOVESIZESTART:0x000A
+	,EVENT_SYSTEM_MOVESIZEEND:0x000B
+	,EVENT_SYSTEM_CONTEXTHELPSTART:0x000C
+	,EVENT_SYSTEM_CONTEXTHELPEND:0x000D
+	,EVENT_SYSTEM_DRAGDROPSTART:0x000E
+	,EVENT_SYSTEM_DRAGDROPEND:0x000F
+	,EVENT_SYSTEM_DIALOGSTART:0x0010
+	,EVENT_SYSTEM_DIALOGEND:0x0011
+	,EVENT_SYSTEM_SCROLLINGSTART:0x0012
+	,EVENT_SYSTEM_SCROLLINGEND:0x0013
+	,EVENT_SYSTEM_SWITCHSTART:0x0014
+	,EVENT_SYSTEM_SWITCHEND:0x0015
+	,EVENT_SYSTEM_MINIMIZESTART:0x0016
+	,EVENT_SYSTEM_MINIMIZEEND:0x0017
+	,EVENT_SYSTEM_DESKTOPSWITCH:0x0020
+	,EVENT_SYSTEM_END:0x00FF
+	,EVENT_OEM_DEFINED_START:0x0101
+	,EVENT_OEM_DEFINED_END:0x01FF
+	,EVENT_UIA_EVENTID_START:0x4E00
+	,EVENT_UIA_EVENTID_END:0x4EFF
+	,EVENT_UIA_PROPID_START:0x7500
+	,EVENT_UIA_PROPID_END:0x75FF
+	,EVENT_CONSOLE_CARET:0x4001
+	,EVENT_CONSOLE_UPDATE_REGION:0x4002
+	,EVENT_CONSOLE_UPDATE_SIMPLE:0x4003
+	,EVENT_CONSOLE_UPDATE_SCROLL:0x4004
+	,EVENT_CONSOLE_LAYOUT:0x4005
+	,EVENT_CONSOLE_START_APPLICATION:0x4006
+	,EVENT_CONSOLE_END_APPLICATION:0x4007
+	,EVENT_CONSOLE_END:0x40FF
+	,EVENT_OBJECT_CREATE:0x8000
+	,EVENT_OBJECT_DESTROY:0x8001
+	,EVENT_OBJECT_SHOW:0x8002
+	,EVENT_OBJECT_HIDE:0x8003
+	,EVENT_OBJECT_REORDER:0x8004
+	,EVENT_OBJECT_FOCUS:0x8005
+	,EVENT_OBJECT_SELECTION:0x8006
+	,EVENT_OBJECT_SELECTIONADD:0x8007
+	,EVENT_OBJECT_SELECTIONREMOVE:0x8008
+	,EVENT_OBJECT_SELECTIONWITHIN:0x8009
+	,EVENT_OBJECT_STATECHANGE:0x800A
+	,EVENT_OBJECT_LOCATIONCHANGE:0x800B
+	,EVENT_OBJECT_NAMECHANGE:0x800C
+	,EVENT_OBJECT_DESCRIPTIONCHANGE:0x800D
+	,EVENT_OBJECT_VALUECHANGE:0x800E
+	,EVENT_OBJECT_PARENTCHANGE:0x800F
+	,EVENT_OBJECT_HELPCHANGE:0x8010
+	,EVENT_OBJECT_DEFACTIONCHANGE:0x8011
+	,EVENT_OBJECT_ACCELERATORCHANGE:0x8012
+	,EVENT_OBJECT_INVOKED:0x8013
+	,EVENT_OBJECT_TEXTSELECTIONCHANGED:0x8014
+	,EVENT_OBJECT_CONTENTSCROLLED:0x8015
+	,EVENT_SYSTEM_ARRANGMENTPREVIEW:0x8016
+	,EVENT_OBJECT_END:0x80FF
+	,EVENT_AIA_START:0xA000
+	,EVENT_AIA_END:0xAFFF
+; enum Navigation indicate the spatial (up, down, left, and right) or logical (first child, last, next, and previous) direction observed when clients use IAccessible::accNavigate to navigate from one user interface element to another within the same container. http://msdn.microsoft.com/en-us/library/dd373600%28v=vs.85%29.aspx
+	,NAVDIR_MIN:0
+	,NAVDIR_UP:1
+	,NAVDIR_DOWN:2
+	,NAVDIR_LEFT:3
+	,NAVDIR_RIGHT:4
+	,NAVDIR_NEXT:5
+	,NAVDIR_PREVIOUS:6
+	,NAVDIR_FIRSTCHILD:7
+	,NAVDIR_LASTCHILD:8
+	,NAVDIR_MAX:9
+; enum Object Identifiers determine the object to which a WM_GETOBJECT message request refers. http://msdn.microsoft.com/en-us/library/dd373606%28v=vs.85%29.aspx
+	,OBJID_WINDOW:0
+	,OBJID_SYSMENU:-1
+	,OBJID_TITLEBAR:-2
+	,OBJID_MENU:-3
+	,OBJID_CLIENT:-4
+	,OBJID_VSCROLL:-5
+	,OBJID_HSCROLL:-6
+	,OBJID_SIZEGRIP:-7
+	,OBJID_CARET:-8
+	,OBJID_CURSOR:-9
+	,OBJID_ALERT:-10
+	,OBJID_SOUND:-11
+	,OBJID_QUERYCLASSNAMEIDX:-12
+	,OBJID_NATIVEOM:-16
+*/
 	return _[t]
 }
-;*/
