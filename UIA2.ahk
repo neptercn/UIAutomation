@@ -4,15 +4,16 @@
 
 class IBase
 {
-  __new(p=0){
+	__new(p=0){
 		if (this.__:=p)
-			this.vt:=NumGet(p+0)
+			this._v:=NumGet(p+0)
+		else return
 	}
 	__delete(){
 		ObjRelease(this.__)
 	}
 	vt(n){
-		return NumGet(this.vt+n*A_PtrSize)
+		return NumGet(this._v+n*A_PtrSize)
 	}
 }
 
@@ -23,7 +24,7 @@ class IBase
 class IUIAutomation extends IBase
 {
 	__new(){
-		this.__:=ComObjCreate("{ff48dba4-60ef-4201-aa87-54103eef594e}","{30cbe57d-d9d0-452a-ab13-7ac5ac4825ee}"),this.vt:=NumGet(this.__+0)
+		this.__:=ComObjCreate("{ff48dba4-60ef-4201-aa87-54103eef594e}","{30cbe57d-d9d0-452a-ab13-7ac5ac4825ee}"),this._v:=NumGet(this.__+0)
 	}
 	
 	; Compares two UI Automation elements to determine whether they represent the same underlying UI element.
@@ -1138,7 +1139,7 @@ class IUIAutomationTreeWalker extends IBase
 	; Retrieves the first child element of the specified UI Automation element, and caches properties and control patterns.
 	GetFirstChildElementBuildCache(element,cacheRequest){
 	UIA_Error(DllCall(this.vt(10),"ptr",this.__,"ptr",element.__,"ptr",cacheRequest.__,"ptr*",first),"FirstChildElementBuildCache")
-	return first
+	return new IUIAutomationElement(first)
 	}
 	
 	; Retrieves the last child element of the specified UI Automation element, and caches properties and control patterns.
